@@ -10,7 +10,6 @@ position: Consumer
 access: 3rd-Party
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
-  - API
   - Container Registry
 created: '2025-02-17'
 modified: '2026-03-16'
@@ -27,7 +26,6 @@ apis:
       by navigate to the Swagger UI using your Harbor instance IP.
     humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
     tags:
-      - API
       - Container Registry
     properties:
       - type: Documentation
