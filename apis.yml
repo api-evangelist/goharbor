@@ -39,7 +39,7 @@ common:
     url: https://goharbor.io/
   - type: Documentation
     url: https://goharbor.io/docs/
-  - type: GitHub Organization
+  - type: GitHubOrganization
     url: https://github.com/goharbor
 maintainers:
   - FN: Kin Lane
