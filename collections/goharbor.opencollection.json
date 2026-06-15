@@ -1,0 +1,759 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Harbor API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "health",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Check the status of Harbor components",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/health"
+          },
+          "docs": "Check the status of Harbor components"
+        },
+        {
+          "info": {
+            "name": "Get statistics for the Harbor system",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/statistics"
+          },
+          "docs": "Get statistics for the Harbor system"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "search",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search projects and repositories",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/search",
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Search projects and repositories"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "projects",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List projects",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects"
+          },
+          "docs": "List projects"
+        },
+        {
+          "info": {
+            "name": "Create a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/projects"
+          },
+          "docs": "Create a project"
+        },
+        {
+          "info": {
+            "name": "Get a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a project"
+        },
+        {
+          "info": {
+            "name": "Update a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Update a project"
+        },
+        {
+          "info": {
+            "name": "Delete a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete a project"
+        },
+        {
+          "info": {
+            "name": "Get project summary",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id/summary",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get project summary"
+        },
+        {
+          "info": {
+            "name": "List members of a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id/members",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List members of a project"
+        },
+        {
+          "info": {
+            "name": "Add a member to a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id/members",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Add a member to a project"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "repositories",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List all repositories",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/repositories"
+          },
+          "docs": "List all repositories"
+        },
+        {
+          "info": {
+            "name": "List repositories in a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List repositories in a project"
+        },
+        {
+          "info": {
+            "name": "Get a repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a repository"
+        },
+        {
+          "info": {
+            "name": "Delete a repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete a repository"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "artifacts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List artifacts in a repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name/artifacts",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List artifacts in a repository"
+        },
+        {
+          "info": {
+            "name": "Get an artifact",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name/artifacts/:reference",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "reference",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get an artifact"
+        },
+        {
+          "info": {
+            "name": "Delete an artifact",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name/artifacts/:reference",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "reference",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete an artifact"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "tags",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List tags for an artifact",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name/artifacts/:reference/tags",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "reference",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List tags for an artifact"
+        },
+        {
+          "info": {
+            "name": "Add a tag to an artifact",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name/artifacts/:reference/tags",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "reference",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Add a tag to an artifact"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "scan",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Trigger an artifact vulnerability scan",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name/artifacts/:reference/scan",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "reference",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Trigger an artifact vulnerability scan"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "webhooks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List webhook policies",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id/webhook/policies",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List webhook policies"
+        },
+        {
+          "info": {
+            "name": "Create a webhook policy",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id/webhook/policies",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Create a webhook policy"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "audit",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List audit logs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/audit-logs"
+          },
+          "docs": "List audit logs"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "usergroups",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List user groups",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/usergroups"
+          },
+          "docs": "List user groups"
+        },
+        {
+          "info": {
+            "name": "Create a user group",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/usergroups"
+          },
+          "docs": "Create a user group"
+        },
+        {
+          "info": {
+            "name": "Get a user group",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/usergroups/:group_id",
+            "params": [
+              {
+                "name": "group_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a user group"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "robots",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List robot accounts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/robots"
+          },
+          "docs": "List robot accounts"
+        },
+        {
+          "info": {
+            "name": "Create a robot account",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/robots"
+          },
+          "docs": "Create a robot account"
+        },
+        {
+          "info": {
+            "name": "Get a robot account",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/robots/:robot_id",
+            "params": [
+              {
+                "name": "robot_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a robot account"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "quotas",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List quotas",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/quotas"
+          },
+          "docs": "List quotas"
+        },
+        {
+          "info": {
+            "name": "Get a quota",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/quotas/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a quota"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "replication",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List replication policies",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/replication/policies"
+          },
+          "docs": "List replication policies"
+        },
+        {
+          "info": {
+            "name": "Create a replication policy",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/replication/policies"
+          },
+          "docs": "Create a replication policy"
+        },
+        {
+          "info": {
+            "name": "List replication executions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/replication/executions"
+          },
+          "docs": "List replication executions"
+        },
+        {
+          "info": {
+            "name": "Trigger a replication execution",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/replication/executions"
+          },
+          "docs": "Trigger a replication execution"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "registries",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List external registries",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/registries"
+          },
+          "docs": "List external registries"
+        },
+        {
+          "info": {
+            "name": "Create an external registry endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/registries"
+          },
+          "docs": "Create an external registry endpoint"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
