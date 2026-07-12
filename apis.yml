@@ -35,12 +35,18 @@ apis:
       - type: SourceCode
         url: https://github.com/goharbor/harbor
 common:
+  - type: DomainSecurity
+    url: security/goharbor-domain-security.yml
+  - type: Authentication
+    url: authentication/goharbor-authentication.yml
   - type: Website
     url: https://goharbor.io/
   - type: Documentation
     url: https://goharbor.io/docs/
   - type: GitHubOrganization
     url: https://github.com/goharbor
+  - url: https://goharbor.io/blog/index.xml
+    type: Blog
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

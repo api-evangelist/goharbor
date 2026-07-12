@@ -1,0 +1,13 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/goharbor-openapi.yml
+summary:
+  types:
+  - http
+schemes:
+- name: basicAuth
+  type: http
+  scheme: basic
+  description: Harbor user credentials (HTTP Basic)
+  sources:
+  - openapi/goharbor-openapi.yml
