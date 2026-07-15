@@ -35,6 +35,8 @@ apis:
       - type: SourceCode
         url: https://github.com/goharbor/harbor
 common:
+  - type: AgenticAccess
+    url: agentic-access/goharbor-agentic-access.yml
   - type: DomainSecurity
     url: security/goharbor-domain-security.yml
   - type: Authentication
