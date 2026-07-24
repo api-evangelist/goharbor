@@ -1,0 +1,65 @@
+openapi: 3.1.0
+info:
+  title: Harbor artifacts usergroups API
+  version: '2.0'
+  description: 'Subset of the Harbor v2.0 REST API for the cloud-native container
+
+    registry. Authenticates with HTTP Basic auth. Full upstream spec
+
+    available at
+
+    https://raw.githubusercontent.com/goharbor/harbor/main/api/v2.0/swagger.yaml
+
+    '
+  contact:
+    name: Harbor
+    url: https://goharbor.io/
+servers:
+- url: https://{host}/api/v2.0
+  description: Harbor instance
+  variables:
+    host:
+      default: harbor.example.com
+security:
+- basicAuth: []
+tags:
+- name: usergroups
+paths:
+  /usergroups:
+    get:
+      tags:
+      - usergroups
+      summary: List user groups
+      operationId: listUserGroups
+      responses:
+        '200':
+          description: OK
+    post:
+      tags:
+      - usergroups
+      summary: Create a user group
+      operationId: createUserGroup
+      responses:
+        '201':
+          description: Created
+  /usergroups/{group_id}:
+    get:
+      tags:
+      - usergroups
+      summary: Get a user group
+      operationId: getUserGroup
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Harbor user credentials (HTTP Basic)

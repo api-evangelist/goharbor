@@ -1,0 +1,96 @@
+openapi: 3.1.0
+info:
+  title: Harbor artifacts repositories API
+  version: '2.0'
+  description: 'Subset of the Harbor v2.0 REST API for the cloud-native container
+
+    registry. Authenticates with HTTP Basic auth. Full upstream spec
+
+    available at
+
+    https://raw.githubusercontent.com/goharbor/harbor/main/api/v2.0/swagger.yaml
+
+    '
+  contact:
+    name: Harbor
+    url: https://goharbor.io/
+servers:
+- url: https://{host}/api/v2.0
+  description: Harbor instance
+  variables:
+    host:
+      default: harbor.example.com
+security:
+- basicAuth: []
+tags:
+- name: repositories
+paths:
+  /repositories:
+    get:
+      tags:
+      - repositories
+      summary: List all repositories
+      operationId: listRepositories
+      responses:
+        '200':
+          description: OK
+  /projects/{project_name}/repositories:
+    get:
+      tags:
+      - repositories
+      summary: List repositories in a project
+      operationId: listProjectRepositories
+      parameters:
+      - name: project_name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+  /projects/{project_name}/repositories/{repository_name}:
+    get:
+      tags:
+      - repositories
+      summary: Get a repository
+      operationId: getRepository
+      parameters:
+      - name: project_name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: repository_name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+    delete:
+      tags:
+      - repositories
+      summary: Delete a repository
+      operationId: deleteRepository
+      parameters:
+      - name: project_name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: repository_name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Deleted
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Harbor user credentials (HTTP Basic)

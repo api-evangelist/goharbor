@@ -1,0 +1,65 @@
+openapi: 3.1.0
+info:
+  title: Harbor artifacts robots API
+  version: '2.0'
+  description: 'Subset of the Harbor v2.0 REST API for the cloud-native container
+
+    registry. Authenticates with HTTP Basic auth. Full upstream spec
+
+    available at
+
+    https://raw.githubusercontent.com/goharbor/harbor/main/api/v2.0/swagger.yaml
+
+    '
+  contact:
+    name: Harbor
+    url: https://goharbor.io/
+servers:
+- url: https://{host}/api/v2.0
+  description: Harbor instance
+  variables:
+    host:
+      default: harbor.example.com
+security:
+- basicAuth: []
+tags:
+- name: robots
+paths:
+  /robots:
+    get:
+      tags:
+      - robots
+      summary: List robot accounts
+      operationId: listRobots
+      responses:
+        '200':
+          description: OK
+    post:
+      tags:
+      - robots
+      summary: Create a robot account
+      operationId: createRobot
+      responses:
+        '201':
+          description: Created
+  /robots/{robot_id}:
+    get:
+      tags:
+      - robots
+      summary: Get a robot account
+      operationId: getRobot
+      parameters:
+      - name: robot_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Harbor user credentials (HTTP Basic)

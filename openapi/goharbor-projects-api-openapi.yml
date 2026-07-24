@@ -1,0 +1,137 @@
+openapi: 3.1.0
+info:
+  title: Harbor artifacts projects API
+  version: '2.0'
+  description: 'Subset of the Harbor v2.0 REST API for the cloud-native container
+
+    registry. Authenticates with HTTP Basic auth. Full upstream spec
+
+    available at
+
+    https://raw.githubusercontent.com/goharbor/harbor/main/api/v2.0/swagger.yaml
+
+    '
+  contact:
+    name: Harbor
+    url: https://goharbor.io/
+servers:
+- url: https://{host}/api/v2.0
+  description: Harbor instance
+  variables:
+    host:
+      default: harbor.example.com
+security:
+- basicAuth: []
+tags:
+- name: projects
+paths:
+  /projects:
+    get:
+      tags:
+      - projects
+      summary: List projects
+      operationId: listProjects
+      responses:
+        '200':
+          description: OK
+    post:
+      tags:
+      - projects
+      summary: Create a project
+      operationId: createProject
+      responses:
+        '201':
+          description: Created
+  /projects/{project_name_or_id}:
+    get:
+      tags:
+      - projects
+      summary: Get a project
+      operationId: getProject
+      parameters:
+      - name: project_name_or_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+    put:
+      tags:
+      - projects
+      summary: Update a project
+      operationId: updateProject
+      parameters:
+      - name: project_name_or_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+    delete:
+      tags:
+      - projects
+      summary: Delete a project
+      operationId: deleteProject
+      parameters:
+      - name: project_name_or_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Deleted
+  /projects/{project_name_or_id}/summary:
+    get:
+      tags:
+      - projects
+      summary: Get project summary
+      operationId: getProjectSummary
+      parameters:
+      - name: project_name_or_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+  /projects/{project_name_or_id}/members:
+    get:
+      tags:
+      - projects
+      summary: List members of a project
+      operationId: listProjectMembers
+      parameters:
+      - name: project_name_or_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+    post:
+      tags:
+      - projects
+      summary: Add a member to a project
+      operationId: addProjectMember
+      parameters:
+      - name: project_name_or_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Created
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Harbor user credentials (HTTP Basic)

@@ -1,0 +1,82 @@
+openapi: 3.1.0
+info:
+  title: Harbor artifacts tags API
+  version: '2.0'
+  description: 'Subset of the Harbor v2.0 REST API for the cloud-native container
+
+    registry. Authenticates with HTTP Basic auth. Full upstream spec
+
+    available at
+
+    https://raw.githubusercontent.com/goharbor/harbor/main/api/v2.0/swagger.yaml
+
+    '
+  contact:
+    name: Harbor
+    url: https://goharbor.io/
+servers:
+- url: https://{host}/api/v2.0
+  description: Harbor instance
+  variables:
+    host:
+      default: harbor.example.com
+security:
+- basicAuth: []
+tags:
+- name: tags
+paths:
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/tags:
+    get:
+      tags:
+      - tags
+      summary: List tags for an artifact
+      operationId: listArtifactTags
+      parameters:
+      - name: project_name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: repository_name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: reference
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+    post:
+      tags:
+      - tags
+      summary: Add a tag to an artifact
+      operationId: addArtifactTag
+      parameters:
+      - name: project_name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: repository_name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: reference
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Created
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Harbor user credentials (HTTP Basic)

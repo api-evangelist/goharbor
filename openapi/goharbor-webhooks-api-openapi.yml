@@ -1,0 +1,62 @@
+openapi: 3.1.0
+info:
+  title: Harbor artifacts webhooks API
+  version: '2.0'
+  description: 'Subset of the Harbor v2.0 REST API for the cloud-native container
+
+    registry. Authenticates with HTTP Basic auth. Full upstream spec
+
+    available at
+
+    https://raw.githubusercontent.com/goharbor/harbor/main/api/v2.0/swagger.yaml
+
+    '
+  contact:
+    name: Harbor
+    url: https://goharbor.io/
+servers:
+- url: https://{host}/api/v2.0
+  description: Harbor instance
+  variables:
+    host:
+      default: harbor.example.com
+security:
+- basicAuth: []
+tags:
+- name: webhooks
+paths:
+  /projects/{project_name_or_id}/webhook/policies:
+    get:
+      tags:
+      - webhooks
+      summary: List webhook policies
+      operationId: listWebhookPolicies
+      parameters:
+      - name: project_name_or_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+    post:
+      tags:
+      - webhooks
+      summary: Create a webhook policy
+      operationId: createWebhookPolicy
+      parameters:
+      - name: project_name_or_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Created
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Harbor user credentials (HTTP Basic)
