@@ -6,9 +6,22 @@ description: >-
   interface. You can navigate to the REST API through the Harbor portal, or by
   navigate to the Swagger UI using your Harbor instance IP.
 type: Index
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
 position: Consumer
 access: 3rd-Party
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/goharbor.png
 tags:
   - Container Registry
 created: '2025-02-17'
@@ -17,23 +30,188 @@ url: >-
   https://raw.githubusercontent.com/api-evangelist/goharbor/refs/heads/main/apis.yml
 specificationVersion: '0.19'
 apis:
-  - aid: goharbor:goharbor
-    name: GoHarbor
-    description: >-
-      You can view and test the Harbor REST API from your Harbor interface using
-      the Swagger UI. This means that you can invoke all APIs through the Harbor
-      interface. You can navigate to the REST API through the Harbor portal, or
-      by navigate to the Swagger UI using your Harbor instance IP.
-    humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
-    tags:
-      - Container Registry
-    properties:
-      - type: Documentation
-        url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
-      - type: OpenAPI
-        url: https://raw.githubusercontent.com/goharbor/harbor/main/api/v2.0/swagger.yaml
-      - type: SourceCode
-        url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-artifacts-api
+  name: GoHarbor artifacts API
+  description: The artifacts API from GoHarbor — 2 operation(s) for artifacts.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - artifacts
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-artifacts-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-audit-api
+  name: GoHarbor audit API
+  description: The audit API from GoHarbor — 1 operation(s) for audit.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - audit
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-audit-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-health-api
+  name: GoHarbor health API
+  description: The health API from GoHarbor — 2 operation(s) for health.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - health
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-health-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-projects-api
+  name: GoHarbor projects API
+  description: The projects API from GoHarbor — 4 operation(s) for projects.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - projects
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-projects-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-quotas-api
+  name: GoHarbor quotas API
+  description: The quotas API from GoHarbor — 2 operation(s) for quotas.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - quotas
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-quotas-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-registries-api
+  name: GoHarbor registries API
+  description: The registries API from GoHarbor — 1 operation(s) for registries.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - registries
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-registries-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-replication-api
+  name: GoHarbor replication API
+  description: The replication API from GoHarbor — 2 operation(s) for replication.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - replication
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-replication-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-repositories-api
+  name: GoHarbor repositories API
+  description: The repositories API from GoHarbor — 3 operation(s) for repositories.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - repositories
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-repositories-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-robots-api
+  name: GoHarbor robots API
+  description: The robots API from GoHarbor — 2 operation(s) for robots.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - robots
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-robots-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-scan-api
+  name: GoHarbor scan API
+  description: The scan API from GoHarbor — 1 operation(s) for scan.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - scan
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-scan-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-search-api
+  name: GoHarbor search API
+  description: The search API from GoHarbor — 1 operation(s) for search.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - search
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-search-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-tags-api
+  name: GoHarbor tags API
+  description: The tags API from GoHarbor — 1 operation(s) for tags.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - tags
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-tags-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-usergroups-api
+  name: GoHarbor usergroups API
+  description: The usergroups API from GoHarbor — 2 operation(s) for usergroups.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - usergroups
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-usergroups-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-webhooks-api
+  name: GoHarbor webhooks API
+  description: The webhooks API from GoHarbor — 1 operation(s) for webhooks.
+  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  tags:
+  - webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
 common:
   - type: AgenticAccess
     url: agentic-access/goharbor-agentic-access.yml
