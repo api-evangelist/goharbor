@@ -1,0 +1,40 @@
+{
+  "provider": "goharbor",
+  "sources": [
+    "goharbor-artifacts-api-openapi.yml",
+    "goharbor-audit-api-openapi.yml",
+    "goharbor-health-api-openapi.yml",
+    "goharbor-projects-api-openapi.yml",
+    "goharbor-quotas-api-openapi.yml",
+    "goharbor-registries-api-openapi.yml",
+    "goharbor-replication-api-openapi.yml",
+    "goharbor-repositories-api-openapi.yml",
+    "goharbor-robots-api-openapi.yml",
+    "goharbor-scan-api-openapi.yml",
+    "goharbor-search-api-openapi.yml",
+    "goharbor-tags-api-openapi.yml",
+    "goharbor-usergroups-api-openapi.yml",
+    "goharbor-webhooks-api-openapi.yml"
+  ],
+  "outputs": [
+    "goharbor-artifacts-api-openapi.yml",
+    "goharbor-audit-api-openapi.yml",
+    "goharbor-health-api-openapi.yml",
+    "goharbor-projects-api-openapi.yml",
+    "goharbor-quotas-api-openapi.yml",
+    "goharbor-registries-api-openapi.yml",
+    "goharbor-replication-api-openapi.yml",
+    "goharbor-repositories-api-openapi.yml",
+    "goharbor-robots-api-openapi.yml",
+    "goharbor-scan-api-openapi.yml",
+    "goharbor-search-api-openapi.yml",
+    "goharbor-tags-api-openapi.yml",
+    "goharbor-usergroups-api-openapi.yml",
+    "goharbor-webhooks-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

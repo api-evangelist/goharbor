@@ -1,0 +1,313 @@
+openapi: 3.1.0
+info:
+  title: Harbor API
+  version: "2.0"
+  description: |
+    Subset of the Harbor v2.0 REST API for the cloud-native container
+    registry. Authenticates with HTTP Basic auth. Full upstream spec
+    available at
+    https://raw.githubusercontent.com/goharbor/harbor/main/api/v2.0/swagger.yaml
+  contact:
+    name: Harbor
+    url: https://goharbor.io/
+servers:
+  - url: https://{host}/api/v2.0
+    description: Harbor instance
+    variables:
+      host:
+        default: harbor.example.com
+security:
+  - basicAuth: []
+tags:
+  - name: health
+  - name: search
+  - name: projects
+  - name: repositories
+  - name: artifacts
+  - name: tags
+  - name: scan
+  - name: webhooks
+  - name: replication
+  - name: registries
+  - name: robots
+  - name: quotas
+  - name: audit
+  - name: usergroups
+paths:
+  /health:
+    get:
+      tags: [health]
+      summary: Check the status of Harbor components
+      operationId: getHealth
+      security: []
+      responses: { '200': { description: OK } }
+  /search:
+    get:
+      tags: [search]
+      summary: Search projects and repositories
+      operationId: search
+      parameters:
+        - { name: q, in: query, required: true, schema: { type: string } }
+      responses: { '200': { description: OK } }
+  /statistics:
+    get:
+      tags: [health]
+      summary: Get statistics for the Harbor system
+      operationId: getStatistics
+      responses: { '200': { description: OK } }
+  /projects:
+    get:
+      tags: [projects]
+      summary: List projects
+      operationId: listProjects
+      responses: { '200': { description: OK } }
+    post:
+      tags: [projects]
+      summary: Create a project
+      operationId: createProject
+      responses: { '201': { description: Created } }
+  /projects/{project_name_or_id}:
+    get:
+      tags: [projects]
+      summary: Get a project
+      operationId: getProject
+      parameters:
+        - { name: project_name_or_id, in: path, required: true, schema: { type: string } }
+      responses: { '200': { description: OK } }
+    put:
+      tags: [projects]
+      summary: Update a project
+      operationId: updateProject
+      parameters:
+        - { name: project_name_or_id, in: path, required: true, schema: { type: string } }
+      responses: { '200': { description: OK } }
+    delete:
+      tags: [projects]
+      summary: Delete a project
+      operationId: deleteProject
+      parameters:
+        - { name: project_name_or_id, in: path, required: true, schema: { type: string } }
+      responses: { '200': { description: Deleted } }
+  /projects/{project_name_or_id}/summary:
+    get:
+      tags: [projects]
+      summary: Get project summary
+      operationId: getProjectSummary
+      parameters:
+        - { name: project_name_or_id, in: path, required: true, schema: { type: string } }
+      responses: { '200': { description: OK } }
+  /projects/{project_name_or_id}/members:
+    get:
+      tags: [projects]
+      summary: List members of a project
+      operationId: listProjectMembers
+      parameters:
+        - { name: project_name_or_id, in: path, required: true, schema: { type: string } }
+      responses: { '200': { description: OK } }
+    post:
+      tags: [projects]
+      summary: Add a member to a project
+      operationId: addProjectMember
+      parameters:
+        - { name: project_name_or_id, in: path, required: true, schema: { type: string } }
+      responses: { '201': { description: Created } }
+  /repositories:
+    get:
+      tags: [repositories]
+      summary: List all repositories
+      operationId: listRepositories
+      responses: { '200': { description: OK } }
+  /projects/{project_name}/repositories:
+    get:
+      tags: [repositories]
+      summary: List repositories in a project
+      operationId: listProjectRepositories
+      parameters:
+        - { name: project_name, in: path, required: true, schema: { type: string } }
+      responses: { '200': { description: OK } }
+  /projects/{project_name}/repositories/{repository_name}:
+    get:
+      tags: [repositories]
+      summary: Get a repository
+      operationId: getRepository
+      parameters:
+        - { name: project_name, in: path, required: true, schema: { type: string } }
+        - { name: repository_name, in: path, required: true, schema: { type: string } }
+      responses: { '200': { description: OK } }
+    delete:
+      tags: [repositories]
+      summary: Delete a repository
+      operationId: deleteRepository
+      parameters:
+        - { name: project_name, in: path, required: true, schema: { type: string } }
+        - { name: repository_name, in: path, required: true, schema: { type: string } }
+      responses: { '200': { description: Deleted } }
+  /projects/{project_name}/repositories/{repository_name}/artifacts:
+    get:
+      tags: [artifacts]
+      summary: List artifacts in a repository
+      operationId: listArtifacts
+      parameters:
+        - { name: project_name, in: path, required: true, schema: { type: string } }
+        - { name: repository_name, in: path, required: true, schema: { type: string } }
+      responses: { '200': { description: OK } }
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}:
+    get:
+      tags: [artifacts]
+      summary: Get an artifact
+      operationId: getArtifact
+      parameters:
+        - { name: project_name, in: path, required: true, schema: { type: string } }
+        - { name: repository_name, in: path, required: true, schema: { type: string } }
+        - { name: reference, in: path, required: true, schema: { type: string } }
+      responses: { '200': { description: OK } }
+    delete:
+      tags: [artifacts]
+      summary: Delete an artifact
+      operationId: deleteArtifact
+      parameters:
+        - { name: project_name, in: path, required: true, schema: { type: string } }
+        - { name: repository_name, in: path, required: true, schema: { type: string } }
+        - { name: reference, in: path, required: true, schema: { type: string } }
+      responses: { '200': { description: Deleted } }
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/tags:
+    get:
+      tags: [tags]
+      summary: List tags for an artifact
+      operationId: listArtifactTags
+      parameters:
+        - { name: project_name, in: path, required: true, schema: { type: string } }
+        - { name: repository_name, in: path, required: true, schema: { type: string } }
+        - { name: reference, in: path, required: true, schema: { type: string } }
+      responses: { '200': { description: OK } }
+    post:
+      tags: [tags]
+      summary: Add a tag to an artifact
+      operationId: addArtifactTag
+      parameters:
+        - { name: project_name, in: path, required: true, schema: { type: string } }
+        - { name: repository_name, in: path, required: true, schema: { type: string } }
+        - { name: reference, in: path, required: true, schema: { type: string } }
+      responses: { '201': { description: Created } }
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/scan:
+    post:
+      tags: [scan]
+      summary: Trigger an artifact vulnerability scan
+      operationId: scanArtifact
+      parameters:
+        - { name: project_name, in: path, required: true, schema: { type: string } }
+        - { name: repository_name, in: path, required: true, schema: { type: string } }
+        - { name: reference, in: path, required: true, schema: { type: string } }
+      responses: { '202': { description: Accepted } }
+  /projects/{project_name_or_id}/webhook/policies:
+    get:
+      tags: [webhooks]
+      summary: List webhook policies
+      operationId: listWebhookPolicies
+      parameters:
+        - { name: project_name_or_id, in: path, required: true, schema: { type: string } }
+      responses: { '200': { description: OK } }
+    post:
+      tags: [webhooks]
+      summary: Create a webhook policy
+      operationId: createWebhookPolicy
+      parameters:
+        - { name: project_name_or_id, in: path, required: true, schema: { type: string } }
+      responses: { '201': { description: Created } }
+  /audit-logs:
+    get:
+      tags: [audit]
+      summary: List audit logs
+      operationId: listAuditLogs
+      responses: { '200': { description: OK } }
+  /usergroups:
+    get:
+      tags: [usergroups]
+      summary: List user groups
+      operationId: listUserGroups
+      responses: { '200': { description: OK } }
+    post:
+      tags: [usergroups]
+      summary: Create a user group
+      operationId: createUserGroup
+      responses: { '201': { description: Created } }
+  /usergroups/{group_id}:
+    get:
+      tags: [usergroups]
+      summary: Get a user group
+      operationId: getUserGroup
+      parameters:
+        - { name: group_id, in: path, required: true, schema: { type: integer } }
+      responses: { '200': { description: OK } }
+  /robots:
+    get:
+      tags: [robots]
+      summary: List robot accounts
+      operationId: listRobots
+      responses: { '200': { description: OK } }
+    post:
+      tags: [robots]
+      summary: Create a robot account
+      operationId: createRobot
+      responses: { '201': { description: Created } }
+  /robots/{robot_id}:
+    get:
+      tags: [robots]
+      summary: Get a robot account
+      operationId: getRobot
+      parameters:
+        - { name: robot_id, in: path, required: true, schema: { type: integer } }
+      responses: { '200': { description: OK } }
+  /quotas:
+    get:
+      tags: [quotas]
+      summary: List quotas
+      operationId: listQuotas
+      responses: { '200': { description: OK } }
+  /quotas/{id}:
+    get:
+      tags: [quotas]
+      summary: Get a quota
+      operationId: getQuota
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses: { '200': { description: OK } }
+  /replication/policies:
+    get:
+      tags: [replication]
+      summary: List replication policies
+      operationId: listReplicationPolicies
+      responses: { '200': { description: OK } }
+    post:
+      tags: [replication]
+      summary: Create a replication policy
+      operationId: createReplicationPolicy
+      responses: { '201': { description: Created } }
+  /replication/executions:
+    get:
+      tags: [replication]
+      summary: List replication executions
+      operationId: listReplicationExecutions
+      responses: { '200': { description: OK } }
+    post:
+      tags: [replication]
+      summary: Trigger a replication execution
+      operationId: createReplicationExecution
+      responses: { '201': { description: Created } }
+  /registries:
+    get:
+      tags: [registries]
+      summary: List external registries
+      operationId: listRegistries
+      responses: { '200': { description: OK } }
+    post:
+      tags: [registries]
+      summary: Create an external registry endpoint
+      operationId: createRegistry
+      responses: { '201': { description: Created } }
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Harbor user credentials (HTTP Basic)
