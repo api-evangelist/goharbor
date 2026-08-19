@@ -1,0 +1,47 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Harbor artifacts registries API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "registries",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List external registries",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/registries"
+          },
+          "docs": "List external registries"
+        },
+        {
+          "info": {
+            "name": "Create an external registry endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/registries"
+          },
+          "docs": "Create an external registry endpoint"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

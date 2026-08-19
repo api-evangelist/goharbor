@@ -1,0 +1,47 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Harbor artifacts health API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "health",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Check the status of Harbor components",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/health"
+          },
+          "docs": "Check the status of Harbor components"
+        },
+        {
+          "info": {
+            "name": "Get statistics for the Harbor system",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/statistics"
+          },
+          "docs": "Get statistics for the Harbor system"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

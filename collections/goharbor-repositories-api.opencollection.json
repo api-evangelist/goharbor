@@ -1,0 +1,100 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Harbor artifacts repositories API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "repositories",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List all repositories",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/repositories"
+          },
+          "docs": "List all repositories"
+        },
+        {
+          "info": {
+            "name": "List repositories in a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List repositories in a project"
+        },
+        {
+          "info": {
+            "name": "Get a repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a repository"
+        },
+        {
+          "info": {
+            "name": "Delete a repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete a repository"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

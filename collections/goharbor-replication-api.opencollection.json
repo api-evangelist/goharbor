@@ -1,0 +1,69 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Harbor artifacts replication API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "replication",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List replication policies",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/replication/policies"
+          },
+          "docs": "List replication policies"
+        },
+        {
+          "info": {
+            "name": "Create a replication policy",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/replication/policies"
+          },
+          "docs": "Create a replication policy"
+        },
+        {
+          "info": {
+            "name": "List replication executions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/replication/executions"
+          },
+          "docs": "List replication executions"
+        },
+        {
+          "info": {
+            "name": "Trigger a replication execution",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/replication/executions"
+          },
+          "docs": "Trigger a replication execution"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

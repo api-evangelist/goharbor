@@ -1,0 +1,81 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Harbor artifacts tags API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "tags",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List tags for an artifact",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name/artifacts/:reference/tags",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "reference",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List tags for an artifact"
+        },
+        {
+          "info": {
+            "name": "Add a tag to an artifact",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name/artifacts/:reference/tags",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "reference",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Add a tag to an artifact"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

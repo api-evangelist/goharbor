@@ -1,0 +1,104 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Harbor artifacts API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "artifacts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List artifacts in a repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name/artifacts",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List artifacts in a repository"
+        },
+        {
+          "info": {
+            "name": "Get an artifact",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name/artifacts/:reference",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "reference",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get an artifact"
+        },
+        {
+          "info": {
+            "name": "Delete an artifact",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name/artifacts/:reference",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "reference",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete an artifact"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

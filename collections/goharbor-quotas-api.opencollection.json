@@ -1,0 +1,54 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Harbor artifacts quotas API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "quotas",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List quotas",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/quotas"
+          },
+          "docs": "List quotas"
+        },
+        {
+          "info": {
+            "name": "Get a quota",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/quotas/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a quota"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

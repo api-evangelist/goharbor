@@ -1,0 +1,65 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Harbor artifacts usergroups API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "usergroups",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List user groups",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/usergroups"
+          },
+          "docs": "List user groups"
+        },
+        {
+          "info": {
+            "name": "Create a user group",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/usergroups"
+          },
+          "docs": "Create a user group"
+        },
+        {
+          "info": {
+            "name": "Get a user group",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/usergroups/:group_id",
+            "params": [
+              {
+                "name": "group_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a user group"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,61 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Harbor artifacts webhooks API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "webhooks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List webhook policies",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id/webhook/policies",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List webhook policies"
+        },
+        {
+          "info": {
+            "name": "Create a webhook policy",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id/webhook/policies",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Create a webhook policy"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

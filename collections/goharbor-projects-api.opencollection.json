@@ -1,0 +1,155 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Harbor artifacts projects API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "projects",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List projects",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects"
+          },
+          "docs": "List projects"
+        },
+        {
+          "info": {
+            "name": "Create a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/projects"
+          },
+          "docs": "Create a project"
+        },
+        {
+          "info": {
+            "name": "Get a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a project"
+        },
+        {
+          "info": {
+            "name": "Update a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Update a project"
+        },
+        {
+          "info": {
+            "name": "Delete a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete a project"
+        },
+        {
+          "info": {
+            "name": "Get project summary",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id/summary",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get project summary"
+        },
+        {
+          "info": {
+            "name": "List members of a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id/members",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List members of a project"
+        },
+        {
+          "info": {
+            "name": "Add a member to a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/projects/:project_name_or_id/members",
+            "params": [
+              {
+                "name": "project_name_or_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Add a member to a project"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

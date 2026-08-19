@@ -1,0 +1,53 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Harbor artifacts scan API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "scan",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Trigger an artifact vulnerability scan",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{host}/api/v2.0/projects/:project_name/repositories/:repository_name/artifacts/:reference/scan",
+            "params": [
+              {
+                "name": "project_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "repository_name",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "reference",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Trigger an artifact vulnerability scan"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
