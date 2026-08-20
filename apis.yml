@@ -35,6 +35,8 @@ apis:
   description: The artifacts API from GoHarbor — 2 operation(s) for artifacts.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - Artifacts
+  tags_raw:
   - artifacts
   properties:
   - type: OpenAPI
@@ -48,6 +50,8 @@ apis:
   description: The audit API from GoHarbor — 1 operation(s) for audit.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - Audit
+  tags_raw:
   - audit
   properties:
   - type: OpenAPI
@@ -61,6 +65,8 @@ apis:
   description: The health API from GoHarbor — 2 operation(s) for health.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - Health
+  tags_raw:
   - health
   properties:
   - type: OpenAPI
@@ -74,6 +80,8 @@ apis:
   description: The projects API from GoHarbor — 4 operation(s) for projects.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - Project
+  tags_raw:
   - projects
   properties:
   - type: OpenAPI
@@ -87,6 +95,8 @@ apis:
   description: The quotas API from GoHarbor — 2 operation(s) for quotas.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - Quotas
+  tags_raw:
   - quotas
   properties:
   - type: OpenAPI
@@ -100,6 +110,8 @@ apis:
   description: The registries API from GoHarbor — 1 operation(s) for registries.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - Registries
+  tags_raw:
   - registries
   properties:
   - type: OpenAPI
@@ -113,6 +125,8 @@ apis:
   description: The replication API from GoHarbor — 2 operation(s) for replication.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - Replication
+  tags_raw:
   - replication
   properties:
   - type: OpenAPI
@@ -126,6 +140,8 @@ apis:
   description: The repositories API from GoHarbor — 3 operation(s) for repositories.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - Repositories
+  tags_raw:
   - repositories
   properties:
   - type: OpenAPI
@@ -139,6 +155,8 @@ apis:
   description: The robots API from GoHarbor — 2 operation(s) for robots.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - Robots
+  tags_raw:
   - robots
   properties:
   - type: OpenAPI
@@ -152,6 +170,8 @@ apis:
   description: The scan API from GoHarbor — 1 operation(s) for scan.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - Scans
+  tags_raw:
   - scan
   properties:
   - type: OpenAPI
@@ -165,6 +185,8 @@ apis:
   description: The search API from GoHarbor — 1 operation(s) for search.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - Search
+  tags_raw:
   - search
   properties:
   - type: OpenAPI
@@ -178,6 +200,8 @@ apis:
   description: The tags API from GoHarbor — 1 operation(s) for tags.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - Tags
+  tags_raw:
   - tags
   properties:
   - type: OpenAPI
@@ -191,6 +215,8 @@ apis:
   description: The usergroups API from GoHarbor — 2 operation(s) for usergroups.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - User Groups
+  tags_raw:
   - usergroups
   properties:
   - type: OpenAPI
@@ -204,6 +230,8 @@ apis:
   description: The webhooks API from GoHarbor — 1 operation(s) for webhooks.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
+  - Webhook
+  tags_raw:
   - webhooks
   properties:
   - type: OpenAPI
