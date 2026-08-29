@@ -6,6 +6,19 @@ description: >-
   interface. You can navigate to the REST API through the Harbor portal, or by
   navigate to the Swagger UI using your Harbor instance IP.
 type: Index
+deliveryModel:
+  model: self-hosted
+  license: Apache-2.0
+  open_source: true
+  commercial: false
+  callable_host: false
+  label: Self-hosted open source · you run it yourself
+  confidence: high
+  source:
+  - license
+  - openapi
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
