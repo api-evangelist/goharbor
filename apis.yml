@@ -123,7 +123,7 @@ apis:
   description: The registries API from GoHarbor — 1 operation(s) for registries.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
-  - registries
+  - Registries
   tags_raw:
   - registries
   properties:
@@ -138,7 +138,7 @@ apis:
   description: The replication API from GoHarbor — 2 operation(s) for replication.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
-  - replication
+  - Replication
   tags_raw:
   - replication
   properties:
@@ -153,7 +153,7 @@ apis:
   description: The repositories API from GoHarbor — 3 operation(s) for repositories.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
-  - repositories
+  - Repositories
   tags_raw:
   - repositories
   properties:
@@ -168,7 +168,7 @@ apis:
   description: The robots API from GoHarbor — 2 operation(s) for robots.
   humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
   tags:
-  - robots
+  - Robots
   tags_raw:
   - robots
   properties:
