@@ -1,0 +1,53 @@
+generated: '2026-09-12'
+method: probed
+source: https://demo.goharbor.io (probed 2026-09-12), https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+provider: Harbor
+providerId: goharbor
+description: >-
+  Harbor runs a public demo instance that anyone can register on and call, and every Harbor
+  deployment (including the demo) ships a built-in Swagger UI console bound to the live
+  instance. Together those are the test surface: there is no separate "test mode" or test
+  key prefix, because a Harbor sandbox is simply a Harbor.
+environments:
+- name: Community demo instance
+  url: https://demo.goharbor.io
+  type: shared-public-instance
+  signup: self-service — the instance runs with self_registration enabled
+  credentials_published: false
+  note: >-
+    Probed 2026-09-12. GET /api/v2.0/systeminfo returned
+    auth_mode "db_auth", self_registration true, and the banner "Harbor Community Demo
+    Instance. Create an account to test drive Harbor." Anonymous reads work: GET
+    /api/v2.0/health returned 200 with all eight components healthy, and GET
+    /api/v2.0/projects?page_size=2 returned 200 with x-total-count 88. No credentials are
+    published by the project, so writes require registering an account.
+  status_component: demo.goharbor.io on https://status.goharbor.io
+  reset_policy: not published
+- name: Self-hosted instance
+  url: https://{host}
+  type: operator-run
+  note: The normal path — install Harbor (docker-compose or Helm) and point clients at it. Installation docs — https://goharbor.io/docs/2.15.0/install-config/
+console:
+  name: Harbor API Explorer (Swagger UI)
+  path: /devcenter-api-2.0
+  example: https://demo.goharbor.io/devcenter-api-2.0
+  status: 200
+  auth: 'Click Authorize and supply HTTP Basic credentials; all calls execute as that user against the live instance.'
+  docs: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  note: >-
+    Reachable from the Harbor portal ("Harbor API" in the left navigation) or directly by
+    instance address. It is a live console, not a mock — calls mutate the instance they run
+    against.
+test_data:
+  fixtures_published: false
+  test_credentials_published: false
+  magic_values: []
+  note: >-
+    Harbor publishes no test cards, magic identifiers, fixture tokens or time-simulation
+    tooling. Nothing is recorded here that the project does not publish.
+safety:
+  note: >-
+    Because the console and the demo both execute against live data, an agent rehearsing a
+    destructive flow should use a throwaway project. Harbor's only rehearsal affordances are
+    the retention policy dry-run, GET /projects/{p}/_deletable, and the ping operations for
+    registries and scanners — see conventions/goharbor-conventions.yml.

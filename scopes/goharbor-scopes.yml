@@ -1,0 +1,1009 @@
+generated: '2026-09-12'
+method: searched
+source: https://goharbor.io/docs/2.15.0/administration/robot-accounts/#permission-references
+provider: Harbor
+providerId: goharbor
+model: robot-account-permissions
+oauth2: false
+description: 'Harbor''s scope surface is its robot-account permission model, not OAuth. A robot account
+  (or a user role) is granted an explicit set of <action>:<resource> permissions, and Harbor publishes
+  the exact API operations each permission unlocks. That published table — reproduced verbatim below —
+  is the scope reference for this API: it is what you consult to give an agent or a pipeline the least
+  privilege it needs. Permissions exist at two levels, system-wide and per-project, and a system robot
+  account can carry both. There is no OAuth 2.0 authorization server and no scope string in an access
+  token; the permission set is bound to the robot account at creation and presented as HTTP Basic credentials.'
+grant:
+  mechanism: Robot account created with an explicit permission list (POST /robots) or inherited from a
+    project role.
+  presentation: HTTP Basic — robot account name as user, secret as password.
+  secret_recovery: Harbor does not store robot secrets. A lost secret can only be rotated (PATCH /robots/{robot_id}),
+    never retrieved.
+  expiry: Set per robot account at creation; "never expires" is selectable.
+  docs: https://goharbor.io/docs/2.15.0/working-with-projects/project-configuration/create-robot-accounts/
+constraints:
+- Push Repository must be assigned together with Pull Repository; it cannot be granted alone.
+- Robot accounts cannot log in to the Harbor web UI.
+- A system robot account may be scoped to selected projects or set to cover all existing and future projects.
+counts:
+  system_permissions: 70
+  project_permissions: 64
+permissions:
+- permission: list:audit-log
+  action: list
+  resource: audit-log
+  label: List Audit log (audit-log)
+  level: system
+  operations:
+  - GET /audit-logs
+- permission: read:catalog
+  action: read
+  resource: catalog
+  label: Read Catalog (catalog)
+  level: system
+  operations:
+  - GET /v2/_catalog
+- permission: read:garbage-collection
+  action: read
+  resource: garbage-collection
+  label: Read Garbage Collection (garbage-collection)
+  level: system
+  operations:
+  - GET /system/gc/{gc_id}/log
+  - GET /system/gc/schedule
+- permission: list:garbage-collection
+  action: list
+  resource: garbage-collection
+  label: List Garbage Collection (garbage-collection)
+  level: system
+  operations:
+  - GET /system/gc
+- permission: create:garbage-collection
+  action: create
+  resource: garbage-collection
+  label: Create Garbage Collection (garbage-collection)
+  level: system
+  operations:
+  - POST /system/gc/schedule
+- permission: stop:garbage-collection
+  action: stop
+  resource: garbage-collection
+  label: Stop Garbage Collection (garbage-collection)
+  level: system
+  operations:
+  - PUT /system/gc/{gc_id}
+- permission: update:garbage-collection
+  action: update
+  resource: garbage-collection
+  label: Update Garbage Collection (garbage-collection)
+  level: system
+  operations:
+  - PUT /system/gc/schedule
+- permission: list:jobservice-monitor
+  action: list
+  resource: jobservice-monitor
+  label: List Job Service Monitor (jobservice-monitor)
+  level: system
+  operations:
+  - GET /jobservice/pools
+  - GET /jobservice/pools/{pool_id}/workers
+  - GET /jobservice/jobs/{job_id}/log
+  - GET /jobservice/queues
+- permission: stop:jobservice-monitor
+  action: stop
+  resource: jobservice-monitor
+  label: Stop Job Service Monitor (jobservice-monitor)
+  level: system
+  operations:
+  - PUT /jobservice/jobs/{job_id}
+  - PUT /jobservice/queues/{job_type}
+- permission: read:label
+  action: read
+  resource: label
+  label: Read Label (label)
+  level: system
+  operations:
+  - GET /labels/{global_label_id}
+- permission: create:label
+  action: create
+  resource: label
+  label: Create Label (label)
+  level: system
+  operations:
+  - POST /labels?scope=g
+- permission: update:label
+  action: update
+  resource: label
+  label: Update Label (label)
+  level: system
+  operations:
+  - PUT /labels/{global_label_id}
+- permission: delete:label
+  action: delete
+  resource: label
+  label: Delete Label (label)
+  level: system
+  operations:
+  - DELETE /labels/{global_label_id}
+- permission: read:preheat-instance
+  action: read
+  resource: preheat-instance
+  label: Read Preheat Instance (preheat-instance)
+  level: system
+  operations:
+  - POST /preheat/instances/ping
+  - GET /p2p/preheat/instances/{preheat_instance_name}
+- permission: list:preheat-instance
+  action: list
+  resource: preheat-instance
+  label: List Preheat Instance (preheat-instance)
+  level: system
+  operations:
+  - GET /p2p/preheat/providers
+  - GET /p2p/preheat/instances
+- permission: create:preheat-instance
+  action: create
+  resource: preheat-instance
+  label: Create Preheat Instance (preheat-instance)
+  level: system
+  operations:
+  - POST /p2p/preheat/instances
+- permission: update:preheat-instance
+  action: update
+  resource: preheat-instance
+  label: Update Preheat Instance (preheat-instance)
+  level: system
+  operations:
+  - PUT /p2p/preheat/instances/{preheat_instance_name}
+- permission: delete:preheat-instance
+  action: delete
+  resource: preheat-instance
+  label: Delete Preheat Instance (preheat-instance)
+  level: system
+  operations:
+  - DELETE /p2p/preheat/instances/{preheat_instance_name}
+- permission: list:project
+  action: list
+  resource: project
+  label: List Project (project)
+  level: system
+  operations:
+  - GET /projects
+- permission: create:project
+  action: create
+  resource: project
+  label: Create Project (project)
+  level: system
+  operations:
+  - POST /projects
+- permission: read:purge-audit
+  action: read
+  resource: purge-audit
+  label: Read Purge Audit (purge-audit)
+  level: system
+  operations:
+  - GET /system/purgeaudit/{purge_id}/log
+  - GET /system/purgeaudit/schedule
+  - GET /system/purgeaudit/{purge_id}
+- permission: list:purge-audit
+  action: list
+  resource: purge-audit
+  label: List Purge Audit (purge-audit)
+  level: system
+  operations:
+  - GET /system/purgeaudit
+- permission: create:purge-audit
+  action: create
+  resource: purge-audit
+  label: Create Purge Audit (purge-audit)
+  level: system
+  operations:
+  - POST /system/purgeaudit/schedule
+- permission: stop:purge-audit
+  action: stop
+  resource: purge-audit
+  label: Stop Purge Audit (purge-audit)
+  level: system
+  operations:
+  - PUT /system/purgeaudit/{purge_id}
+- permission: update:purge-audit
+  action: update
+  resource: purge-audit
+  label: Update Purge Audit (purge-audit)
+  level: system
+  operations:
+  - PUT system/purgeaudit/schedule
+- permission: read:registry
+  action: read
+  resource: registry
+  label: Read Registry (registry)
+  level: system
+  operations:
+  - POST /registries/ping
+  - GET /registries/{id}
+  - GET /registries/{id}/info
+- permission: list:registry
+  action: list
+  resource: registry
+  label: List Registry (registry)
+  level: system
+  operations:
+  - GET /registries
+- permission: create:registry
+  action: create
+  resource: registry
+  label: Create Registry (registry)
+  level: system
+  operations:
+  - POST /registries
+- permission: update:registry
+  action: update
+  resource: registry
+  label: Update Registry (registry)
+  level: system
+  operations:
+  - PUT /registries/{id}
+- permission: delete:registry
+  action: delete
+  resource: registry
+  label: Delete Registry (registry)
+  level: system
+  operations:
+  - DELETE /registries/{id}
+- permission: read:replication
+  action: read
+  resource: replication
+  label: Read Replication (replication)
+  level: system
+  operations:
+  - GET /replication/executions/{id}
+  - GET /replication/executions/{id}/tasks/{task_id}/log
+- permission: list:replication
+  action: list
+  resource: replication
+  label: List Replication (replication)
+  level: system
+  operations:
+  - GET /replication/executions
+  - GET /replication/executions/{id}/tasks
+- permission: create:replication
+  action: create
+  resource: replication
+  label: Create Replication (replication)
+  level: system
+  operations:
+  - POST /replication/executions
+  - PUT /replication/executions/{id}
+- permission: list:replication-adapter
+  action: list
+  resource: replication-adapter
+  label: List Replication Adapter (replication-adapter)
+  level: system
+  operations:
+  - GET /replication/adapters
+  - GET /replication/adapterinfos
+- permission: read:replication-policy
+  action: read
+  resource: replication-policy
+  label: Read Replication Policy (replication-policy)
+  level: system
+  operations:
+  - GET /replication/policies/{id}
+- permission: list:replication-policy
+  action: list
+  resource: replication-policy
+  label: List Replication Policy (replication-policy)
+  level: system
+  operations:
+  - GET /replication/policies
+- permission: create:replication-policy
+  action: create
+  resource: replication-policy
+  label: Create Replication Policy (replication-policy)
+  level: system
+  operations:
+  - POST /replication/policies
+- permission: update:replication-policy
+  action: update
+  resource: replication-policy
+  label: Update Replication Policy (replication-policy)
+  level: system
+  operations:
+  - PUT /replication/policies/{id}
+- permission: delete:replication-policy
+  action: delete
+  resource: replication-policy
+  label: Delete Replication Policy (replication-policy)
+  level: system
+  operations:
+  - DELETE /replication/policies/{id}
+- permission: read:scan-all
+  action: read
+  resource: scan-all
+  label: Read Scan All (scan-all)
+  level: system
+  operations:
+  - GET /scans/all/metrics
+  - GET /scans/schedule/metrics
+- permission: create:scan-all
+  action: create
+  resource: scan-all
+  label: Create Scan All (scan-all)
+  level: system
+  operations:
+  - POST /system/scanAll/schedule
+- permission: stop:scan-all
+  action: stop
+  resource: scan-all
+  label: Stop Scan All (scan-all)
+  level: system
+  operations:
+  - POST /system/scanAll/stop
+- permission: update:scan-all
+  action: update
+  resource: scan-all
+  label: Update Scan All (scan-all)
+  level: system
+  operations:
+  - PUT /system/scanAll/schedule
+- permission: read:scanner
+  action: read
+  resource: scanner
+  label: Read Scanner (scanner)
+  level: system
+  operations:
+  - POST /scanners/ping
+  - GET /scanners/{registration_id}
+  - GET /scanners/{registration_id}/metadata
+- permission: list:scanner
+  action: list
+  resource: scanner
+  label: List Scanner (scanner)
+  level: system
+  operations:
+  - GET /scanners
+- permission: create:scanner
+  action: create
+  resource: scanner
+  label: Create Scanner (scanner)
+  level: system
+  operations:
+  - POST /scanners
+- permission: update:scanner
+  action: update
+  resource: scanner
+  label: Update Scanner (scanner)
+  level: system
+  operations:
+  - PUT /scanners/{registration_id}
+- permission: delete:scanner
+  action: delete
+  resource: scanner
+  label: Delete Scanner (scanner)
+  level: system
+  operations:
+  - DELETE /scanners/{registration_id}
+- permission: read:security-hub
+  action: read
+  resource: security-hub
+  label: Read Security Hub (security-hub)
+  level: system
+  operations:
+  - GET /security/summary
+- permission: list:security-hub
+  action: list
+  resource: security-hub
+  label: List Security Hub (security-hub)
+  level: system
+  operations:
+  - GET /security/vul
+- permission: read:system-volumes
+  action: read
+  resource: system-volumes
+  label: Read System Volumes (system-volumes)
+  level: system
+  operations:
+  - GET /systeminfo/volumes
+- permission: list:robot-account
+  action: list
+  resource: robot-account
+  label: List Robot Account
+  level: system
+  operations:
+  - GET /robots
+- permission: create:robot-account
+  action: create
+  resource: robot-account
+  label: Create Robot Account
+  level: system
+  operations:
+  - POST /robots
+- permission: read:robot-account
+  action: read
+  resource: robot-account
+  label: Read Robot Account
+  level: system
+  operations:
+  - GET /robots/{robot_id}
+- permission: update:robot-account
+  action: update
+  resource: robot-account
+  label: Update Robot Account
+  level: system
+  operations:
+  - PUT /robots/{robot_id}
+- permission: delete:robot-account
+  action: delete
+  resource: robot-account
+  label: Delete Robot Account
+  level: system
+  operations:
+  - DELETE /robots/{robot_id}
+- permission: create:user
+  action: create
+  resource: user
+  label: Create User
+  level: system
+  operations:
+  - POST /users
+- permission: read:user
+  action: read
+  resource: user
+  label: Read User
+  level: system
+  operations:
+  - GET /users/{user_id}
+- permission: update:user
+  action: update
+  resource: user
+  label: Update User
+  level: system
+  operations:
+  - PUT /users/{user_id}
+- permission: delete:user
+  action: delete
+  resource: user
+  label: Delete User
+  level: system
+  operations:
+  - DELETE /users/{user_id}
+- permission: create:ldap-user
+  action: create
+  resource: ldap-user
+  label: Create LDAP User
+  level: system
+  operations:
+  - POST /ldap/users/import
+- permission: list:ldap-user
+  action: list
+  resource: ldap-user
+  label: List LDAP User
+  level: system
+  operations:
+  - GET /ldap/users/search
+- permission: create:export-cve-job
+  action: create
+  resource: export-cve-job
+  label: Create Export CVE job
+  level: system
+  operations:
+  - POST /export/cve
+- permission: read:export-cve-execution
+  action: read
+  resource: export-cve-execution
+  label: Read Export CVE execution
+  level: system
+  operations:
+  - GET /export/cve/download/{execution_id}
+  - GET /export/cve/execution/{execution_id}
+- permission: update:quota
+  action: update
+  resource: quota
+  label: Update Quota
+  level: system
+  operations:
+  - PUT /quotas/{id}
+- permission: create:user-group
+  action: create
+  resource: user-group
+  label: Create User Group
+  level: system
+  operations:
+  - POST /usergroups
+- permission: read:user-group
+  action: read
+  resource: user-group
+  label: Read User Group
+  level: system
+  operations:
+  - GET /usergroups/{group_id}
+- permission: update:user-group
+  action: update
+  resource: user-group
+  label: Update User Group
+  level: system
+  operations:
+  - PUT /usergroups/{group_id}
+- permission: list:user-group
+  action: list
+  resource: user-group
+  label: List User Group
+  level: system
+  operations:
+  - GET /usergroups
+- permission: delete:user-group
+  action: delete
+  resource: user-group
+  label: Delete User Group
+  level: system
+  operations:
+  - DELETE /usergroups/{group_id}
+- permission: list:accessory
+  action: list
+  resource: accessory
+  label: List Accessory (accessory)
+  level: project
+  operations:
+  - GET /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/accessories
+- permission: read:artifact
+  action: read
+  resource: artifact
+  label: Read Artifact (artifact)
+  level: project
+  operations:
+  - GET /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}
+- permission: list:artifact
+  action: list
+  resource: artifact
+  label: List Artifact (artifact)
+  level: project
+  operations:
+  - GET /projects/{project_name}/repositories/{repository_name}/artifacts
+- permission: create:artifact
+  action: create
+  resource: artifact
+  label: Create Artifact (artifact)
+  level: project
+  operations:
+  - POST /projects/{project_name}/repositories/{repository_name}/artifacts
+- permission: delete:artifact
+  action: delete
+  resource: artifact
+  label: Delete Artifact (artifact)
+  level: project
+  operations:
+  - DELETE /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}
+- permission: read:artifact-addition
+  action: read
+  resource: artifact-addition
+  label: Read Artifact Addition (artifact-addition)
+  level: project
+  operations:
+  - GET /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/additions/vulnerabilities
+  - GET /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/additions/{addition}
+- permission: create:artifact-label
+  action: create
+  resource: artifact-label
+  label: Create Artifact Label (artifact-label)
+  level: project
+  operations:
+  - POST /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/labels
+- permission: delete:artifact-label
+  action: delete
+  resource: artifact-label
+  label: Delete Artifact Label (artifact-label)
+  level: project
+  operations:
+  - DELETE /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/labels/{label_id}
+- permission: list:immutable-tag
+  action: list
+  resource: immutable-tag
+  label: List Immutable Tag (immutable-tag)
+  level: project
+  operations:
+  - GET /projects/{project_name_or_id}/immutabletagrules
+- permission: create:immutable-tag
+  action: create
+  resource: immutable-tag
+  label: Create Immutable Tag (immutable-tag)
+  level: project
+  operations:
+  - POST /projects/{project_name_or_id}/immutabletagrules
+- permission: update:immutable-tag
+  action: update
+  resource: immutable-tag
+  label: Update Immutable Tag (immutable-tag)
+  level: project
+  operations:
+  - PUT /projects/{project_name_or_id}/immutabletagrules/{immutable_rule_id}
+- permission: delete:immutable-tag
+  action: delete
+  resource: immutable-tag
+  label: Delete Immutable Tag (immutable-tag)
+  level: project
+  operations:
+  - DELETE /projects/{project_name_or_id}/immutabletagrules/{immutable_rule_id}
+- permission: read:label
+  action: read
+  resource: label
+  label: Read Label (label)
+  level: project
+  operations:
+  - GET /labels/{project_label_id}
+- permission: list:label
+  action: list
+  resource: label
+  label: List Label (label)
+  level: project
+  operations:
+  - GET /labels?scope=p&project_id={project_id}
+- permission: create:label
+  action: create
+  resource: label
+  label: Create Label (label)
+  level: project
+  operations:
+  - POST /labels?scope=p&project_id={project_id}
+- permission: update:label
+  action: update
+  resource: label
+  label: Update Label (label)
+  level: project
+  operations:
+  - PUT /labels/{project_label_id}
+- permission: delete:label
+  action: delete
+  resource: label
+  label: Delete Label (label)
+  level: project
+  operations:
+  - DELETE /labels/{project_label_id}
+- permission: list:log
+  action: list
+  resource: log
+  label: List Log (log)
+  level: project
+  operations:
+  - GET /projects/{project_name}/logs
+- permission: read:metadata
+  action: read
+  resource: metadata
+  label: Read Project Metadata (metadata)
+  level: project
+  operations:
+  - GET /projects/{project_name_or_id}/metadatas/{meta_name}
+- permission: list:metadata
+  action: list
+  resource: metadata
+  label: List Project Metadata (metadata)
+  level: project
+  operations:
+  - GET /projects/{project_name_or_id}/metadatas
+- permission: create:metadata
+  action: create
+  resource: metadata
+  label: Create Project Metadata (metadata)
+  level: project
+  operations:
+  - POST /projects/{project_name_or_id}/metadatas
+- permission: update:metadata
+  action: update
+  resource: metadata
+  label: Update Project Metadata (metadata)
+  level: project
+  operations:
+  - PUT /projects/{project_name_or_id}/metadatas/{meta_name}
+- permission: delete:metadata
+  action: delete
+  resource: metadata
+  label: Delete Project Metadata (metadata)
+  level: project
+  operations:
+  - DELETE /projects/{project_name_or_id}/metadatas/{meta_name}
+- permission: read:notification-policy
+  action: read
+  resource: notification-policy
+  label: Read Notification Policy (notification-policy)
+  level: project
+  operations:
+  - GET /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}
+  - GET /projects/{project_name_or_id}/webhook/lasttrigger
+  - GET /projects/{project_name_or_id}/webhook/events
+  - GET /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}/executions
+  - GET /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}/executions/{execution_id}/tasks
+  - GET /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}/executions/{execution_id}/tasks/{task_id}/log
+- permission: list:notification-policy
+  action: list
+  resource: notification-policy
+  label: List Notification Policy (notification-policy)
+  level: project
+  operations:
+  - GET /projects/{project_name_or_id}/webhook/policies
+  - GET /projects/{project_name_or_id}/webhook/jobs
+- permission: create:notification-policy
+  action: create
+  resource: notification-policy
+  label: Create Notification Policy (notification-policy)
+  level: project
+  operations:
+  - POST /projects/{project_name_or_id}/webhook/policies
+- permission: update:notification-policy
+  action: update
+  resource: notification-policy
+  label: Update Notification Policy (notification-policy)
+  level: project
+  operations:
+  - PUT /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}
+- permission: delete:notification-policy
+  action: delete
+  resource: notification-policy
+  label: Delete Notification Policy (notification-policy)
+  level: project
+  operations:
+  - DELETE /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}
+- permission: read:preheat-policy
+  action: read
+  resource: preheat-policy
+  label: Read Preheat Policy (preheat-policy)
+  level: project
+  operations:
+  - GET /projects/{project_name}/preheat/policies/{preheat_policy_name}
+  - POST /projects/{project_name}/preheat/policies/{preheat_policy_name}
+  - GET /projects/{project_name}/preheat/policies/{preheat_policy_name}/executions/{execution_id}
+  - GET /projects/{project_name}/preheat/policies/{preheat_policy_name}/executions/{execution_id}/tasks/{task_id}/logs
+- permission: list:preheat-policy
+  action: list
+  resource: preheat-policy
+  label: List Preheat Policy (preheat-policy)
+  level: project
+  operations:
+  - GET /projects/{project_name}/preheat/policies
+  - GET /projects/{project_name}/preheat/providers
+- permission: create:preheat-policy
+  action: create
+  resource: preheat-policy
+  label: Create Preheat Policy (preheat-policy)
+  level: project
+  operations:
+  - POST /projects/{project_name}/preheat/policies
+- permission: update:preheat-policy
+  action: update
+  resource: preheat-policy
+  label: Update Preheat Policy (preheat-policy)
+  level: project
+  operations:
+  - PUT /projects/{project_name}/preheat/policies/{preheat_policy_name}
+  - PATCH /projects/{project_name}/preheat/policies/{preheat_policy_name}/executions/{execution_id}
+- permission: delete:preheat-policy
+  action: delete
+  resource: preheat-policy
+  label: Delete Preheat Policy (preheat-policy)
+  level: project
+  operations:
+  - DELETE /projects/{project_name}/preheat/policies/{preheat_policy_name}
+- permission: read:project
+  action: read
+  resource: project
+  label: Read Project (project)
+  level: project
+  operations:
+  - GET /projects/{project_name_or_id}
+- permission: update:project
+  action: update
+  resource: project
+  label: Update Project (project)
+  level: project
+  operations:
+  - PUT /projects/{project_name_or_id}
+- permission: delete:project
+  action: delete
+  resource: project
+  label: Delete Project (project)
+  level: project
+  operations:
+  - DELETE /projects/{project_name_or_id}
+  - GET /projects/{project_name_or_id}/_deletable
+- permission: read:repository
+  action: read
+  resource: repository
+  label: Read Repository (repository)
+  level: project
+  operations:
+  - GET /projects/{project_name}/repositories/{repository_name}
+- permission: list:repository
+  action: list
+  resource: repository
+  label: List Repository (repository)
+  level: project
+  operations:
+  - GET /projects/{project_name}/repositories
+- permission: update:repository
+  action: update
+  resource: repository
+  label: Update Repository (repository)
+  level: project
+  operations:
+  - PUT /projects/{project_name}/repositories/{repository_name}
+- permission: delete:repository
+  action: delete
+  resource: repository
+  label: Delete Repository (repository)
+  level: project
+  operations:
+  - DELETE /projects/{project_name}/repositories/{repository_name}
+- permission: pull:repository
+  action: pull
+  resource: repository
+  label: Pull Repository (repository)
+  level: project
+  operations:
+  - Pull artifacts from the project
+- permission: push:repository
+  action: push
+  resource: repository
+  label: Push Repository (repository)
+  level: project
+  operations:
+  - Push artifacts to the project
+- permission: read:scan
+  action: read
+  resource: scan
+  label: Read Scan (scan)
+  level: project
+  operations:
+  - GET /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/scan/{report_id}/log
+- permission: create:scan
+  action: create
+  resource: scan
+  label: Create Scan (scan)
+  level: project
+  operations:
+  - POST /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/scan
+- permission: stop:scan
+  action: stop
+  resource: scan
+  label: Stop Scan (scan)
+  level: project
+  operations:
+  - POST /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/scan/stop
+- permission: read:scanner
+  action: read
+  resource: scanner
+  label: Read Scanner (scanner)
+  level: project
+  operations:
+  - GET /projects/{project_name_or_id}/scanner
+- permission: create:scanner
+  action: create
+  resource: scanner
+  label: Create Scanner (scanner)
+  level: project
+  operations:
+  - PUT /projects/{project_name_or_id}/scanner
+  - GET /projects/{project_name_or_id}/scanner/candidates
+- permission: list:tag
+  action: list
+  resource: tag
+  label: List Tag (tag)
+  level: project
+  operations:
+  - GET /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/tags
+- permission: create:tag
+  action: create
+  resource: tag
+  label: Create Tag (tag)
+  level: project
+  operations:
+  - POST /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/tags
+- permission: delete:tag
+  action: delete
+  resource: tag
+  label: Delete Tag (tag)
+  level: project
+  operations:
+  - DELETE /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/tags/{tag_name}
+- permission: read:tag-retention
+  action: read
+  resource: tag-retention
+  label: Read Tag Retention (tag-retention)
+  level: project
+  operations:
+  - GET /retentions/{id}
+  - GET /retentions/{id}/executions/{eid}/tasks/{tid}
+- permission: list:tag-retention
+  action: list
+  resource: tag-retention
+  label: List Tag Retention (tag-retention)
+  level: project
+  operations:
+  - GET /retentions/{id}/executions
+  - GET /retentions/{id}/executions/{eid}/tasks
+- permission: create:tag-retention
+  action: create
+  resource: tag-retention
+  label: Create Tag Retention (tag-retention)
+  level: project
+  operations:
+  - POST /retentions
+- permission: update:tag-retention
+  action: update
+  resource: tag-retention
+  label: Update Tag Retention (tag-retention)
+  level: project
+  operations:
+  - PUT /retentions/{id}
+  - POST /retentions/{id}/executions
+  - PATCH /retentions/{id}/executions/{eid}
+- permission: delete:tag-retention
+  action: delete
+  resource: tag-retention
+  label: Delete Tag Retention (tag-retention)
+  level: project
+  operations:
+  - DELETE /retentions/{id}
+- permission: list:robot-account
+  action: list
+  resource: robot-account
+  label: List Robot Account
+  level: project
+  operations:
+  - GET /robots
+- permission: create:robot-account
+  action: create
+  resource: robot-account
+  label: Create Robot Account
+  level: project
+  operations:
+  - POST /robots
+- permission: read:robot-account
+  action: read
+  resource: robot-account
+  label: Read Robot Account
+  level: project
+  operations:
+  - GET /robots/{robot_id}
+- permission: update:robot-account
+  action: update
+  resource: robot-account
+  label: Update Robot Account
+  level: project
+  operations:
+  - PUT /robots/{robot_id}
+- permission: delete:robot-account
+  action: delete
+  resource: robot-account
+  label: Delete Robot Account
+  level: project
+  operations:
+  - DELETE /robots/{robot_id}
+- permission: add:project-member
+  action: add
+  resource: project-member
+  label: Add Project Member
+  level: project
+  operations:
+  - POST /projects/{project_name_or_id}/members
+- permission: read:project-member
+  action: read
+  resource: project-member
+  label: Read Project Member
+  level: project
+  operations:
+  - GET /projects/{project_name_or_id}/members/{mid}
+- permission: update:project-member
+  action: update
+  resource: project-member
+  label: Update Project Member
+  level: project
+  operations:
+  - PUT /projects/{project_name_or_id}/members/{mid}
+- permission: delete:project-member
+  action: delete
+  resource: project-member
+  label: Delete Project Member
+  level: project
+  operations:
+  - DELETE /projects/{project_name_or_id}/members/{mid}
+introspection:
+  operation: getCurrentUserPermissions
+  path: GET /users/current/permissions
+  note: The API can report the caller’s own effective permissions at runtime.

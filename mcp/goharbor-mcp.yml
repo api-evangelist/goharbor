@@ -1,0 +1,127 @@
+generated: '2026-09-12'
+method: derived
+source: openapi/_original/goharbor-harbor-api-v2.0-swagger.yml
+provider: Harbor
+providerId: goharbor
+status: candidate
+description: >-
+  Harbor publishes NO first-party MCP server. The goharbor GitHub organization (29 repos,
+  enumerated 2026-09-12) contains no MCP implementation, and no hosted MCP endpoint is
+  documented anywhere on goharbor.io. The tools below are a CANDIDATE surface derived from
+  real operationIds in Harbor's own api/v2.0/swagger.yaml — they are a proposal for what a
+  Harbor MCP server should expose, not something a client can call today. Because Harbor is
+  self-hosted, any future server would have to be pointed at the operator's own instance
+  (https://{host}/api/v2.0), so a vendor-hosted remote endpoint is unlikely by design; a
+  local stdio server shipped alongside harbor-cli is the natural shape.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: derived
+community_implementations:
+- repository: https://github.com/bupd/harbor-mcp-server
+  note: Community MCP server for Harbor ("built by the community for the community"), not published under the goharbor org and not referenced by Harbor's docs. Recorded for completeness only; NOT counted as a provider MCP surface.
+- repository: https://github.com/nomagicln/mcp-harbor
+  note: Community MCP server for Harbor. Third-party.
+auth:
+  model: http-basic
+  note: The Harbor v2.0 API authenticates with HTTP Basic (user credentials, a robot account name + secret, or an OIDC CLI secret). An MCP server would carry a robot account whose permission set is chosen from the Harbor permission reference (see scopes/goharbor-scopes.yml).
+tools:
+- name: harbor_health
+  description: Check the status of Harbor components.
+  rest: getHealth
+  consequence: read
+- name: harbor_search
+  description: Search projects and repositories by keyword.
+  rest: search
+  consequence: read
+- name: harbor_list_projects
+  description: List projects visible to the caller.
+  rest: listProjects
+  consequence: read
+- name: harbor_get_project
+  description: Return detail for one project by name or id.
+  rest: getProject
+  consequence: read
+- name: harbor_create_project
+  description: Create a new project.
+  rest: createProject
+  consequence: write
+- name: harbor_delete_project
+  description: Delete a project by id. Irreversible.
+  rest: deleteProject
+  consequence: destructive
+- name: harbor_list_repositories
+  description: List repositories inside a project.
+  rest: listRepositories
+  consequence: read
+- name: harbor_list_artifacts
+  description: List artifacts in a repository.
+  rest: listArtifacts
+  consequence: read
+- name: harbor_get_artifact
+  description: Get one artifact by reference (tag or digest).
+  rest: getArtifact
+  consequence: read
+- name: harbor_copy_artifact
+  description: Copy an artifact from another repository.
+  rest: CopyArtifact
+  consequence: write
+- name: harbor_delete_artifact
+  description: Delete an artifact by reference. Irreversible once garbage collection runs.
+  rest: deleteArtifact
+  consequence: destructive
+- name: harbor_scan_artifact
+  description: Trigger a vulnerability scan of an artifact.
+  rest: scanArtifact
+  consequence: write
+- name: harbor_get_vulnerabilities
+  description: Read the vulnerability report attached to an artifact.
+  rest: getVulnerabilitiesAddition
+  consequence: read
+- name: harbor_list_tags
+  description: List tags on an artifact.
+  rest: listTags
+  consequence: read
+- name: harbor_create_tag
+  description: Add a tag to an artifact.
+  rest: createTag
+  consequence: write
+- name: harbor_delete_tag
+  description: Remove a tag from an artifact.
+  rest: deleteTag
+  consequence: destructive
+- name: harbor_list_robots
+  description: List robot accounts.
+  rest: ListRobot
+  consequence: read
+- name: harbor_create_robot
+  description: Create a robot account and return its secret (shown once).
+  rest: CreateRobot
+  consequence: write
+- name: harbor_list_quotas
+  description: List project storage quotas and usage.
+  rest: listQuotas
+  consequence: read
+- name: harbor_start_replication
+  description: Start a replication execution for a policy.
+  rest: startReplication
+  consequence: write
+- name: harbor_stop_replication
+  description: Stop a running replication execution.
+  rest: stopReplication
+  consequence: write
+- name: harbor_list_audit_logs
+  description: Read recent audit log entries.
+  rest: listAuditLogs
+  consequence: read
+- name: harbor_security_summary
+  description: Read the Security Hub vulnerability summary for the instance.
+  rest: getSecuritySummary
+  consequence: read
+coverage:
+  operations_in_spec: 203
+  tools_proposed: 23
+  note: A deliberate subset of the 203 published operations covering the read/scan/publish flows an agent would drive; the remaining operations are administrative (LDAP, GC scheduling, job service, purge, configuration).

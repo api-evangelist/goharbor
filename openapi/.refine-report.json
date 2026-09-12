@@ -35,6 +35,22 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
+  "notes": [
+    "goharbor-artifacts-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "goharbor-audit-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "goharbor-health-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "goharbor-projects-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "goharbor-quotas-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "goharbor-registries-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "goharbor-replication-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "goharbor-repositories-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "goharbor-robots-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "goharbor-scan-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "goharbor-search-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "goharbor-tags-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "goharbor-usergroups-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "goharbor-webhooks-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
   "skipped": []
 }

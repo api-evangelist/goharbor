@@ -1,0 +1,85 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Harbor v2.0 API
+  version: 1.0.0
+x-provenance:
+  generated: '2026-09-12'
+  method: generated
+  source: openapi/_original/goharbor-harbor-api-v2.0-swagger.yml
+  note: >-
+    Non-destructive enhancement layer over Harbor's own published contract. The original is
+    stored verbatim and is never mutated. Everything asserted here is sourced from Harbor's
+    own docs, source or live responses — see the repo artifacts each action names.
+extends: ../openapi/_original/goharbor-harbor-api-v2.0-swagger.yml
+actions:
+- target: $.info
+  description: Add the license, contact and external documentation Harbor publishes outside the spec.
+  update:
+    license:
+      name: Apache-2.0
+      url: https://github.com/goharbor/harbor/blob/main/LICENSE
+    contact:
+      name: Harbor
+      url: https://goharbor.io/
+    x-docs: https://goharbor.io/docs/2.15.0/
+    x-api-explorer: https://{host}/devcenter-api-2.0
+    x-source-of-truth: https://raw.githubusercontent.com/goharbor/harbor/main/api/v2.0/swagger.yaml
+- target: $.info
+  description: Record the self-hosted delivery model so a consumer does not look for a vendor endpoint.
+  update:
+    x-delivery-model:
+      model: self-hosted
+      base_url_template: https://{host}/api/v2.0
+      note: Harbor is installed and operated by the consumer. The spec's `host` field is literally "localhost" because the document ships inside the server.
+- target: $.info
+  description: Attach the runtime conventions confirmed against live responses.
+  update:
+    x-conventions:
+      pagination:
+        params: [page, page_size]
+        response_headers: [X-Total-Count, Link]
+      request_id_header: X-Request-Id
+      query_language: 'k=v | k=~v | k=[min~max] | k={v1 v2} | k=(v1 v2)'
+      sort_param: sort
+      idempotency: none
+      error_envelope: '{"errors":[{"code","message"}]}'
+      artifact: conventions/goharbor-conventions.yml
+- target: $.info
+  description: Record the domain standard this contract implements alongside its REST surface.
+  update:
+    x-domain-standard:
+      id: oci-distribution
+      name: OCI Distribution Specification
+      evidence: 'GET /v2/ on a Harbor instance returns 401 with docker-distribution-api-version: registry/2.0'
+      artifact: conformance/goharbor-conformance.yml
+- target: $.info
+  description: Point at the published permission model, which is the real authorization surface behind Basic auth.
+  update:
+    x-authorization:
+      model: robot-account-permissions
+      reference: https://goharbor.io/docs/2.15.0/administration/robot-accounts/#permission-references
+      artifact: scopes/goharbor-scopes.yml
+      introspection: GET /users/current/permissions
+- target: $.info
+  description: Record the event surface, which is documented outside the REST contract.
+  update:
+    x-events:
+      style: webhooks
+      formats: [Default, CloudEvents 1.0]
+      event_count: 10
+      docs: https://goharbor.io/docs/2.15.0/working-with-projects/project-configuration/configure-webhooks/
+      artifact: asyncapi/goharbor-webhooks.yml
+- target: $.paths['/projects/{project_name}/repositories/{repository_name}/artifacts/{reference}'].delete
+  description: Flag the irreversibility of artifact deletion for agent consumers.
+  update:
+    x-reversibility:
+      reversal: null
+      window: null
+      note: No undelete. Blobs persist only until the operator's next garbage collection run.
+      docs: https://goharbor.io/docs/2.15.0/administration/garbage-collection/
+- target: $.paths['/projects/{project_name_or_id}'].delete
+  description: Point at the deletability precheck so an agent can rehearse.
+  update:
+    x-precheck:
+      operationId: getProjectDeletable
+      path: GET /projects/{project_name_or_id}/_deletable

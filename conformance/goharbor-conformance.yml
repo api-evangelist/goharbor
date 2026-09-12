@@ -1,0 +1,119 @@
+generated: '2026-09-12'
+method: searched
+source: >-
+  live probes of https://demo.goharbor.io/v2/ and https://registry.goharbor.io/v2/ on 2026-09-12,
+  https://goharbor.io/docs/2.15.0/ ,
+  https://www.bestpractices.dev/projects/2095 ,
+  openapi/_original/goharbor-harbor-api-v2.0-swagger.yml
+provider: Harbor
+providerId: goharbor
+description: >-
+  Standards Harbor implements, each recorded against evidence we fetched. The
+  domain standard for this market is the OCI Distribution Specification — a container
+  registry that speaks it is interchangeable with every other registry and client in the
+  ecosystem, and Harbor's own deployments answer the /v2/ discovery endpoint with the
+  distribution API version header, which is the definitive signature.
+domain_standard:
+  id: oci-distribution
+  name: OCI Distribution Specification
+  market: container registry
+  conforms: true
+  evidence: >-
+    GET https://demo.goharbor.io/v2/ → HTTP 401 with
+    `docker-distribution-api-version: registry/2.0` and
+    `www-authenticate: Bearer realm="https://demo.goharbor.io/service/token",service="harbor-registry"`.
+    Identical response shape from https://registry.goharbor.io/v2/ (probed 2026-09-12). The
+    401 + token-realm challenge on /v2/ IS the OCI distribution handshake; an unauthenticated
+    401 there is the specified behaviour, not a failure.
+  docs: https://goharbor.io/docs/2.15.0/working-with-projects/working-with-oci/
+  note: >-
+    Harbor also exposes GET /v2/_catalog as a permissioned ability in its own permission
+    reference, and its REST API models OCI artifacts, accessories, referrers and digests as
+    first-class resources — the standard is in the data model, not only at the edge.
+conformance:
+- id: oci-distribution
+  name: OCI Distribution Specification (registry/2.0 API)
+  conforms: true
+  evidence: 'https://demo.goharbor.io/v2/ → 401, docker-distribution-api-version: registry/2.0 (probed 2026-09-12)'
+- id: oci-image-spec
+  name: OCI Image Specification (artifacts, manifests, accessories)
+  conforms: true
+  evidence: https://goharbor.io/docs/2.15.0/working-with-projects/working-with-oci/ — Harbor stores and serves arbitrary OCI artifacts, and its API exposes manifest digests, references and accessories (listAccessories, getAddition) as resources.
+- id: cloudevents-1.0
+  name: CloudEvents 1.0
+  conforms: true
+  evidence: >-
+    https://goharbor.io/docs/2.15.0/working-with-projects/project-configuration/configure-webhooks/
+    — webhook payloads can be emitted in a "CloudEvents" format "following the spec of
+    CloudEvents", with the documented example carrying "specversion":"1.0", id, source,
+    type (harbor.artifact.pushed), datacontenttype and time.
+  note: Selectable per webhook policy alongside Harbor's legacy "Default" payload format.
+- id: oidc
+  name: OpenID Connect (relying party)
+  conforms: true
+  role: consumer
+  evidence: https://goharbor.io/docs/2.15.0/administration/configure-authentication/oidc-auth/ — Harbor authenticates users against an external OIDC provider and issues a per-user CLI secret for API/registry access.
+  note: Harbor is an OIDC CLIENT. It is not an authorization server and publishes no /.well-known/openid-configuration of its own.
+- id: ldap
+  name: LDAP / Active Directory authentication
+  conforms: true
+  evidence: https://goharbor.io/docs/2.15.0/administration/configure-authentication/ldap-auth/ — plus 4 Ldap-tagged operations in the published contract.
+- id: rfc8288-link-header
+  name: RFC 8288 Web Linking (pagination)
+  conforms: true
+  evidence: 'GET https://demo.goharbor.io/api/v2.0/projects?page_size=2 → link: </api/v2.0/projects?page=2&page_size=2>; rel="next" (probed 2026-09-12)'
+- id: prometheus-metrics
+  name: Prometheus exposition / OpenMetrics
+  conforms: true
+  evidence: https://goharbor.io/docs/2.15.0/administration/metrics/ — Harbor components expose Prometheus metrics endpoints.
+- id: opentelemetry
+  name: OpenTelemetry distributed tracing
+  conforms: true
+  evidence: https://goharbor.io/docs/2.15.0/administration/distributed-tracing/ — Harbor emits OpenTelemetry traces (Jaeger/OTLP exporters).
+- id: sigstore-cosign
+  name: Sigstore Cosign signature verification
+  conforms: true
+  evidence: https://goharbor.io/docs/2.15.0/working-with-projects/project-configuration/implementing-content-trust/ — projects can require Cosign-signed artifacts before allowing a pull.
+- id: sbom-generation
+  name: SBOM generation and replication
+  conforms: true
+  evidence: https://goharbor.io/docs/2.15.0/administration/sbom-integration/ — automatic SBOM generation on push since Harbor 2.11, stored as an artifact accessory and replicable.
+  note: The docs do not name the SBOM serialization format, so no SPDX/CycloneDX claim is made here.
+- id: rfc9457
+  name: RFC 9457 Problem Details for HTTP APIs
+  conforms: false
+  evidence: >-
+    Harbor uses its own envelope {"errors":[{"code","message"}]} with content-type
+    application/json on every failure path (openapi/_original/goharbor-harbor-api-v2.0-swagger.yml,
+    shared responses 400/401/403/404/405/409/412/415/422/500). No application/problem+json.
+- id: idempotency-key
+  name: Idempotency-Key request header
+  conforms: false
+  evidence: No Idempotency-Key parameter appears in any of the 203 published operations; the docs describe no replay protection.
+- id: oauth2
+  name: OAuth 2.0 authorization for the API
+  conforms: false
+  evidence: The published contract declares one security definition, HTTP Basic. OAuth/OIDC is used for interactive user login only; API callers present Basic credentials or a robot secret.
+assurance:
+- id: openssf-best-practices
+  name: OpenSSF (CII) Best Practices badge
+  level: silver
+  tiered_percentage: 235
+  conforms: true
+  evidence: https://www.bestpractices.dev/projects/2095 (project "harbor", badge_level "silver", read from the badge API 2026-09-12)
+- id: cncf-graduated
+  name: CNCF project
+  conforms: true
+  evidence: https://www.cncf.io/projects/ — Harbor is a CNCF project; the repository is held under "Harbor a Series of LF Projects, LLC".
+- id: apache-2.0
+  name: Apache License 2.0
+  conforms: true
+  evidence: https://github.com/goharbor/harbor/blob/main/LICENSE
+compliance_note: >-
+  Harbor is an open-source project, not an operated service, so there is no SOC 2 / ISO
+  27001 / PCI audit to publish — the relevant third-party assurance for a project of this
+  shape is the OpenSSF Best Practices badge (silver) and its CNCF governance, both recorded
+  above with URLs.
+counts:
+  conforms_true: 12
+  conforms_false: 3

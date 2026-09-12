@@ -1,0 +1,166 @@
+generated: '2026-09-12'
+method: searched
+source: >-
+  https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/ ,
+  openapi/_original/goharbor-harbor-api-v2.0-swagger.yml ,
+  live probes of https://demo.goharbor.io/api/v2.0/* on 2026-09-12
+provider: Harbor
+providerId: goharbor
+description: >-
+  Cross-cutting runtime semantics for the Harbor v2.0 REST API, read from Harbor's own
+  swagger.yaml and confirmed against live responses from the public demo instance.
+base_url: https://{host}/api/v2.0
+note: >-
+  Harbor is self-hosted. There is no vendor-operated base URL: {host} is the operator's own
+  Harbor deployment. The spec's servers/host block carries the same variable with the
+  default harbor.example.com.
+auth:
+  style: http-basic
+  header: 'Authorization: Basic <base64(user:secret)>'
+  principals: [local database user, LDAP/AD user, OIDC user CLI secret, robot account]
+  detail: authentication/goharbor-authentication.yml
+  docs: https://goharbor.io/docs/2.15.0/administration/configure-authentication/
+idempotency:
+  coverage: none
+  mechanism: null
+  header: null
+  scope: []
+  note: >-
+    Harbor publishes no idempotency key mechanism. No Idempotency-Key header appears in the
+    203 operations of api/v2.0/swagger.yaml, and the docs never mention safe retry of a
+    write. Repeating a create returns HTTP 409 CONFLICT where the resource is uniquely
+    named (project, registry, robot, retention policy), which gives a client a way to detect
+    a duplicate after the fact but is not replay protection: POST
+    /projects/{p}/repositories/{r}/artifacts/{ref}/scan and POST /replication/executions
+    both enqueue a new job on every call.
+pagination:
+  style: page-number
+  params:
+  - name: page
+    in: query
+    type: integer
+    default: 1
+    description: The page number.
+  - name: page_size
+    in: query
+    type: integer
+    default: 10
+    description: The size of per page.
+  response_headers:
+  - name: X-Total-Count
+    description: Total count of matching resources.
+  - name: Link
+    description: RFC 8288 link header carrying rel="next" and rel="prev".
+  evidence: >-
+    GET https://demo.goharbor.io/api/v2.0/projects?page_size=2 returned HTTP 200 with
+    x-total-count: 88 and link: </api/v2.0/projects?page=2&page_size=2>; rel="next"
+    (probed 2026-09-12).
+filtering:
+  param: q
+  style: harbor-query-language
+  patterns:
+  - exact match — k=v
+  - fuzzy match — k=~v
+  - range — k=[min~max]
+  - union list — k={v1 v2 v3}
+  - intersection list — k=(v1 v2 v3)
+  sort:
+    param: sort
+    style: 'comma separated fields, leading - for descending (sort=field1,-field2)'
+  source: global parameters `query` and `sort` in api/v2.0/swagger.yaml
+request_tracing:
+  header: X-Request-Id
+  direction: both
+  note: >-
+    X-Request-Id is a documented REQUEST header on every operation (global parameter
+    requestId) and is echoed on every response — including errors. Harbor's own Spectral
+    ruleset (.spectral.yaml, rule `requestId-required`) enforces its presence at error
+    severity, so the contract itself guarantees it. Confirmed live: every demo.goharbor.io
+    response carried x-request-id.
+versioning:
+  style: uri-path
+  current: v2.0
+  path: /api/v2.0
+  product_versioning: semver — see lifecycle/goharbor-lifecycle.yml
+  note: The API major version has been v2.0 since Harbor 2.0; product releases (2.15.x) ship under the same API path.
+errors:
+  envelope: '{"errors":[{"code":"<CODE>","message":"<text>"}]}'
+  format: harbor-errors
+  rfc9457: false
+  content_type: application/json
+  catalog: errors/goharbor-problem-types.yml
+rate_limits:
+  published: false
+  headers_observed: []
+  error_code: TOO_MANY_REQUEST
+  detail: rate-limits/goharbor-rate-limits.yml
+reversibility:
+  grade: documented
+  summary: >-
+    Harbor's destructive operations are mostly one-way at the API level, and the docs state
+    the recovery paths that do exist without ever stating a time window for undoing an API
+    call. Deleted artifacts and repositories are soft-removed from the database
+    immediately; the blobs survive only until the next garbage collection run, which the
+    operator schedules — so the "window" is an operator setting, not a published guarantee.
+  surfaces:
+  - operation: deleteArtifact
+    method: DELETE /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}
+    reversal: null
+    window: null
+    note: >-
+      No undelete operation exists. The underlying blobs are only actually removed when
+      garbage collection runs, and Harbor documents GC as an admin-scheduled job, but the
+      docs state no restore path and no retention window.
+    docs: https://goharbor.io/docs/2.15.0/administration/garbage-collection/
+  - operation: deleteProject
+    method: DELETE /projects/{project_name_or_id}
+    reversal: null
+    window: null
+    precheck: getProjectDeletable (GET /projects/{project_name_or_id}/_deletable) reports whether the project can be deleted before you try.
+    note: A dry-run style precheck exists, but there is no reversal.
+  - operation: deleteRepository
+    method: DELETE /projects/{project_name}/repositories/{repository_name}
+    reversal: null
+    window: null
+  - operation: triggerRetentionExecution
+    method: POST /retentions/{id}/executions
+    reversal: operateRetentionExecution (PATCH /retentions/{id}/executions/{eid}) stops a running execution
+    window: 'while the execution is still running — no time value published'
+    note: Stopping a retention run halts further deletions; it does not restore artifacts already deleted by that run. Retention runs support a dry-run mode in the UI/policy (dry_run flag on the execution), which is the intended rehearsal path.
+  - operation: startReplication
+    method: POST /replication/executions
+    reversal: stopReplication (PUT /replication/executions/{id})
+    window: while the execution is running
+  - operation: scanArtifact
+    method: POST /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/scan
+    reversal: stopScanArtifact (POST .../scan/stop)
+    window: while the scan job is queued or running
+  - operation: DeleteRobot
+    method: DELETE /robots/{robot_id}
+    reversal: null
+    window: null
+    note: Robot secrets are never stored by Harbor and cannot be recovered; RefreshSec (PATCH /robots/{robot_id}) rotates a secret but cannot recover a deleted account.
+  instance_level:
+    mechanism: Backup and restore of the whole Harbor deployment with Velero
+    window: null
+    docs: https://goharbor.io/docs/2.15.0/administration/backup-restore/
+    note: Instance-level disaster recovery, not per-operation undo. The docs state no RPO.
+dry_run_mode:
+  available: partial
+  surfaces:
+  - Tag retention policies support a dry-run execution before a real run.
+  - getProjectDeletable and POST /registries/ping / POST /scanners/ping are precheck operations.
+  note: There is no generic dry-run flag across the write surface.
+bulk:
+  supported: false
+  note: No batch endpoint; writes are one resource per call.
+metadata:
+  supported: true
+  surface: Project metadata (GET/POST/PUT/DELETE /projects/{project_name_or_id}/metadatas) and artifact labels.
+cross_links:
+  errors: errors/goharbor-problem-types.yml
+  lifecycle: lifecycle/goharbor-lifecycle.yml
+  authentication: authentication/goharbor-authentication.yml
+  scopes: scopes/goharbor-scopes.yml
+  rate_limits: rate-limits/goharbor-rate-limits.yml
+  webhooks: asyncapi/goharbor-webhooks.yml

@@ -1,13 +1,94 @@
-generated: '2026-07-11'
-method: derived
-source: openapi/goharbor-openapi.yml
+generated: '2026-09-12'
+method: searched
+source: >-
+  https://goharbor.io/docs/2.15.0/administration/configure-authentication/ ,
+  https://goharbor.io/docs/2.15.0/administration/robot-accounts/ ,
+  https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/ ,
+  openapi/_original/goharbor-harbor-api-v2.0-swagger.yml ,
+  live probe of https://demo.goharbor.io/api/v2.0/systeminfo (2026-09-12)
+docs: https://goharbor.io/docs/2.15.0/administration/configure-authentication/
+provider: Harbor
+providerId: goharbor
+description: >-
+  The Harbor v2.0 API accepts exactly one credential presentation — HTTP Basic — but four
+  different principals can sit behind it, and which ones exist is decided by the operator's
+  chosen authentication mode. That distinction is the thing to get right: OIDC and LDAP
+  configure who can LOG IN; API callers still send Basic credentials, and for an OIDC
+  instance the password is a Harbor-issued CLI secret, not the IdP password.
 summary:
   types:
   - http
+  primary: basic
+  oauth2: false
+  api_keys: false
+  mtls: false
 schemes:
 - name: basicAuth
   type: http
   scheme: basic
-  description: Harbor user credentials (HTTP Basic)
+  description: Harbor user credentials, robot account name + secret, or an OIDC CLI secret.
+  header: 'Authorization: Basic base64(<principal>:<secret>)'
   sources:
-  - openapi/goharbor-openapi.yml
+  - openapi/_original/goharbor-harbor-api-v2.0-swagger.yml
+  - openapi/goharbor-artifacts-api-openapi.yml
+- name: BearerAuth
+  type: http
+  scheme: bearer
+  description: Applies to the Harbor Scanner Adapter API only — the contract a scanner vendor implements for Harbor to call, not the Harbor API itself.
+  sources:
+  - openapi/goharbor-scanner-adapter-api-openapi.yml
+principals:
+- id: local-user
+  name: Local database user
+  available_when: auth_mode db_auth
+  note: Created in the Harbor database. Once local accounts exist the instance is locked into database mode and cannot be switched.
+  docs: https://goharbor.io/docs/2.15.0/administration/configure-authentication/db-auth/
+- id: ldap-user
+  name: LDAP / Active Directory user
+  available_when: auth_mode ldap_auth
+  docs: https://goharbor.io/docs/2.15.0/administration/configure-authentication/ldap-auth/
+- id: oidc-user
+  name: OIDC user (via CLI secret)
+  available_when: auth_mode oidc_auth
+  note: >-
+    The IdP password is never sent to Harbor's API. Harbor issues the user a CLI secret
+    (setCliSecret — PUT /users/{user_id}/cli_secret) which is what the user presents as the
+    Basic password for API and registry access.
+  docs: https://goharbor.io/docs/2.15.0/administration/configure-authentication/oidc-auth/
+- id: robot-account
+  name: Robot account
+  scope: system-wide or project-scoped
+  note: >-
+    The correct principal for a pipeline or an agent. Carries an explicit permission list,
+    has an expiry, cannot log into the web UI, and its secret is displayed once and never
+    stored by Harbor — a lost secret can only be rotated (RefreshSec), never retrieved.
+  permissions: scopes/goharbor-scopes.yml
+  docs: https://goharbor.io/docs/2.15.0/administration/robot-accounts/
+anonymous:
+  supported: true
+  note: >-
+    Some operations are explicitly unauthenticated — GET /health and GET /ping require no
+    credentials, and public projects are readable anonymously. Confirmed live: GET
+    https://demo.goharbor.io/api/v2.0/health and /api/v2.0/projects?page_size=2 both
+    returned 200 with no Authorization header (2026-09-12).
+  spec_evidence: 'The contract declares `security: [{basic: []}, {}]` — the empty object is the anonymous alternative.'
+authorization:
+  model: robot-account-permissions / project roles
+  reference: https://goharbor.io/docs/2.15.0/administration/robot-accounts/#permission-references
+  artifact: scopes/goharbor-scopes.yml
+  introspection:
+    operationId: getCurrentUserPermissions
+    path: GET /users/current/permissions
+registry_auth:
+  note: >-
+    The OCI registry surface authenticates separately, with the standard distribution token
+    flow: GET /v2/ returns 401 with
+    `www-authenticate: Bearer realm="https://<host>/service/token",service="harbor-registry"`
+    (probed 2026-09-12). Clients exchange Basic credentials at that realm for a bearer token.
+discovery:
+  well_known_openid_configuration: false
+  note: Harbor is an OIDC relying party, not a provider. No /.well-known/openid-configuration is served — see well-known/goharbor-well-known.yml.
+console:
+  name: Harbor API Explorer
+  path: /devcenter-api-2.0
+  auth: 'Authorize button supplies HTTP Basic to every call; requests execute as that user against the live instance.'

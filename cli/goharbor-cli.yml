@@ -1,0 +1,94 @@
+generated: '2026-09-12'
+method: searched
+source: https://goharbor.io/cli-docs/ , https://github.com/goharbor/harbor-cli
+provider: Harbor
+providerId: goharbor
+name: Harbor CLI
+official: true
+repository: https://github.com/goharbor/harbor-cli
+docs: https://goharbor.io/cli-docs/
+version: v0.0.26
+released: '2026-08-18'
+description: >-
+  The official Harbor CLI — a command-line alternative to the Harbor web UI, aimed at daily
+  use and at scripting Harbor tasks inside pipelines. Its stated first goal is web UI
+  parity; the repository publishes a feature checklist of what has and has not reached it.
+install:
+- method: container
+  command: 'docker run -ti --rm -v $HOME/.config/harbor-cli:/root/.config/harbor-cli -e HARBOR_ENCRYPTION_KEY=$(...) registry.goharbor.io/harbor-cli/harbor-cli --help'
+  note: Image is served from Harbor's own community registry.
+- method: homebrew
+  command: brew install harbor-cli
+  tap: https://github.com/goharbor/homebrew-tap
+- method: deb
+  command: 'wget https://github.com/goharbor/harbor-cli/releases/download/<version>/harbor-cli_<version>_linux_amd64.deb && sudo dpkg -i harbor-cli_<version>_linux_amd64.deb'
+- method: rpm
+  command: 'wget https://github.com/goharbor/harbor-cli/releases/download/<version>/harbor-cli_<version>_linux_amd64.rpm && sudo rpm -i harbor-cli_<version>_linux_amd64.rpm'
+- method: apk
+  command: 'wget https://github.com/goharbor/harbor-cli/releases/download/<version>/harbor-cli_<version>_linux_amd64.apk && sudo apk add --allow-untrusted harbor-cli_<version>_linux_amd64.apk'
+- method: apt-repo
+  command: 'echo "deb [trusted=yes] https://harborcli.goharbor.io stable main" | sudo tee /etc/apt/sources.list.d/harbor-cli.list && sudo apt update'
+- method: go
+  command: go install github.com/goharbor/harbor-cli@latest
+  note: Module resolves on proxy.golang.org at v0.0.26.
+auth:
+  command: harbor login
+  storage: Credentials are stored in $HOME/.config/harbor-cli, encrypted with AES-256 using a base64 32-byte key supplied as HARBOR_ENCRYPTION_KEY.
+  docs: https://goharbor.io/cli-docs/cli-encryption/
+config:
+  command: harbor config
+  env:
+  - HARBOR_CLI_CONFIG
+  - HARBOR_ENCRYPTION_KEY
+  docs: https://goharbor.io/cli-docs/cli-config/
+commands:
+- name: harbor project
+  description: Manage projects and assign resources to them.
+- name: harbor repo
+  description: Manage repositories in a Harbor context.
+- name: harbor artifact
+  description: Manage artifacts in a Harbor repository.
+- name: harbor registry
+  description: Manage registries (replication endpoints).
+- name: harbor replication
+  description: Manage replication policies and executions.
+- name: harbor user
+  description: Administer users, including creating, updating and managing accounts.
+- name: harbor robot
+  description: Manage robot accounts.
+- name: harbor label
+  description: Manage labels.
+- name: harbor tag
+  description: Manage tags.
+- name: harbor quota
+  description: Manage project quotas.
+- name: harbor webhook
+  description: Manage webhook policies.
+- name: harbor cve-allowlist
+  description: Manage the system CVE allowlist.
+- name: harbor scanner
+  description: CRUD for scanner registrations.
+- name: harbor vulnerability
+  description: List and view vulnerability summaries from Harbor Security Hub.
+- name: harbor preheat
+  description: Manage P2P preheat provider instances.
+- name: harbor schedule
+  description: Schedule jobs in Harbor.
+- name: harbor health
+  description: Get the health status of Harbor components.
+- name: harbor info
+  description: Display Harbor system, statistics and CLI environment information.
+- name: harbor login
+  description: Log in to a Harbor registry.
+- name: harbor config
+  description: Manage the CLI configuration.
+- name: harbor completion
+  description: Generate a shell autocompletion script.
+- name: harbor version
+  description: Print the CLI version.
+not_yet_covered:
+- Distribution
+- Garbage collection
+- Job service dashboard
+- Audit log dashboard
+note: The not_yet_covered list is Harbor's own parity checklist in the harbor-cli README, reproduced rather than inferred.

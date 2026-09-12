@@ -1,10 +1,16 @@
 aid: goharbor
 name: GoHarbor
 description: >-
-  You can view and test the Harbor REST API from your Harbor interface using the
-  Swagger UI. This means that you can invoke all APIs through the Harbor
-  interface. You can navigate to the REST API through the Harbor portal, or by
-  navigate to the Swagger UI using your Harbor instance IP.
+  Harbor is an open source, CNCF-hosted registry that stores, signs and scans OCI artifacts,
+  adding the policy and identity layer a plain container registry lacks: projects, RBAC and
+  robot accounts, vulnerability scanning and SBOM generation, Cosign content trust, tag
+  retention and immutability, quotas, replication between registries and P2P preheat. It is
+  Apache-2.0 and self-hosted, so every API base URL is the operator's own deployment rather
+  than a vendor endpoint. Harbor publishes a 203-operation v2.0 REST API in its own
+  repository, serves a live Swagger UI from every instance at /devcenter-api-2.0, speaks the
+  OCI Distribution Specification on /v2/, emits ten project event types over webhooks in
+  CloudEvents 1.0 format, and ships an official CLI, Go client, Helm chart and Terraform
+  provider.
 type: Index
 deliveryModel:
   model: self-hosted
@@ -38,8 +44,17 @@ access: 3rd-Party
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/goharbor.png
 tags:
   - Container Registry
+  - Containers
+  - Artifacts
+  - Vulnerability Scanning
+  - Supply Chain Security
+  - OCI
+  - Open Source
+  - Kubernetes
+  - DevOps
+  - Replication
 created: '2025-02-17'
-modified: '2026-04-28'
+modified: '2026-09-12'
 url: >-
   https://raw.githubusercontent.com/api-evangelist/goharbor/refs/heads/main/apis.yml
 specificationVersion: '0.23'
@@ -47,7 +62,8 @@ apis:
 - aid: goharbor:goharbor-artifacts-api
   name: GoHarbor artifacts API
   description: The artifacts API from GoHarbor — 2 operation(s) for artifacts.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - Artifacts
   tags_raw:
@@ -56,13 +72,14 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-artifacts-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-audit-api
   name: GoHarbor audit API
   description: The audit API from GoHarbor — 1 operation(s) for audit.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - Audit
   tags_raw:
@@ -71,13 +88,14 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-audit-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-health-api
   name: GoHarbor health API
   description: The health API from GoHarbor — 2 operation(s) for health.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - Health
   tags_raw:
@@ -86,13 +104,14 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-health-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-projects-api
   name: GoHarbor projects API
   description: The projects API from GoHarbor — 4 operation(s) for projects.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - Project
   tags_raw:
@@ -101,13 +120,14 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-projects-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-quotas-api
   name: GoHarbor quotas API
   description: The quotas API from GoHarbor — 2 operation(s) for quotas.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - Quotas
   tags_raw:
@@ -116,13 +136,14 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-quotas-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-registries-api
   name: GoHarbor registries API
   description: The registries API from GoHarbor — 1 operation(s) for registries.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - Registries
   tags_raw:
@@ -131,13 +152,14 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-registries-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-replication-api
   name: GoHarbor replication API
   description: The replication API from GoHarbor — 2 operation(s) for replication.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - Replication
   tags_raw:
@@ -146,13 +168,14 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-replication-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-repositories-api
   name: GoHarbor repositories API
   description: The repositories API from GoHarbor — 3 operation(s) for repositories.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - Repositories
   tags_raw:
@@ -161,13 +184,14 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-repositories-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-robots-api
   name: GoHarbor robots API
   description: The robots API from GoHarbor — 2 operation(s) for robots.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - Robots
   tags_raw:
@@ -176,13 +200,14 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-robots-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-scan-api
   name: GoHarbor scan API
   description: The scan API from GoHarbor — 1 operation(s) for scan.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - Scans
   tags_raw:
@@ -191,13 +216,14 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-scan-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-search-api
   name: GoHarbor search API
   description: The search API from GoHarbor — 1 operation(s) for search.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - Search
   tags_raw:
@@ -206,13 +232,14 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-search-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-tags-api
   name: GoHarbor tags API
   description: The tags API from GoHarbor — 1 operation(s) for tags.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - Tags
   tags_raw:
@@ -221,13 +248,14 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-tags-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-usergroups-api
   name: GoHarbor usergroups API
   description: The usergroups API from GoHarbor — 2 operation(s) for usergroups.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - User Groups
   tags_raw:
@@ -236,13 +264,14 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-usergroups-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-webhooks-api
   name: GoHarbor webhooks API
   description: The webhooks API from GoHarbor — 1 operation(s) for webhooks.
-  humanURL: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
   tags:
   - Webhook
   tags_raw:
@@ -251,9 +280,69 @@ apis:
   - type: OpenAPI
     url: openapi/goharbor-webhooks-api-openapi.yml
   - type: Documentation
-    url: https://goharbor.io/docs/2.5.0/working-with-projects/using-api-explorer/
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
     url: https://github.com/goharbor/harbor
+- aid: goharbor:goharbor-harbor-v2-api
+  name: Harbor v2.0 REST API
+  description: >-
+    Harbor's complete, first-party v2.0 REST API as published in the project's own
+    repository (api/v2.0/swagger.yaml) — 135 paths, 203 operations and 153 definitions
+    covering projects, repositories, artifacts, tags, labels, accessories, scanning, SBOMs,
+    robot accounts, users and groups, quotas, registries, replication, retention,
+    immutability, webhooks, preheat, garbage collection, audit logs, the Security Hub and
+    system configuration. Authenticates with HTTP Basic; the base URL is the operator's own
+    Harbor instance.
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
+  tags:
+  - Container Registry
+  - Artifacts
+  - OCI
+  tags_raw:
+  - registry
+  - artifacts
+  - oci
+  properties:
+  - type: OpenAPI
+    url: openapi/_original/goharbor-harbor-api-v2.0-swagger.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/
+  - type: APIReference
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+  - type: Overlay
+    url: overlays/goharbor-harbor-api-overlay.yaml
+  - type: DataModel
+    url: data-model/goharbor-data-model.yml
+  - type: ErrorCatalog
+    url: errors/goharbor-problem-types.yml
+  - type: Webhooks
+    url: asyncapi/goharbor-webhooks.yml
+- aid: goharbor:goharbor-scanner-adapter-api
+  name: Harbor Scanner Adapter API
+  description: >-
+    The contract a vulnerability scanner vendor implements so it can be registered as a
+    pluggable scanner in Harbor. OpenAPI 3.0, three operations — GET /metadata to advertise
+    capabilities, POST /scan to accept an asynchronous scan request, and GET
+    /scan/{scan_request_id}/report to return the report Harbor polls for. Published by the
+    Harbor project in goharbor/pluggable-scanner-spec.
+  humanURL: https://github.com/goharbor/pluggable-scanner-spec
+  baseURL: https://{scanner-adapter}/api/v1
+  tags:
+  - Vulnerability Scanning
+  - Artifacts
+  tags_raw:
+  - scanning
+  - artifacts
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-scanner-adapter-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/administration/vulnerability-scanning/
+  - type: SourceCode
+    url: https://github.com/goharbor/pluggable-scanner-spec
 common:
   - type: IssueTracker
     url: https://github.com/goharbor/harbor/issues
@@ -280,6 +369,63 @@ common:
     url: https://github.com/goharbor
   - url: https://goharbor.io/blog/index.xml
     type: Blog
+  - type: APIReference
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  - type: GettingStarted
+    url: https://goharbor.io/docs/2.15.0/install-config/
+  - type: Support
+    url: https://goharbor.io/community/
+  - type: Roadmap
+    url: https://github.com/goharbor/harbor/blob/main/ROADMAP.md
+  - type: TermsOfService
+    url: https://lfprojects.org/policies/terms-of-use/
+  - type: PrivacyPolicy
+    url: https://lfprojects.org/policies/privacy-policy/
+  - type: StatusPage
+    url: https://status.goharbor.io
+  - type: Security
+    url: security/goharbor-vulnerability-disclosure.yml
+  - type: VulnerabilityDisclosure
+    url: security/goharbor-vulnerability-disclosure.yml
+  - type: Compliance
+    url: conformance/goharbor-conformance.yml
+  - type: Conformance
+    url: conformance/goharbor-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/goharbor-lifecycle.yml
+  - type: ChangeLog
+    url: changelog/goharbor-changelog.yml
+  - type: Conventions
+    url: conventions/goharbor-conventions.yml
+  - type: ErrorCatalog
+    url: errors/goharbor-problem-types.yml
+  - type: DataModel
+    url: data-model/goharbor-data-model.yml
+  - type: OAuthScopes
+    url: scopes/goharbor-scopes.yml
+  - type: Packages
+    url: packages/goharbor-packages.yml
+  - type: SDKs
+    url: packages/goharbor-packages.yml
+  - type: CLI
+    url: cli/goharbor-cli.yml
+  - type: Sandbox
+    url: sandbox/goharbor-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/goharbor-webhooks.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: LLMsTxt
+    url: llms/goharbor-llms.txt
+  - type: Overlay
+    url: overlays/goharbor-harbor-api-overlay.yaml
+  - type: X-MCPServerCandidate
+    url: mcp/goharbor-mcp.yml
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-09-12'
+  status: enriched
+  artifacts_added: 22
+  pass: local-v3

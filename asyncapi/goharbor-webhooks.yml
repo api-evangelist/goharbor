@@ -1,0 +1,95 @@
+generated: '2026-09-12'
+method: searched
+source: https://goharbor.io/docs/2.15.0/working-with-projects/project-configuration/configure-webhooks/
+provider: Harbor
+providerId: goharbor
+type: Webhooks
+description: >-
+  Harbor's event surface is a per-project webhook policy: a project administrator registers
+  an endpoint and Harbor POSTs a JSON notification when one of ten documented events occurs
+  in that project. There is no AsyncAPI document and no streaming/queue surface — Harbor
+  publishes NO AsyncAPI specification, and none is authored here. What follows is the
+  published event catalog, the two payload formats, and the API operations that manage
+  subscriptions.
+asyncapi_published: false
+delivery:
+  transport: HTTP(S) POST
+  endpoint_kinds:
+  - http
+  - slack
+  scope: per project — multiple endpoints may be registered per project
+  payload_formats:
+  - name: Default
+    note: Harbor's original payload shape, unchanged across versions. Fields — type, occur_at, operator, event_data{resources[], repository{}}.
+  - name: CloudEvents
+    note: 'Same data wrapped per CloudEvents 1.0 — specversion, id, requestid, source (/projects/{id}/webhook/policies/{policy_id}), type (e.g. harbor.artifact.pushed), datacontenttype, time, data.'
+    spec: https://cloudevents.io
+  retries: not published
+  signing: not published
+  note: The docs describe no signature header and no retry/backoff policy for webhook delivery.
+events:
+- type: PUSH_ARTIFACT
+  trigger: Push artifact to registry
+  payload: repository namespace and name, resource URL, tags, manifest digest, artifact name, push timestamp, username of the pusher
+  cloudevents_type: harbor.artifact.pushed
+- type: PULL_ARTIFACT
+  trigger: Pull artifact from registry
+  payload: repository namespace and name, manifest digest, artifact name, pull timestamp, username of the puller
+- type: DELETE_ARTIFACT
+  trigger: Delete artifact from registry
+  payload: repository namespace and name, manifest digest, artifact name, artifact size, delete timestamp, username of the deleter
+- type: SCANNING_COMPLETED
+  trigger: Artifact scan completed
+  payload: repository namespace and name, tag scanned, artifact name, counts of critical/major/minor issues, last scan status, completion timestamp, username
+- type: SCANNING_STOPPED
+  trigger: Artifact scan stopped
+  payload: repository namespace and name, tag scanned, artifact name, scan status
+- type: SCANNING_FAILED
+  trigger: Artifact scan failed
+  payload: repository namespace and name, tag scanned, artifact name, the error that occurred, username
+- type: QUOTA_EXCEED
+  trigger: Project quota exceeded
+  payload: repository namespace and name, tags, manifest digest, artifact name, push timestamp, username
+- type: QUOTA_WARNING
+  trigger: Project quota near threshold
+  payload: repository namespace and name, tags, manifest digest, artifact name, push timestamp, username
+- type: REPLICATION
+  trigger: Artifact replication status changed
+  payload: repository namespace and name, tags, manifest digest, artifact name, push timestamp, username who triggered the replication
+- type: TAG_RETENTION
+  trigger: Artifact tag retention finished
+  payload: repository namespace and name, total and retained counts, the retention rule, deleted artifact results
+subscription_api:
+  base: https://{host}/api/v2.0
+  operations:
+  - operationId: GetSupportedEventTypes
+    method: GET /projects/{project_name_or_id}/webhook/events
+    purpose: Discover the event types and notify types this instance supports — the runtime source of truth for the catalog above.
+  - operationId: CreateWebhookPolicyOfProject
+    method: POST /projects/{project_name_or_id}/webhook/policies
+    purpose: Register an endpoint and select the events and payload format.
+  - operationId: ListWebhookPoliciesOfProject
+    method: GET /projects/{project_name_or_id}/webhook/policies
+  - operationId: GetWebhookPolicyOfProject
+    method: GET /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}
+  - operationId: UpdateWebhookPolicyOfProject
+    method: PUT /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}
+  - operationId: DeleteWebhookPolicyOfProject
+    method: DELETE /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}
+  - operationId: ListExecutionsOfWebhookPolicy
+    method: GET /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}/executions
+    purpose: Delivery history per policy.
+  - operationId: ListTasksOfWebhookExecution
+    method: GET /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}/executions/{execution_id}/tasks
+  - operationId: GetLogsOfWebhookTask
+    method: GET /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}/executions/{execution_id}/tasks/{task_id}/log
+    purpose: Per-delivery log — the debugging surface when an endpoint stops receiving events.
+  deprecated:
+  - operationId: LastTrigger
+    method: GET /projects/{project_name_or_id}/webhook/lasttrigger
+  - operationId: ListWebhookJobs
+    method: GET /projects/{project_name_or_id}/webhook/jobs
+counts:
+  events: 10
+  payload_formats: 2
+  management_operations: 9

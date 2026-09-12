@@ -1,88 +1,61 @@
 specification: API Commons Rate Limits
 specificationVersion: '0.1'
 schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
-provider: GoHarbor
+provider: Harbor
 providerId: goharbor
+generated: '2026-09-12'
+method: probed
+source: >-
+  live probes of https://demo.goharbor.io/api/v2.0/* on 2026-09-12 ,
+  openapi/_original/goharbor-harbor-api-v2.0-swagger.yml ,
+  https://github.com/goharbor/harbor/blob/main/src/lib/errors/const.go
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-04'
+modified: '2026-09-12'
 tags:
   - Container Registry
   - Rate Limiting
-  - Quotas
-  - Throttling
-description: Machine-readable rate limit definitions for the GoHarbor API surface. Captures per-tier quotas,
-  burst behavior, response signaling, and recovery semantics. Defaults are scaffold values to be replaced
-  with published provider limits.
+limit_count: 0
+limits: []
+description: >-
+  Harbor publishes no API rate limits, and none were observable. This is consistent with the
+  product: Harbor is self-hosted, so throughput is bounded by the operator's own deployment
+  rather than by a vendor quota. Recorded as a measured zero, not an omission.
+evidence:
+  probes:
+  - request: GET https://demo.goharbor.io/api/v2.0/health
+    status: 200
+    rate_limit_headers: []
+  - request: 'GET https://demo.goharbor.io/api/v2.0/projects?page_size=2'
+    status: 200
+    rate_limit_headers: []
+    other_headers: [x-request-id, x-total-count, link]
+  - request: GET https://demo.goharbor.io/api/v2.0/systeminfo
+    status: 200
+    rate_limit_headers: []
+  spec: No RateLimit-*, X-RateLimit-* or Retry-After header is declared on any of the 203 operations in Harbor's published contract.
 headers:
-  limit: X-RateLimit-Limit
-  remaining: X-RateLimit-Remaining
-  reset: X-RateLimit-Reset
-  retryAfter: Retry-After
-  policy: RateLimit-Policy
+  limit: null
+  remaining: null
+  reset: null
+  retryAfter: null
+  policy: null
+  observed: []
 responseCodes:
   throttled: 429
-  quotaExceeded: 429
-  serviceUnavailable: 503
-limits:
-  - tier: free
-    name: Free Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 10
-    burst: 20
-    timeFrame: minute
-    applies:
-      - GoHarbor
-  - tier: free
-    name: Free Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 1000
-    timeFrame: month
-    applies:
-      - GoHarbor
-  - tier: professional
-    name: Professional Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 100
-    burst: 200
-    timeFrame: minute
-    applies:
-      - GoHarbor
-  - tier: professional
-    name: Professional Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 100000
-    timeFrame: month
-    applies:
-      - GoHarbor
-  - tier: enterprise
-    name: Enterprise Negotiated Limit
-    scope: contract
-    metric: requests_per_minute
-    limit: 1000
-    burst: 5000
-    timeFrame: minute
-    applies:
-      - GoHarbor
-policies:
-  - name: Backoff Strategy
-    description: Clients should implement exponential backoff with jitter, honoring the Retry-After header
-      when present.
-  - name: Burst Handling
-    description: Short bursts above the steady-state limit are tolerated up to the documented burst ceiling
-      before throttling engages.
-  - name: Quota Reset
-    description: Monthly quotas reset at the start of each calendar month in UTC. Per-minute and per-second
-      windows reset on a sliding-window basis.
-  - name: Fair Use
-    description: Even on uncapped enterprise tiers, sustained usage that materially impacts shared infrastructure
-      may be subject to fair-use throttling.
+  note: >-
+    Harbor's error registry does define TOO_MANY_REQUEST (src/lib/errors/const.go) and a
+    helper errors.IsRateLimitError, so a 429 with
+    {"errors":[{"code":"TOO_MANY_REQUEST",...}]} is possible — but no threshold, window or
+    scope is published, and no limit headers accompany it.
+supersedes: >-
+  This file previously carried invented per-tier limits (10 req/min free, 100 professional,
+  1000 enterprise) and a full set of X-RateLimit-* headers Harbor does not send, written by
+  the 2026-05-04 bulk sweep. Removed 2026-09-12 and replaced with this probe.
+related:
+  quotas: >-
+    Harbor's real published limit surface is per-project STORAGE quota, configured by the
+    operator — https://goharbor.io/docs/2.15.0/administration/configure-project-quotas/ .
+    Exceeding it raises the QUOTA_EXCEED webhook event, not a 429.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

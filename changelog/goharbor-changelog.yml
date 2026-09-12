@@ -1,0 +1,45 @@
+generated: '2026-09-12'
+method: searched
+source: https://github.com/goharbor/harbor/releases (GitHub Releases API, read 2026-09-12)
+provider: Harbor
+providerId: goharbor
+description: >-
+  Harbor's changelog is its GitHub Releases feed: every GA and every release candidate ships
+  dated release notes. RELEASES.md additionally requires a blog post for each major/minor
+  release, so goharbor.io/blog carries the narrative version.
+scheme: semver
+url: https://github.com/goharbor/harbor/releases
+feed: https://github.com/goharbor/harbor/releases.atom
+blog: https://goharbor.io/blog/
+current_version: v2.15.2
+current_version_date: '2026-07-02'
+entries:
+- version: v2.15.3-rc1
+  date: '2026-09-11'
+  prerelease: true
+  highlights: Release candidate for the 2.15.3 patch release.
+- version: v2.15.2
+  date: '2026-07-02'
+  prerelease: false
+  breaking: false
+  highlights: Patch release on the 2.15 line.
+- version: v2.15.2-rc3
+  date: '2026-07-02'
+  prerelease: true
+- version: v2.15.2-rc2
+  date: '2026-06-27'
+  prerelease: true
+- version: v2.15.2-rc1
+  date: '2026-06-17'
+  prerelease: true
+- version: v2.14.4
+  date: '2026-05-11'
+  prerelease: false
+  breaking: false
+  highlights: Patch release on the 2.14 maintenance line.
+window: most recent 6 published releases as of 2026-09-12
+note: >-
+  Release notes are per-release GitHub bodies (roughly 1–6 KB each), not a single rolling
+  CHANGELOG document; CHANGELOG.md exists in the repository but the releases feed is the
+  live surface. No separate API changelog is published — API changes arrive inside product
+  releases and are visible as diffs to api/v2.0/swagger.yaml.

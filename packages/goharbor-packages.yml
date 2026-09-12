@@ -1,0 +1,98 @@
+generated: '2026-09-12'
+method: searched
+source: https://github.com/goharbor (org repos), proxy.golang.org, registry.terraform.io, https://goharbor.io/cli-docs/
+provider: Harbor
+providerId: goharbor
+description: >-
+  First-party client libraries, provider plugins and distributions published by the Harbor
+  project (CNCF) for its v2.0 REST API and for deploying Harbor itself. Harbor is an
+  Apache-2.0, self-hosted registry, so its "SDK" surface is Go-centric: a generated Go API
+  client, the official CLI, a Terraform provider and the Helm chart. Registry versions and
+  publish dates below were read from each registry's own metadata endpoint on 2026-09-12.
+packages:
+- name: github.com/goharbor/go-client
+  registry: go
+  official: true
+  language: Go
+  url: https://pkg.go.dev/github.com/goharbor/go-client
+  repository: https://github.com/goharbor/go-client
+  version: v0.213.1
+  published: '2025-06-25'
+  source: https://proxy.golang.org/github.com/goharbor/go-client/@latest
+  note: >-
+    Client library with golang for accessing the Harbor API; generated from
+    api/v2.0/swagger.yaml with go-swagger. Latest tag is 15 months older than the
+    current Harbor release (v2.15.2, 2026-07-01) — the generated client trails the
+    contract it wraps.
+- name: github.com/goharbor/harbor-cli
+  registry: go
+  official: true
+  language: Go
+  url: https://pkg.go.dev/github.com/goharbor/harbor-cli
+  repository: https://github.com/goharbor/harbor-cli
+  version: v0.0.26
+  published: '2026-08-18'
+  source: https://proxy.golang.org/github.com/goharbor/harbor-cli/@latest
+  note: Official Harbor CLI. Also distributed as a container image, Homebrew formula, .deb/.rpm/.apk and an APT repo — see cli/goharbor-cli.yml.
+- name: github.com/goharbor/harbor
+  registry: go
+  official: true
+  language: Go
+  url: https://pkg.go.dev/github.com/goharbor/harbor
+  repository: https://github.com/goharbor/harbor
+  version: v2.15.2+incompatible
+  published: '2026-07-01'
+  source: https://proxy.golang.org/github.com/goharbor/harbor/@latest
+  note: The Harbor server itself, resolvable as a Go module. Not a client SDK.
+- name: goharbor/harbor
+  registry: terraform
+  official: true
+  language: HCL
+  url: https://registry.terraform.io/providers/goharbor/harbor/latest
+  repository: https://github.com/goharbor/terraform-provider-harbor
+  version: 3.12.4
+  published: '2026-08-11'
+  source: https://registry.terraform.io/v1/providers/goharbor/harbor
+  note: Official Terraform provider under the goharbor namespace; ~25M downloads. Configures projects, registries, replication, robot accounts and retention through the v2.0 API.
+- name: harbor
+  registry: helm
+  official: true
+  language: YAML
+  url: https://helm.goharbor.io
+  repository: https://github.com/goharbor/harbor-helm
+  version: null
+  published: null
+  source: https://helm.goharbor.io
+  note: >-
+    Official Helm chart repository (HTTP 200, 105 bytes index stub on 2026-09-12). Helm
+    repos have no per-package JSON metadata endpoint of the npm/PyPI kind; chart version
+    was not read rather than guessed.
+- name: harbor-cli
+  registry: homebrew
+  official: true
+  language: Go
+  url: https://github.com/goharbor/homebrew-tap
+  repository: https://github.com/goharbor/homebrew-tap
+  version: null
+  published: null
+  source: https://github.com/goharbor/harbor-cli#homebrewlinuxmacos
+  note: "`brew install harbor-cli`. Formula tap is first-party (goharbor/homebrew-tap); no registry metadata endpoint was queried, so version is recorded null rather than assumed to match the Go tag."
+- name: harborapi
+  registry: pypi
+  official: false
+  language: Python
+  url: https://pypi.org/project/harborapi/
+  version: 0.26.2
+  published: '2025-01-21'
+  source: https://pypi.org/pypi/harborapi/json
+  note: >-
+    Community Python async client for the Harbor v2.0 API. NOT published by the Harbor
+    project — recorded here because it is the de facto Python SDK and because its own
+    last release (2025-01-21) predates Harbor v2.14 and v2.15.
+counts:
+  total: 7
+  official: 6
+  community: 1
+gaps:
+- No first-party JavaScript/TypeScript, Python, Java, .NET or Ruby client is published by the Harbor project.
+- The only generated first-party API client (go-client) is 15 months behind the server release it targets.

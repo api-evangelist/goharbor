@@ -1,0 +1,113 @@
+generated: '2026-09-12'
+method: searched
+source: >-
+  https://github.com/goharbor/harbor/blob/main/src/lib/errors/const.go (error code registry),
+  openapi/_original/goharbor-harbor-api-v2.0-swagger.yml (shared responses + Errors schema),
+  live probe of https://demo.goharbor.io/api/v2.0/swagger.json on 2026-09-12
+provider: Harbor
+providerId: goharbor
+format: harbor-errors
+rfc9457: false
+description: >-
+  Harbor returns a single error envelope on every failure path, defined once in its own
+  contract as the `Errors` schema and reused by all thirteen shared responses. The `code`
+  values are a closed registry declared in Harbor's source (src/lib/errors/const.go), which
+  is what makes this an error CATALOG rather than a list of HTTP statuses.
+envelope:
+  content_type: application/json
+  shape: '{"errors":[{"code":"string","message":"string"}]}'
+  schema: '#/definitions/Errors'
+  example:
+    errors:
+    - code: NOT_FOUND
+      message: 'artifact library/hello-world:latest not found'
+  observed:
+    request: GET https://demo.goharbor.io/api/v2.0/swagger.json
+    status: 404
+    body: '{"errors":[{"code":"NOT_FOUND","message":"path /api/v2.0/swagger.json was not found"}]}'
+    date: '2026-09-12'
+  headers:
+  - name: X-Request-Id
+    description: Echoed on every response including errors; the value to quote when reporting a failure.
+codes:
+- code: NOT_FOUND
+  http_status: 404
+  title: Resource not found
+  remediation: Verify the project/repository/artifact reference. Artifact references accept a tag or a digest.
+- code: CONFLICT
+  http_status: 409
+  title: Resource conflict
+  remediation: The named resource already exists or its current state blocks the operation. Read the existing resource before retrying — Harbor has no idempotency key, so a retry will conflict again.
+- code: UNAUTHORIZED
+  http_status: 401
+  title: Authentication required or invalid
+  remediation: Send HTTP Basic credentials — a Harbor user, a robot account name + secret, or an OIDC CLI secret.
+- code: BAD_REQUEST
+  http_status: 400
+  title: Request body or query parameters are invalid
+  remediation: Inspect the errors array. The `q` parameter follows Harbor's query syntax (k=v, k=~v, k=[min~max]).
+- code: FORBIDDEN
+  http_status: 403
+  title: Caller lacks the required permission
+  remediation: Grant the matching permission from the Harbor permission reference (scopes/goharbor-scopes.yml) to the user role or robot account.
+- code: METHOD_NOT_ALLOWED
+  http_status: 405
+  title: Method not allowed on this resource
+- code: TOO_MANY_REQUEST
+  http_status: 429
+  title: Rate limit exceeded
+  note: >-
+    The code exists in the registry and Harbor exposes errors.IsRateLimitError, but Harbor
+    publishes no rate limits and no RateLimit-* headers were observed on live responses.
+    See rate-limits/goharbor-rate-limits.yml.
+- code: PRECONDITION
+  http_status: 412
+  title: Precondition failed
+  remediation: A dependency or policy check failed — for example deleting a project that still holds repositories. Inspect the errors array for the constraint.
+- code: UNKNOWN
+  http_status: 500
+  title: Unclassified internal error
+  remediation: Quote the X-Request-Id when filing a GitHub issue.
+- code: DENIED
+  http_status: 412
+  title: Request denied by a policy middleware
+  note: Emitted by the read-only, vulnerability and content-trust middleware and returned to the container client, not only to API callers.
+- code: PROJECTPOLICYVIOLATION
+  http_status: 412
+  title: Project policy violation
+  remediation: The project blocks the pull or push — typically a CVE severity threshold or an unsigned artifact under content trust.
+- code: VIOLATE_FOREIGN_KEY_CONSTRAINT
+  http_status: 412
+  title: Referential integrity violation
+  remediation: Remove the dependent resources first.
+- code: DIGEST_INVALID
+  http_status: 400
+  title: Provided digest did not match the uploaded content
+- code: MANIFEST_INVALID
+  http_status: 400
+  title: Manifest is invalid or unsupported
+- code: UNSUPPORTED
+  http_status: 400
+  title: Operation or digest algorithm is unsupported
+- code: REQUEST_ENTITY_TOO_LARGE
+  http_status: 413
+  title: Request entity too large
+- code: ChallengesUnsupportedCode
+  http_status: 401
+  title: Authentication challenge scheme is unsupported
+  note: Internal code, surfaced when a registry token challenge cannot be satisfied.
+http_status_coverage:
+  '400': 121
+  '401': 193
+  '403': 174
+  '404': 117
+  '405': 3
+  '409': 24
+  '412': 11
+  '415': 1
+  '422': 10
+  '500': 202
+  note: Counts are the number of the 203 published operations declaring each status.
+counts:
+  codes: 17
+  statuses: 10

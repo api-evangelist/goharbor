@@ -1,0 +1,107 @@
+generated: '2026-09-12'
+method: probed
+source: live HTTPS probes of every host this record knows, 2026-09-12
+description: >-
+  Well-known discovery probe for Harbor. Every named path was requested on the project
+  website (goharbor.io / www.goharbor.io), on the public demo instance (demo.goharbor.io)
+  and on the community registry host. NOTHING was found: goharbor.io answers 404 with its
+  Hugo 404 page, and demo.goharbor.io answers HTTP 200 with the Harbor Angular SPA shell
+  (826 bytes of <!DOCTYPE html>) for EVERY /.well-known/* path — a single-page-app
+  catch-all, not a document. Those 200s are recorded as misses, and no WellKnown or
+  SecurityTxt pointer is emitted. Note that a self-hosted product cannot publish
+  /.well-known/ documents on its users' instances; the only hosts Harbor itself controls
+  are the project site and its own demo/registry deployments.
+hosts:
+- host: goharbor.io
+  documents:
+  - path: /llms.txt
+    status: 404
+    file: null
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+- host: www.goharbor.io
+  documents:
+  - path: /llms.txt
+    status: 404
+    file: null
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+- host: demo.goharbor.io
+  note: >-
+    Every path below returned HTTP 200 with the identical 826-byte Harbor portal SPA shell
+    (text/html). Treated as a MISS, not a hit — no document is served.
+  documents:
+  - path: /llms.txt
+    status: 200
+    file: null
+    result: spa-shell
+  - path: /.well-known/security.txt
+    status: 200
+    file: null
+    result: spa-shell
+  - path: /.well-known/openid-configuration
+    status: 200
+    file: null
+    result: spa-shell
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    file: null
+    result: spa-shell
+  - path: /.well-known/api-catalog
+    status: 200
+    file: null
+    result: spa-shell
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    file: null
+    result: spa-shell
+  - path: /.well-known/agent-card.json
+    status: 200
+    file: null
+    result: spa-shell
+  - path: /.well-known/agent.json
+    status: 200
+    file: null
+    result: spa-shell
+summary:
+  hits: 0
+  spa_shell_false_positives: 8
+  pointer_emitted: false

@@ -1,0 +1,402 @@
+generated: '2026-09-12'
+method: derived
+source: openapi/_original/goharbor-harbor-api-v2.0-swagger.yml
+provider: Harbor
+providerId: goharbor
+description: Entity-relationship graph derived from the 153 definitions in Harbor's own api/v2.0/swagger.yaml.
+  Harbor's data core is a four-level containment chain — Project holds Repositories, a Repository holds
+  Artifacts, an Artifact carries Tags, Labels, Accessories (signatures, SBOMs) and scan/SBOM overviews
+  — with Registry, ReplicationPolicy, RetentionPolicy, WebhookPolicy, Robot and Quota hanging off Project
+  or off the system root. Identifiers are integers (project_id, repository_id, artifact_id); artifacts
+  are additionally addressed by OCI digest or tag through the path parameter `reference`.
+root: Project
+identifier_style: integer surrogate ids (project_id, repository_id, artifact_id, robot_id) plus OCI digests
+  and human path names (project_name, repository_name, reference)
+counts:
+  definitions_in_spec: 153
+  entities_mapped: 33
+entities:
+- name: Project
+  description: null
+  fields: 14
+  identifier: null
+  relationships:
+  - type: belongs_to
+    target: project
+    via: project_id
+  - type: belongs_to
+    target: owner
+    via: owner_id
+  - type: belongs_to
+    target: registry
+    via: registry_id
+  - type: belongs_to
+    target: current_user_role
+    via: current_user_role_id
+  - type: has_one
+    target: ProjectMetadata
+    via: metadata
+  - type: has_one
+    target: CVEAllowlist
+    via: cve_allowlist
+- name: ProjectSummary
+  description: null
+  fields: 8
+  identifier: null
+  relationships:
+  - type: has_one
+    target: ProjectSummaryQuota
+    via: quota
+  - type: has_one
+    target: Registry
+    via: registry
+- name: ProjectMetadata
+  description: null
+  fields: 15
+  identifier: null
+  relationships:
+  - type: belongs_to
+    target: retention
+    via: retention_id
+- name: ProjectMember
+  description: null
+  fields: 3
+  identifier: null
+  relationships:
+  - type: belongs_to
+    target: role
+    via: role_id
+  - type: has_one
+    target: UserEntity
+    via: member_user
+  - type: has_one
+    target: UserGroup
+    via: member_group
+- name: Repository
+  description: null
+  fields: 8
+  identifier: id
+  relationships:
+  - type: belongs_to
+    target: project
+    via: project_id
+- name: Artifact
+  description: null
+  fields: 23
+  identifier: id
+  relationships:
+  - type: belongs_to
+    target: project
+    via: project_id
+  - type: belongs_to
+    target: repository
+    via: repository_id
+  - type: has_one
+    target: ExtraAttrs
+    via: extra_attrs
+  - type: has_one
+    target: Annotations
+    via: annotations
+  - type: has_many
+    target: Reference
+    via: references
+  - type: has_many
+    target: Tag
+    via: tags
+  - type: has_one
+    target: AdditionLinks
+    via: addition_links
+  - type: has_many
+    target: Label
+    via: labels
+  - type: has_one
+    target: ScanOverview
+    via: scan_overview
+  - type: has_one
+    target: SBOMOverview
+    via: sbom_overview
+  - type: has_many
+    target: Accessory
+    via: accessories
+  - type: has_many
+    target: Accessory
+    via: inherited_accessories
+- name: Tag
+  description: null
+  fields: 7
+  identifier: id
+  relationships:
+  - type: belongs_to
+    target: repository
+    via: repository_id
+  - type: belongs_to
+    target: artifact
+    via: artifact_id
+- name: Label
+  description: null
+  fields: 8
+  identifier: id
+  relationships:
+  - type: belongs_to
+    target: project
+    via: project_id
+- name: Accessory
+  description: The accessory of the artifact
+  fields: 10
+  identifier: id
+  relationships:
+  - type: belongs_to
+    target: artifact
+    via: artifact_id
+  - type: belongs_to
+    target: subject_artifact
+    via: subject_artifact_id
+- name: Robot
+  description: null
+  fields: 14
+  identifier: id
+  relationships:
+  - type: has_many
+    target: RobotPermission
+    via: permissions
+- name: RobotPermission
+  description: null
+  fields: 3
+  identifier: null
+  relationships:
+  - type: has_many
+    target: Access
+    via: access
+- name: UserResp
+  description: null
+  fields: 10
+  identifier: null
+  relationships:
+  - type: belongs_to
+    target: user
+    via: user_id
+  - type: has_one
+    target: OIDCUserInfo
+    via: oidc_user_meta
+- name: UserGroup
+  description: null
+  fields: 4
+  identifier: id
+- name: Quota
+  description: The quota object
+  fields: 6
+  identifier: id
+  relationships:
+  - type: has_one
+    target: QuotaRefObject
+    via: ref
+  - type: has_one
+    target: ResourceList
+    via: hard
+  - type: has_one
+    target: ResourceList
+    via: used
+- name: Registry
+  description: null
+  fields: 11
+  identifier: id
+  relationships:
+  - type: has_one
+    target: RegistryCredential
+    via: credential
+- name: ReplicationPolicy
+  description: null
+  fields: 18
+  identifier: id
+  relationships:
+  - type: has_one
+    target: Registry
+    via: src_registry
+  - type: has_one
+    target: Registry
+    via: dest_registry
+  - type: has_one
+    target: ReplicationTrigger
+    via: trigger
+  - type: has_many
+    target: ReplicationFilter
+    via: filters
+- name: ReplicationExecution
+  description: The replication execution
+  fields: 12
+  identifier: id
+  relationships:
+  - type: belongs_to
+    target: policy
+    via: policy_id
+- name: ReplicationTask
+  description: The replication task
+  fields: 10
+  identifier: id
+  relationships:
+  - type: belongs_to
+    target: execution
+    via: execution_id
+  - type: belongs_to
+    target: job
+    via: job_id
+- name: RetentionPolicy
+  description: retention policy
+  fields: 5
+  identifier: id
+  relationships:
+  - type: has_many
+    target: RetentionRule
+    via: rules
+  - type: has_one
+    target: RetentionRuleTrigger
+    via: trigger
+  - type: has_one
+    target: RetentionPolicyScope
+    via: scope
+- name: RetentionExecution
+  description: null
+  fields: 7
+  identifier: id
+  relationships:
+  - type: belongs_to
+    target: policy
+    via: policy_id
+- name: WebhookPolicy
+  description: The webhook policy object
+  fields: 10
+  identifier: id
+  relationships:
+  - type: belongs_to
+    target: project
+    via: project_id
+  - type: has_many
+    target: WebhookTargetObject
+    via: targets
+- name: AuditLog
+  description: null
+  fields: 6
+  identifier: id
+- name: ScannerRegistration
+  description: Registration represents a named configuration for invoking a scanner via its adapter.
+  fields: 17
+  identifier: null
+- name: ImmutableRule
+  description: null
+  fields: 8
+  identifier: id
+  relationships:
+  - type: has_many
+    target: ImmutableSelector
+    via: tag_selectors
+- name: Execution
+  description: null
+  fields: 10
+  identifier: id
+  relationships:
+  - type: belongs_to
+    target: vendor
+    via: vendor_id
+  - type: has_one
+    target: Metrics
+    via: metrics
+  - type: has_one
+    target: ExtraAttrs
+    via: extra_attrs
+- name: Task
+  description: null
+  fields: 10
+  identifier: id
+  relationships:
+  - type: belongs_to
+    target: execution
+    via: execution_id
+  - type: has_one
+    target: ExtraAttrs
+    via: extra_attrs
+- name: SecuritySummary
+  description: the security summary
+  fields: 12
+  identifier: null
+  relationships:
+  - type: has_many
+    target: DangerousCVE
+    via: dangerous_cves
+  - type: has_many
+    target: DangerousArtifact
+    via: dangerous_artifacts
+- name: VulnerabilityItem
+  description: the vulnerability item info
+  fields: 13
+  identifier: null
+  relationships:
+  - type: belongs_to
+    target: project
+    via: project_id
+  - type: belongs_to
+    target: cve
+    via: cve_id
+- name: PreheatPolicy
+  description: null
+  fields: 12
+  identifier: id
+  relationships:
+  - type: belongs_to
+    target: project
+    via: project_id
+  - type: belongs_to
+    target: provider
+    via: provider_id
+- name: CVEAllowlist
+  description: The CVE Allowlist for system or project
+  fields: 6
+  identifier: id
+  relationships:
+  - type: belongs_to
+    target: project
+    via: project_id
+  - type: has_many
+    target: CVEAllowlistItem
+    via: items
+- name: NativeReportSummary
+  description: The summary for the native report
+  fields: 9
+  identifier: null
+  relationships:
+  - type: belongs_to
+    target: report
+    via: report_id
+  - type: has_one
+    target: VulnerabilitySummary
+    via: summary
+  - type: has_one
+    target: Scanner
+    via: scanner
+- name: SBOMOverview
+  description: The generate SBOM overview information
+  fields: 7
+  identifier: null
+  relationships:
+  - type: belongs_to
+    target: report
+    via: report_id
+  - type: has_one
+    target: Scanner
+    via: scanner
+- name: Errors
+  description: The error array that describe the errors got during the handling of request
+  fields: 1
+  identifier: null
+  relationships:
+  - type: has_many
+    target: Error
+    via: errors
+containment:
+- Project > Repository > Artifact > Tag
+- Artifact > Accessory (cosign signature, SBOM)
+- Artifact > Label
+- Project > WebhookPolicy > Execution > Task
+- ReplicationPolicy > ReplicationExecution > ReplicationTask
+- RetentionPolicy > RetentionExecution > RetentionTask
+- Robot > RobotPermission > Access
+note: Derived mechanically from $ref links and *_id fields; nothing was added that is not in the spec.

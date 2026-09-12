@@ -1,0 +1,97 @@
+generated: '2026-09-12'
+method: searched
+source: >-
+  https://github.com/goharbor/harbor/blob/main/RELEASES.md ,
+  https://github.com/goharbor/harbor/releases ,
+  https://status.goharbor.io ,
+  https://goharbor.io/docs/2.15.0/administration/upgrade/ ,
+  openapi/_original/goharbor-harbor-api-v2.0-swagger.yml
+provider: Harbor
+providerId: goharbor
+description: >-
+  Harbor publishes a written versioning and release policy (RELEASES.md), a three-release
+  support matrix, an upgrade compatibility rule, and a public status page for the services
+  the project itself operates. What it does not publish is an API deprecation policy: the
+  contract marks individual operations deprecated but states no sunset date and emits no
+  Deprecation/Sunset headers.
+versioning:
+  scheme: semver
+  pattern: <major>.<minor>.<patch>
+  prereleases: '-rc1, -rc2, … built from the release branch'
+  api_version: v2.0
+  api_version_in: uri-path (/api/v2.0)
+  current_release: v2.15.2
+  current_release_date: '2026-07-02'
+  latest_prerelease: v2.15.3-rc1
+  latest_prerelease_date: '2026-09-11'
+  docs: https://github.com/goharbor/harbor/blob/main/RELEASES.md
+cadence:
+  minor: approximately every 3 months
+  patch: monthly for the most recent minor release; on demand for the two prior minors, driven by severity
+  branch_pattern: release-<major>.<minor>.0
+support:
+  policy: The project maintains release branches for the three most recent minor releases; each minor release is maintained for approximately 9 months.
+  supported_versions_as_published:
+  - Harbor v2.13.x
+  - Harbor v2.12.x
+  - Harbor v2.11.x
+  note: >-
+    The support matrix in RELEASES.md still names 2.11–2.13 while the current release is
+    2.15.2 — the table has not been updated to the rolling window the same document
+    describes. Recorded as published, with the discrepancy noted.
+  upgrade_policy: >-
+    Patch releases are always compatible within their minor. Only the two previous minor
+    releases may upgrade directly into the current minor (2.1.0 and 2.2.0 → 2.3.0; 2.0.0 →
+    2.3.0 is not supported and must step through 2.2.0).
+  upgrade_docs: https://goharbor.io/docs/2.15.0/administration/upgrade/
+deprecation:
+  policy_published: true
+  policy_style: in-contract
+  policy_url: https://github.com/goharbor/harbor/blob/main/RELEASES.md
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  note: >-
+    Harbor marks operations `deprecated: true` in its own published contract and labels
+    superseded operations in their summary text, but publishes no removal date, no
+    Sunset/Deprecation response headers and no separate deprecation policy page. Removal is
+    governed only by the semver + 9-month support window above.
+  deprecated_operations:
+  - operationId: LastTrigger
+    path: GET /projects/{project_name_or_id}/webhook/lasttrigger
+    replacement: null
+  - operationId: ListWebhookJobs
+    path: GET /projects/{project_name_or_id}/webhook/jobs
+    replacement: ListExecutionsOfWebhookPolicy / ListTasksOfWebhookExecution
+  - operationId: getLatestScheduledScanAllMetrics
+    path: GET /scans/schedule/metrics
+    replacement: getLatestScanAllMetrics
+  - operationId: getLogs
+    path: GET /projects/{project_name}/logs
+    replacement: getLogExts (GET /projects/{project_name}/auditlog-exts)
+    note: Marked "(deprecated)" in the operation summary rather than with the deprecated flag.
+  source: openapi/_original/goharbor-harbor-api-v2.0-swagger.yml
+status_page:
+  url: https://status.goharbor.io
+  status: 200
+  provider: hosted status page ("CNCF Harbor status")
+  components:
+  - registry.goharbor.io
+  - demo.goharbor.io
+  uptime_published: '99.994% (registry.goharbor.io, as displayed 2026-09-12)'
+  subscriptions: [email, RSS, Atom, JSON, webhook, Slack]
+  note: >-
+    The status page covers the services the Harbor project itself runs — the community
+    registry and the public demo. A self-hosted Harbor deployment's availability is the
+    operator's, which is why this is the only availability surface the project can publish.
+sla:
+  published: false
+  note: Apache-2.0 open source, self-hosted. No commercial SLA; the LICENSE disclaims warranty.
+changelog: changelog/goharbor-changelog.yml
+roadmap:
+  url: https://github.com/goharbor/harbor/blob/main/ROADMAP.md
+  board: https://github.com/orgs/goharbor/projects/1
+  note: ROADMAP.md points at the project board as the live view; its own table is stamped "Last Updated June 2022".
+security_releases:
+  policy: https://github.com/goharbor/harbor/blob/main/SECURITY.md
+  backport_window: fixes backported to the three most recent minor release branches, severity permitting

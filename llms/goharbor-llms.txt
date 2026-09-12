@@ -1,0 +1,70 @@
+# Harbor
+
+> Harbor is an open source, CNCF-hosted container registry that stores, signs and scans OCI
+> artifacts. It is self-hosted under Apache-2.0 — there is no vendor-operated API endpoint;
+> every base URL below is the operator's own deployment. Harbor exposes a 203-operation REST
+> API (v2.0), an OCI Distribution registry API, per-project webhooks, an official CLI and a
+> Terraform provider.
+
+Generated 2026-09-12 by API Evangelist from this repository's artifacts and from Harbor's own
+published sources. Harbor does not publish an llms.txt of its own (GET https://goharbor.io/llms.txt
+returned 404 on 2026-09-12), so this file is GENERATED, not harvested.
+
+## API
+
+- [Harbor v2.0 REST API (swagger.yaml)](https://raw.githubusercontent.com/goharbor/harbor/main/api/v2.0/swagger.yaml): The complete first-party contract. Swagger 2.0, 135 paths, 203 operations, 153 definitions. Base path /api/v2.0.
+- [Harbor Scanner Adapter API](https://raw.githubusercontent.com/goharbor/pluggable-scanner-spec/master/api/spec/scanner-adapter-openapi-v1.2.yaml): OpenAPI 3.0 contract a scanner vendor implements to plug into Harbor (/metadata, /scan, /scan/{id}/report).
+- [View the Harbor REST API](https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/): Every Harbor instance serves a live Swagger UI at https://<instance>/devcenter-api-2.0.
+- Base URL: https://{host}/api/v2.0 — {host} is your Harbor instance.
+- Auth: HTTP Basic. A Harbor user, a robot account (name + secret), or an OIDC-issued CLI secret.
+- Pagination: page + page_size; responses carry X-Total-Count and an RFC 8288 Link header.
+- Tracing: send and read X-Request-Id on every call; Harbor's own Spectral ruleset requires it.
+- Errors: {"errors":[{"code":"NOT_FOUND","message":"..."}]} — 17 documented codes, not RFC 9457.
+- Idempotency: none published. Repeating a create returns 409 CONFLICT where names are unique.
+
+## Docs
+
+- [Documentation (2.15.0)](https://goharbor.io/docs/2.15.0/): Install, administration, and working with projects.
+- [Installation and configuration](https://goharbor.io/docs/2.15.0/install-config/)
+- [Configuring authentication](https://goharbor.io/docs/2.15.0/administration/configure-authentication/): database, LDAP/AD, and OIDC.
+- [System robot accounts + permission reference](https://goharbor.io/docs/2.15.0/administration/robot-accounts/): the full <action>:<resource> permission table and the API operations each unlocks.
+- [Project robot accounts](https://goharbor.io/docs/2.15.0/working-with-projects/project-configuration/create-robot-accounts/)
+- [Configure webhook notifications](https://goharbor.io/docs/2.15.0/working-with-projects/project-configuration/configure-webhooks/): 10 event types, Default or CloudEvents 1.0 payloads.
+- [Project quotas](https://goharbor.io/docs/2.15.0/administration/configure-project-quotas/)
+- [Garbage collection](https://goharbor.io/docs/2.15.0/administration/garbage-collection/)
+- [Backup and restore with Velero](https://goharbor.io/docs/2.15.0/administration/backup-restore/)
+- [Vulnerability scanning](https://goharbor.io/docs/2.15.0/administration/vulnerability-scanning/)
+- [SBOM generation](https://goharbor.io/docs/2.15.0/administration/sbom-integration/)
+- [Harbor CLI documentation](https://goharbor.io/cli-docs/)
+
+## Tools
+
+- [Harbor CLI](https://github.com/goharbor/harbor-cli): official, v0.0.26 (2026-08-18). brew install harbor-cli, container image, .deb/.rpm/.apk, APT repo, go install.
+- [go-client](https://github.com/goharbor/go-client): official Go API client, v0.213.1 (2025-06-25).
+- [Terraform provider](https://registry.terraform.io/providers/goharbor/harbor/latest): official, 3.12.4 (2026-08-11).
+- [Helm chart](https://github.com/goharbor/harbor-helm): official deployment chart, https://helm.goharbor.io.
+- No first-party MCP server exists. No agent card is published.
+
+## Project
+
+- [Website](https://goharbor.io/)
+- [GitHub organization](https://github.com/goharbor)
+- [Source](https://github.com/goharbor/harbor) — Apache-2.0
+- [Releases](https://github.com/goharbor/harbor/releases) — current v2.15.2 (2026-07-02)
+- [Versioning and release policy](https://github.com/goharbor/harbor/blob/main/RELEASES.md) — semver, ~3-month minors, three-release support window
+- [Security policy](https://github.com/goharbor/harbor/blob/main/SECURITY.md) — private disclosure via GitHub advisories, 5 business day acknowledgement
+- [Roadmap](https://github.com/goharbor/harbor/blob/main/ROADMAP.md) and [project board](https://github.com/orgs/goharbor/projects/1)
+- [Status page](https://status.goharbor.io) — covers registry.goharbor.io and demo.goharbor.io
+- [Community](https://goharbor.io/community/) and [Slack](https://cloud-native.slack.com/messages/harbor)
+- [Blog](https://goharbor.io/blog/)
+
+## Try it
+
+- [Public demo instance](https://demo.goharbor.io): self-registration is open; anonymous GETs to /api/v2.0/health and /api/v2.0/projects work today.
+- [API explorer on the demo](https://demo.goharbor.io/devcenter-api-2.0)
+
+## Optional
+
+- [OpenSSF Best Practices badge](https://www.bestpractices.dev/projects/2095): silver.
+- [Scanner plugin specification](https://github.com/goharbor/pluggable-scanner-spec)
+- No pricing: Harbor is free and self-hosted. No published rate limits.
