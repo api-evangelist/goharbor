@@ -162,34 +162,6 @@ apis:
     url: https://goharbor.io/docs/2.15.0/administration/vulnerability-scanning/
   - type: SourceCode
     url: https://github.com/goharbor/pluggable-scanner-spec
-- aid: goharbor:goharbor-auditlog-api
-  name: GoHarbor Auditlog API
-  description: The auditlog API from GoHarbor — 3 operation(s) for auditlog.
-  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
-  baseURL: https://{host}/api/v2.0
-  tags:
-  - auditlog
-  properties:
-  - type: OpenAPI
-    url: openapi/goharbor-auditlog-api-openapi.yml
-  - type: Documentation
-    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
-  - type: SourceCode
-    url: https://github.com/goharbor/harbor
-  - type: Documentation
-    url: https://goharbor.io/docs/2.15.0/
-  - type: APIReference
-    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
-  - type: DataModel
-    url: data-model/goharbor-data-model.yml
-  - type: ErrorCatalog
-    url: errors/goharbor-problem-types.yml
-  - type: Webhooks
-    url: asyncapi/goharbor-webhooks.yml
-  - type: Documentation
-    url: https://goharbor.io/docs/2.15.0/administration/vulnerability-scanning/
-  - type: SourceCode
-    url: https://github.com/goharbor/pluggable-scanner-spec
 - aid: goharbor:goharbor-configure-api
   name: GoHarbor Configure API
   description: The configure API from GoHarbor — 2 operation(s) for configure.
@@ -284,34 +256,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/goharbor-immutable-api-openapi.yml
-  - type: Documentation
-    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
-  - type: SourceCode
-    url: https://github.com/goharbor/harbor
-  - type: Documentation
-    url: https://goharbor.io/docs/2.15.0/
-  - type: APIReference
-    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
-  - type: DataModel
-    url: data-model/goharbor-data-model.yml
-  - type: ErrorCatalog
-    url: errors/goharbor-problem-types.yml
-  - type: Webhooks
-    url: asyncapi/goharbor-webhooks.yml
-  - type: Documentation
-    url: https://goharbor.io/docs/2.15.0/administration/vulnerability-scanning/
-  - type: SourceCode
-    url: https://github.com/goharbor/pluggable-scanner-spec
-- aid: goharbor:goharbor-jobservice-api
-  name: GoHarbor Jobservice API
-  description: The jobservice API from GoHarbor — 6 operation(s) for jobservice.
-  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
-  baseURL: https://{host}/api/v2.0
-  tags:
-  - jobservice
-  properties:
-  - type: OpenAPI
-    url: openapi/goharbor-jobservice-api-openapi.yml
   - type: Documentation
     url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
@@ -946,34 +890,6 @@ apis:
     url: https://goharbor.io/docs/2.15.0/administration/vulnerability-scanning/
   - type: SourceCode
     url: https://github.com/goharbor/pluggable-scanner-spec
-- aid: goharbor:goharbor-systeminfo-api
-  name: GoHarbor Systeminfo API
-  description: The systeminfo API from GoHarbor — 3 operation(s) for systeminfo.
-  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
-  baseURL: https://{host}/api/v2.0
-  tags:
-  - systeminfo
-  properties:
-  - type: OpenAPI
-    url: openapi/goharbor-systeminfo-api-openapi.yml
-  - type: Documentation
-    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
-  - type: SourceCode
-    url: https://github.com/goharbor/harbor
-  - type: Documentation
-    url: https://goharbor.io/docs/2.15.0/
-  - type: APIReference
-    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
-  - type: DataModel
-    url: data-model/goharbor-data-model.yml
-  - type: ErrorCatalog
-    url: errors/goharbor-problem-types.yml
-  - type: Webhooks
-    url: asyncapi/goharbor-webhooks.yml
-  - type: Documentation
-    url: https://goharbor.io/docs/2.15.0/administration/vulnerability-scanning/
-  - type: SourceCode
-    url: https://github.com/goharbor/pluggable-scanner-spec
 - aid: goharbor:goharbor-user-api
   name: GoHarbor User API
   description: The user API from GoHarbor — 8 operation(s) for user.
@@ -984,34 +900,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/goharbor-user-api-openapi.yml
-  - type: Documentation
-    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
-  - type: SourceCode
-    url: https://github.com/goharbor/harbor
-  - type: Documentation
-    url: https://goharbor.io/docs/2.15.0/
-  - type: APIReference
-    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
-  - type: DataModel
-    url: data-model/goharbor-data-model.yml
-  - type: ErrorCatalog
-    url: errors/goharbor-problem-types.yml
-  - type: Webhooks
-    url: asyncapi/goharbor-webhooks.yml
-  - type: Documentation
-    url: https://goharbor.io/docs/2.15.0/administration/vulnerability-scanning/
-  - type: SourceCode
-    url: https://github.com/goharbor/pluggable-scanner-spec
-- aid: goharbor:goharbor-usergroup-api
-  name: GoHarbor Usergroup API
-  description: The usergroup API from GoHarbor — 3 operation(s) for usergroup.
-  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
-  baseURL: https://{host}/api/v2.0
-  tags:
-  - usergroup
-  properties:
-  - type: OpenAPI
-    url: openapi/goharbor-usergroup-api-openapi.yml
   - type: Documentation
     url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
@@ -1068,6 +956,118 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/goharbor-webhookjob-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/
+  - type: APIReference
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  - type: DataModel
+    url: data-model/goharbor-data-model.yml
+  - type: ErrorCatalog
+    url: errors/goharbor-problem-types.yml
+  - type: Webhooks
+    url: asyncapi/goharbor-webhooks.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/administration/vulnerability-scanning/
+  - type: SourceCode
+    url: https://github.com/goharbor/pluggable-scanner-spec
+- aid: goharbor:goharbor-audit-log-api
+  name: GoHarbor Audit Log API
+  description: The Audit Log API from GoHarbor — 3 operation(s) for audit log.
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
+  tags:
+  - Audit Log
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-audit-log-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/
+  - type: APIReference
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  - type: DataModel
+    url: data-model/goharbor-data-model.yml
+  - type: ErrorCatalog
+    url: errors/goharbor-problem-types.yml
+  - type: Webhooks
+    url: asyncapi/goharbor-webhooks.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/administration/vulnerability-scanning/
+  - type: SourceCode
+    url: https://github.com/goharbor/pluggable-scanner-spec
+- aid: goharbor:goharbor-job-service-api
+  name: GoHarbor Job Service API
+  description: The Job Service API from GoHarbor — 6 operation(s) for job service.
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
+  tags:
+  - Job Service
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-job-service-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/
+  - type: APIReference
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  - type: DataModel
+    url: data-model/goharbor-data-model.yml
+  - type: ErrorCatalog
+    url: errors/goharbor-problem-types.yml
+  - type: Webhooks
+    url: asyncapi/goharbor-webhooks.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/administration/vulnerability-scanning/
+  - type: SourceCode
+    url: https://github.com/goharbor/pluggable-scanner-spec
+- aid: goharbor:goharbor-system-info-api
+  name: GoHarbor System Info API
+  description: The System Info API from GoHarbor — 3 operation(s) for system info.
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
+  tags:
+  - System Info
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-system-info-api-openapi.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  - type: SourceCode
+    url: https://github.com/goharbor/harbor
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/
+  - type: APIReference
+    url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  - type: DataModel
+    url: data-model/goharbor-data-model.yml
+  - type: ErrorCatalog
+    url: errors/goharbor-problem-types.yml
+  - type: Webhooks
+    url: asyncapi/goharbor-webhooks.yml
+  - type: Documentation
+    url: https://goharbor.io/docs/2.15.0/administration/vulnerability-scanning/
+  - type: SourceCode
+    url: https://github.com/goharbor/pluggable-scanner-spec
+- aid: goharbor:goharbor-user-group-api
+  name: GoHarbor User Group API
+  description: The User Group API from GoHarbor — 3 operation(s) for user group.
+  humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
+  baseURL: https://{host}/api/v2.0
+  tags:
+  - User Group
+  properties:
+  - type: OpenAPI
+    url: openapi/goharbor-user-group-api-openapi.yml
   - type: Documentation
     url: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   - type: SourceCode
