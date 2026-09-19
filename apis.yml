@@ -140,6 +140,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Artifact
+  tags_raw:
   - artifact
   properties:
   - type: OpenAPI
@@ -168,6 +170,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Configure
+  tags_raw:
   - configure
   properties:
   - type: OpenAPI
@@ -196,6 +200,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Gc
+  tags_raw:
   - gc
   properties:
   - type: OpenAPI
@@ -224,6 +230,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Icon
+  tags_raw:
   - icon
   properties:
   - type: OpenAPI
@@ -252,6 +260,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Immutable
+  tags_raw:
   - immutable
   properties:
   - type: OpenAPI
@@ -280,6 +290,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Label
+  tags_raw:
   - label
   properties:
   - type: OpenAPI
@@ -308,6 +320,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - LDAP
+  tags_raw:
   - Ldap
   properties:
   - type: OpenAPI
@@ -336,6 +350,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Member
+  tags_raw:
   - member
   properties:
   - type: OpenAPI
@@ -364,6 +380,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - OIDC
+  tags_raw:
   - oidc
   properties:
   - type: OpenAPI
@@ -392,6 +410,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Permissions
+  tags_raw:
   - permissions
   properties:
   - type: OpenAPI
@@ -420,6 +440,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Ping
+  tags_raw:
   - ping
   properties:
   - type: OpenAPI
@@ -476,6 +498,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Project
+  tags_raw:
   - project
   properties:
   - type: OpenAPI
@@ -504,6 +528,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Project-Metadata
+  tags_raw:
   - projectMetadata
   properties:
   - type: OpenAPI
@@ -532,6 +558,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Purge
+  tags_raw:
   - purge
   properties:
   - type: OpenAPI
@@ -560,6 +588,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Quota
+  tags_raw:
   - quota
   properties:
   - type: OpenAPI
@@ -588,6 +618,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Registry
+  tags_raw:
   - registry
   properties:
   - type: OpenAPI
@@ -616,6 +648,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Repository
+  tags_raw:
   - repository
   properties:
   - type: OpenAPI
@@ -672,6 +706,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Robot
+  tags_raw:
   - robot
   properties:
   - type: OpenAPI
@@ -727,7 +763,8 @@ apis:
   description: The scanAll API from GoHarbor — 4 operation(s) for scanall.
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
-  tags:
+  tags: []
+  tags_raw:
   - scanAll
   properties:
   - type: OpenAPI
@@ -756,6 +793,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Scanner
+  tags_raw:
   - scanner
   properties:
   - type: OpenAPI
@@ -784,6 +823,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Schedule
+  tags_raw:
   - schedule
   properties:
   - type: OpenAPI
@@ -896,6 +937,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - User
+  tags_raw:
   - user
   properties:
   - type: OpenAPI
@@ -924,6 +967,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Webhook
+  tags_raw:
   - webhook
   properties:
   - type: OpenAPI
@@ -980,6 +1025,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Audit Logs
+  tags_raw:
   - Audit Log
   properties:
   - type: OpenAPI
@@ -1064,6 +1111,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - UserGroup
+  tags_raw:
   - User Group
   properties:
   - type: OpenAPI
