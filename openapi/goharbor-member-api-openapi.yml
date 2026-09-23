@@ -1,0 +1,399 @@
+openapi: 3.2.0
+info:
+  title: Harbor Member API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: Member
+paths:
+  /projects/{project_name_or_id}/members:
+    get:
+      summary: Get all project member information
+      operationId: listProjectMembers
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - name: entityname
+        in: query
+        description: The entity name to search.
+        schema:
+          type: string
+      tags:
+      - Member
+      responses:
+        '200':
+          description: Get project members successfully.
+          headers:
+            X-Total-Count:
+              description: The total count of members
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectMemberEntity'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      summary: Create project member
+      operationId: createProjectMember
+      description: Create project member relationship, the member can be one of the user_member and group_member, The user_member need to specify user_id or username. If the user already exist in harbor DB, specify the user_id, If does not exist in harbor DB, it will SearchAndOnBoard the user. The group_member need to specify id or ldap_group_dn. If the group already exist in harbor DB. specify the user group's id, If does not exist, it will SearchAndOnBoard the group.
+      tags:
+      - Member
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      responses:
+        '201':
+          description: Project member created successfully.
+          headers:
+            Location:
+              description: The URL of the created resource
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectMember'
+  /projects/{project_name_or_id}/members/{mid}:
+    get:
+      summary: Get the project member information
+      operationId: getProjectMember
+      tags:
+      - Member
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      - name: mid
+        in: path
+        required: true
+        description: The member ID
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Project member retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectMemberEntity'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      summary: Update project member
+      description: Update project member relationship
+      operationId: updateProjectMember
+      tags:
+      - Member
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      - name: mid
+        in: path
+        required: true
+        description: Member ID.
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleRequest'
+    delete:
+      summary: Delete project member
+      description: Remove the specified project member from the project.
+      operationId: deleteProjectMember
+      tags:
+      - Member
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      - name: mid
+        in: path
+        required: true
+        description: Member ID.
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  schemas:
+    UserGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the user group
+        group_name:
+          type: string
+          description: The name of the user group
+        group_type:
+          type: integer
+          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
+        ldap_group_dn:
+          type: string
+          description: The DN of the LDAP group if group type is 1 (LDAP group).
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    ProjectMemberEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: the project member id
+        project_id:
+          type: integer
+          description: the project id
+        entity_name:
+          type: string
+          description: the name of the group member.
+        role_name:
+          type: string
+          description: the name of the role
+        role_id:
+          type: integer
+          description: the role id
+        entity_id:
+          type: integer
+          description: the id of entity, if the member is a user, it is user_id in user table. if the member is a user group, it is the user group's ID in user_group table.
+        entity_type:
+          type: string
+          description: the entity's type, u for user entity, g for group entity.
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    UserEntity:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          description: The ID of the user.
+        username:
+          type: string
+          description: The name of the user.
+    ProjectMember:
+      type: object
+      properties:
+        role_id:
+          type: integer
+          description: The role id 1 for projectAdmin, 2 for developer, 3 for guest, 4 for maintainer
+        member_user:
+          $ref: '#/components/schemas/UserEntity'
+        member_group:
+          $ref: '#/components/schemas/UserGroup'
+    RoleRequest:
+      type: object
+      properties:
+        role_id:
+          type: integer
+          description: The role id 1 for projectAdmin, 2 for developer, 3 for guest, 4 for maintainer
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '409':
+      description: Conflict. The resource already exists or the current state prevents the operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    isResourceName:
+      name: X-Is-Resource-Name
+      description: The flag to indicate whether the parameter which supports both name and id in the path is the name of the resource. When the X-Is-Resource-Name is false and the parameter can be converted to an integer, the parameter will be as an id, otherwise, it will be as a name.
+      in: header
+      required: false
+      schema:
+        type: boolean
+        default: false
+    projectNameOrId:
+      name: project_name_or_id
+      in: path
+      description: The name or id of the project
+      required: true
+      schema:
+        type: string
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

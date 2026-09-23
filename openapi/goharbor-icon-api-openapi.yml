@@ -1,0 +1,123 @@
+openapi: 3.2.0
+info:
+  title: Harbor Icon API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: Icon
+paths:
+  /icons/{digest}:
+    get:
+      summary: Get artifact icon
+      description: Get the artifact icon with the specified digest. As the original icon image is resized and encoded before returning, the parameter "digest" in the path doesn't match the hash of the returned content
+      tags:
+      - Icon
+      operationId: getIcon
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/digest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Icon'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  schemas:
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    Icon:
+      type: object
+      properties:
+        content-type:
+          type: string
+          description: The content type of the icon
+        content:
+          type: string
+          description: The base64 encoded content of the icon
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    digest:
+      name: digest
+      in: path
+      description: The digest of the resource
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

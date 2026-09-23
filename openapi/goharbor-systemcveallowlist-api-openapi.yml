@@ -1,0 +1,161 @@
+openapi: 3.2.0
+info:
+  title: Harbor System CVE Allowlist API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: SystemCVEAllowlist
+paths:
+  /system/CVEAllowlist:
+    get:
+      summary: Get the system level allowlist of CVE
+      description: Get the system level allowlist of CVE. This API can be called by all authenticated users.
+      operationId: getSystemCVEAllowlist
+      tags:
+      - SystemCVEAllowlist
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      responses:
+        '200':
+          description: Successfully retrieved the CVE allowlist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CVEAllowlist'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      summary: Update the system level allowlist of CVE
+      description: This API overwrites the system level allowlist of CVE with the list in request body. Only system Admin has permission to call this API.
+      operationId: putSystemCVEAllowlist
+      tags:
+      - SystemCVEAllowlist
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      responses:
+        '200':
+          description: Successfully updated the CVE allowlist.
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CVEAllowlist'
+        description: The allowlist with new content
+components:
+  responses:
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  schemas:
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    CVEAllowlistItem:
+      type: object
+      description: The item in CVE allowlist
+      properties:
+        cve_id:
+          type: string
+          description: The ID of the CVE, such as "CVE-2019-10164"
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    CVEAllowlist:
+      type: object
+      description: The CVE Allowlist for system or project
+      properties:
+        id:
+          type: integer
+          description: ID of the allowlist
+        project_id:
+          type: integer
+          description: ID of the project which the allowlist belongs to.  For system level allowlist this attribute is zero.
+        expires_at:
+          type:
+          - integer
+          - 'null'
+          description: the time for expiration of the allowlist, in the form of seconds since epoch.  This is an optional attribute, if it's not set the CVE allowlist does not expire.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CVEAllowlistItem'
+        creation_time:
+          type: string
+          format: date-time
+          description: The creation time of the allowlist.
+        update_time:
+          type: string
+          format: date-time
+          description: The update time of the allowlist.
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

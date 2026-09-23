@@ -1,0 +1,672 @@
+openapi: 3.2.0
+info:
+  title: Harbor User API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: User
+paths:
+  /users:
+    get:
+      summary: List users
+      description: List users registered in Harbor. Requires system admin privileges.
+      tags:
+      - User
+      operationId: listUsers
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: return the list of users.
+          headers:
+            X-Total-Count:
+              description: The total count of users
+              schema:
+                type: integer
+            Link:
+              description: Link to previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResp'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      summary: Create a local user
+      description: This API can be used only when the authentication mode is for local DB. When self registration is disabled.
+      tags:
+      - User
+      operationId: createUser
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      responses:
+        '201':
+          $ref: '#/components/responses/201'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: When self-registration is disabled, only admins can create users. When self-registration is enabled, user creation via API is not permitted (UI only).
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '409':
+          description: Username already exists. A user with the same username already exists in Harbor.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreationReq'
+        description: The new user
+        required: true
+  /users/current:
+    get:
+      summary: Get current user info
+      description: Get the profile of the currently authenticated user. Returns 412 if the caller is authenticated via a non-local context such as a robot account.
+      tags:
+      - User
+      operationId: getCurrentUserInfo
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      responses:
+        '200':
+          description: Get current user information successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResp'
+        '401':
+          $ref: '#/components/responses/401'
+        '412':
+          $ref: '#/components/responses/412'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/search:
+    get:
+      summary: Search users by username
+      description: This endpoint is to search the users by username. It's open for all authenticated requests.
+      tags:
+      - User
+      operationId: searchUsers
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - name: username
+        in: query
+        required: true
+        description: Username for filtering results.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Search users by username successfully.
+          headers:
+            X-Total-Count:
+              description: The total count of available items
+              schema:
+                type: integer
+            Link:
+              description: Link to previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSearchRespItem'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{user_id}:
+    get:
+      summary: Get a user's profile
+      description: Get profile information for the specified user. System admins can access any user; regular users can only access their own profile.
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int
+      tags:
+      - User
+      operationId: getUser
+      responses:
+        '200':
+          description: Get user's info successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResp'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      summary: Update user's profile
+      description: Update profile fields (email, realname, comment) of a user. Regular users can only update their own profile.
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: user_id
+        in: path
+        required: true
+        description: Registered user ID
+        schema:
+          type: integer
+          format: int
+      tags:
+      - User
+      operationId: updateUserProfile
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+        description: Only email, realname and comment can be modified.
+        required: true
+    delete:
+      summary: Mark a registered user as be removed
+      description: This endpoint let administrator of Harbor mark a registered user as removed.It actually won't be deleted from DB.
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: user_id
+        in: path
+        required: true
+        description: User ID for marking as to be removed.
+        schema:
+          type: integer
+          format: int
+      tags:
+      - User
+      operationId: deleteUser
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          description: User not found. No user exists with the specified ID.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{user_id}/sysadmin:
+    put:
+      summary: Update a registered user to change to be an administrator of Harbor
+      description: Promote or demote a registered user to/from Harbor system administrator. Requires system admin privileges.
+      tags:
+      - User
+      operationId: setUserSysAdmin
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSysAdminFlag'
+        description: Toggle a user to admin or not.
+        required: true
+  /users/{user_id}/password:
+    put:
+      summary: Change the password on a user that already exists
+      description: This endpoint is for user to update password. Users with the admin role can change any user's password. Regular users can change only their own password.
+      tags:
+      - User
+      operationId: updateUserPassword
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          description: Invalid user ID; Password does not meet requirement
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: The caller does not have permission to update the password of the user with given ID, or the old password in request body is not correct.
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordReq'
+        description: Password to be updated, the attribute 'old_password' is optional when the API is called by the system administrator.
+        required: true
+  /users/current/permissions:
+    get:
+      summary: Get current user permissions
+      description: Get the RBAC permission list for the currently authenticated user, optionally filtered by scope.
+      tags:
+      - User
+      operationId: getCurrentUserPermissions
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: scope
+        in: query
+        required: false
+        description: The scope for the permission
+        schema:
+          type: string
+      - name: relative
+        in: query
+        required: false
+        description: 'If true, the resources in the response are relative to the scope,
+
+          eg for resource ''/project/1/repository'' if relative is ''true'' then the resource in response will be ''repository''.
+
+          '
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Get current user permission successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Permission'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{user_id}/cli_secret:
+    put:
+      summary: Set CLI secret for a user
+      description: This endpoint let user generate a new CLI secret for himself. This API only works when auth mode is set to 'OIDC'. Once this API returns with successful status, the old secret will be invalid, as there will be only one CLI secret for a user.
+      tags:
+      - User
+      operationId: setCliSecret
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: user_id
+        in: path
+        required: true
+        description: User ID
+        schema:
+          type: integer
+          format: int
+      responses:
+        '200':
+          description: The secret is successfully updated
+        '400':
+          description: Invalid user ID.  Or user is not onboarded via OIDC authentication. Or the secret does not meet the standard.
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '412':
+          description: The auth mode of the system is not "oidc_auth", or the user is not onboarded via OIDC AuthN.
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OIDCCliSecretReq'
+        required: true
+components:
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '412':
+      description: Precondition failed. A dependency or policy check failed; inspect the `errors` array for the constraint that was violated.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '201':
+      description: Created
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+        Location:
+          description: The location of the resource
+          schema:
+            type: string
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  schemas:
+    OIDCUserInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int
+          description: the ID of the OIDC info record
+        user_id:
+          type: integer
+          format: int
+          description: the ID of the user
+        subiss:
+          type: string
+          description: the concatenation of sub and issuer in the ID token
+        secret:
+          type: string
+          description: the secret of the OIDC user that can be used for CLI to push/pull artifacts
+        creation_time:
+          type: string
+          format: date-time
+          description: The creation time of the OIDC user info record.
+        update_time:
+          type: string
+          format: date-time
+          description: The update time of the OIDC user info record.
+    UserProfile:
+      type: object
+      properties:
+        email:
+          type: string
+        realname:
+          type: string
+        comment:
+          type: string
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    UserResp:
+      type: object
+      properties:
+        email:
+          type: string
+        realname:
+          type: string
+        comment:
+          type: string
+        user_id:
+          type: integer
+          format: int
+        username:
+          type: string
+        sysadmin_flag:
+          type: boolean
+          x-omitempty: false
+        admin_role_in_auth:
+          type: boolean
+          x-omitempty: false
+          description: indicate the admin privilege is grant by authenticator (LDAP), is always false unless it is the current login user
+        oidc_user_meta:
+          $ref: '#/components/schemas/OIDCUserInfo'
+        creation_time:
+          type: string
+          format: date-time
+          description: The creation time of the user.
+        update_time:
+          type: string
+          format: date-time
+          description: The update time of the user.
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    UserCreationReq:
+      type: object
+      properties:
+        email:
+          type: string
+          maxLength: 255
+        realname:
+          type: string
+        comment:
+          type: string
+        password:
+          type: string
+        username:
+          type: string
+          maxLength: 255
+    OIDCCliSecretReq:
+      type: object
+      properties:
+        secret:
+          type: string
+          description: The new secret
+    PasswordReq:
+      type: object
+      properties:
+        old_password:
+          type: string
+          description: The user's existing password.
+        new_password:
+          type: string
+          description: New password for marking as to be updated.
+    Permission:
+      type: object
+      properties:
+        resource:
+          type: string
+          description: The permission resoruce
+        action:
+          type: string
+          description: The permission action
+    UserSearchRespItem:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int
+          description: The ID of the user.
+        username:
+          type: string
+    UserSysAdminFlag:
+      type: object
+      properties:
+        sysadmin_flag:
+          type: boolean
+          description: true-admin, false-not admin.
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    sort:
+      name: sort
+      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
+      in: query
+      required: false
+      schema:
+        type: string
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
+      required: false
+      schema:
+        type: string
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

@@ -1,0 +1,141 @@
+openapi: 3.2.0
+info:
+  title: Harbor Permissions API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: Permissions
+paths:
+  /permissions:
+    get:
+      summary: Get system or project level permissions info
+      operationId: getPermissions
+      description: This endpoint is for retrieving resource and action info that only provides for admin user(system admin and project admin).
+      tags:
+      - Permissions
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      responses:
+        '200':
+          description: Get permissions successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Permissions'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  schemas:
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    Permissions:
+      type: object
+      properties:
+        system:
+          type: array
+          description: The system level permissions
+          items:
+            $ref: '#/components/schemas/Permission'
+        project:
+          type: array
+          description: The project level permissions
+          items:
+            $ref: '#/components/schemas/Permission'
+    Permission:
+      type: object
+      properties:
+        resource:
+          type: string
+          description: The permission resoruce
+        action:
+          type: string
+          description: The permission action
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+  responses:
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

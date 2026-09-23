@@ -1,0 +1,447 @@
+openapi: 3.2.0
+info:
+  title: Harbor Gc API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: Gc
+paths:
+  /system/gc:
+    get:
+      summary: Get gc results
+      description: This endpoint let user get gc execution history.
+      tags:
+      - Gc
+      operationId: getGCHistory
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: Get gc results successfully.
+          headers:
+            X-Total-Count:
+              description: The total count of history
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GCHistory'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+  /system/gc/{gc_id}:
+    get:
+      summary: Get gc status
+      description: This endpoint let user get gc status filtered by specific ID.
+      operationId: getGC
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/gcId'
+      tags:
+      - Gc
+      responses:
+        '200':
+          description: Get gc results successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GCHistory'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      summary: Stop the specific GC execution
+      description: Stop the GC execution specified by ID
+      tags:
+      - Gc
+      operationId: stopGC
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/gcId'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /system/gc/{gc_id}/log:
+    get:
+      summary: Get gc job log
+      description: This endpoint let user get gc job logs filtered by specific ID.
+      operationId: getGCLog
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/gcId'
+      tags:
+      - Gc
+      responses:
+        '200':
+          description: Get successfully.
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /system/gc/schedule:
+    get:
+      summary: Get gc's schedule
+      description: This endpoint is for get schedule of gc job.
+      operationId: getGCSchedule
+      tags:
+      - Gc
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      responses:
+        '200':
+          description: Get gc's schedule.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GCHistory'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      summary: Create a gc schedule
+      description: This endpoint is for update gc schedule.
+      operationId: createGCSchedule
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      tags:
+      - Gc
+      responses:
+        '201':
+          $ref: '#/components/responses/201'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schedule'
+        description: Updates of gc's schedule.
+        required: true
+    put:
+      summary: Update gc's schedule
+      description: This endpoint is for update gc schedule.
+      operationId: updateGCSchedule
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      tags:
+      - Gc
+      responses:
+        '200':
+          description: Updated gc's schedule successfully.
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schedule'
+        description: Updates of gc's schedule.
+        required: true
+components:
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '201':
+      description: Created
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+        Location:
+          description: The location of the resource
+          schema:
+            type: string
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '409':
+      description: Conflict. The resource already exists or the current state prevents the operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    gcId:
+      name: gc_id
+      in: path
+      description: The ID of the gc log
+      required: true
+      schema:
+        type: integer
+        format: int64
+    sort:
+      name: sort
+      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
+      in: query
+      required: false
+      schema:
+        type: string
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
+      required: false
+      schema:
+        type: string
+  schemas:
+    GCHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: the id of gc job.
+        job_name:
+          type: string
+          description: the job name of gc job.
+        job_kind:
+          type: string
+          description: the job kind of gc job.
+        job_parameters:
+          type: string
+          description: the job parameters of gc job.
+        schedule:
+          $ref: '#/components/schemas/ScheduleObj'
+        job_status:
+          type: string
+          description: the status of gc job.
+        deleted:
+          type: boolean
+          description: if gc job was deleted.
+        creation_time:
+          type: string
+          format: date-time
+          description: the creation time of gc job.
+        update_time:
+          type: string
+          format: date-time
+          description: the update time of gc job.
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    Schedule:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The id of the schedule.
+          readOnly: true
+        status:
+          type: string
+          description: The status of the schedule.
+          readOnly: true
+        creation_time:
+          type: string
+          format: date-time
+          description: the creation time of the schedule.
+          readOnly: true
+        update_time:
+          type: string
+          format: date-time
+          description: the update time of the schedule.
+          readOnly: true
+        schedule:
+          $ref: '#/components/schemas/ScheduleObj'
+        parameters:
+          type: object
+          description: The parameters of schedule job
+          additionalProperties:
+            type: object
+    ScheduleObj:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'The schedule type. The valid values are ''Hourly'', ''Daily'', ''Weekly'', ''Custom'', ''Manual'', ''None'' and ''Schedule''.
+
+            ''Manual'' means to trigger it right away, ''Schedule'' means to trigger it by a specified cron schedule and
+
+            ''None'' means to cancel the schedule.
+
+            '
+          enum:
+          - Hourly
+          - Daily
+          - Weekly
+          - Custom
+          - Manual
+          - None
+          - Schedule
+        cron:
+          type: string
+          description: A cron expression, a time-based job scheduler.
+        next_scheduled_time:
+          type: string
+          format: date-time
+          description: The next time to schedule to run the job.
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

@@ -1,0 +1,1200 @@
+openapi: 3.2.0
+info:
+  title: Goharbor Scanner API
+  version: '1.0'
+  description: 'Operations tagged scanner across 2 of this provider''s published API definitions: goharbor-harbor-api-v2.0-swagger.yml, goharbor-scanner-api-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+- url: /api/v1
+tags:
+- name: Scanner
+paths:
+  /scanners:
+    get:
+      summary: List scanner registrations
+      description: Returns a list of currently configured scanner registrations.
+      tags:
+      - Scanner
+      operationId: listScanners
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: A list of scanner registrations.
+          headers:
+            X-Total-Count:
+              description: The total count of available items
+              schema:
+                type: integer
+            Link:
+              description: Link to previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScannerRegistration'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+      - basic: []
+      - {}
+    post:
+      summary: Create a scanner registration
+      description: Creats a new scanner registration with the given data.
+      tags:
+      - Scanner
+      operationId: createScanner
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      responses:
+        '201':
+          description: Created successfully
+          headers:
+            Location:
+              description: The URL of the created resource
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScannerRegistrationReq'
+        description: A scanner registration to be created.
+        required: true
+      security:
+      - basic: []
+      - {}
+    servers:
+    - url: http://localhost/api/v2.0
+    - url: https://localhost/api/v2.0
+  /scanners/ping:
+    post:
+      summary: Tests scanner registration settings
+      description: Pings scanner adapter to test endpoint URL and authorization settings.
+      tags:
+      - Scanner
+      operationId: pingScanner
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScannerRegistrationSettings'
+        description: A scanner registration settings to be tested.
+        required: true
+      security:
+      - basic: []
+      - {}
+    servers:
+    - url: http://localhost/api/v2.0
+    - url: https://localhost/api/v2.0
+  /scanners/{registration_id}:
+    get:
+      summary: Get a scanner registration details
+      description: Retruns the details of the specified scanner registration.
+      tags:
+      - Scanner
+      operationId: getScanner
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: registration_id
+        in: path
+        description: The scanner registration identifer.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The details of the scanner registration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScannerRegistration'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+      - basic: []
+      - {}
+    put:
+      summary: Update a scanner registration
+      description: 'Updates the specified scanner registration.
+
+
+        If `access_credential` is omitted or empty in the request body and the registration still uses
+
+        an authentication type that requires a credential (Basic, Bearer, or APIKey), the existing stored
+
+        credential is left unchanged. Send a non-empty `access_credential` to set or rotate the secret.'
+      tags:
+      - Scanner
+      operationId: updateScanner
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: registration_id
+        in: path
+        description: The scanner registration identifier.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScannerRegistrationReq'
+        description: A scanner registration to be updated.
+        required: true
+      security:
+      - basic: []
+      - {}
+    delete:
+      summary: Delete a scanner registration
+      description: Deletes the specified scanner registration.
+      tags:
+      - Scanner
+      operationId: deleteScanner
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: registration_id
+        in: path
+        description: The scanner registration identifier.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Deleted successfully and return the deleted registration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScannerRegistration'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+      - basic: []
+      - {}
+    patch:
+      summary: Set system default scanner registration
+      description: Set the specified scanner registration as the system default one.
+      tags:
+      - Scanner
+      operationId: setScannerAsDefault
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: registration_id
+        in: path
+        description: The scanner registration identifier.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully set the specified scanner registration as system default
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IsDefault'
+        required: true
+      security:
+      - basic: []
+      - {}
+    servers:
+    - url: http://localhost/api/v2.0
+    - url: https://localhost/api/v2.0
+  /scanners/{registration_id}/metadata:
+    get:
+      summary: Get the metadata of the specified scanner registration
+      description: Get the metadata of the specified scanner registration, including the capabilities and customized properties.
+      tags:
+      - Scanner
+      operationId: getScannerMetadata
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: registration_id
+        in: path
+        required: true
+        description: The scanner registration identifier.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The metadata of the specified scanner adapter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScannerAdapterMetadata'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+      - basic: []
+      - {}
+    servers:
+    - url: http://localhost/api/v2.0
+    - url: https://localhost/api/v2.0
+  /metadata:
+    servers:
+    - url: /api/v1
+    get:
+      tags:
+      - Scanner
+      summary: Get scanner metadata
+      description: 'Used to fetch scanner''s metadata and capabilities. The operation is invoked to build an index of scanners
+
+        capable of analysing a given type of artifacts and making sure that scan reports can be parsed and rendered.'
+      operationId: GetMetadata
+      responses:
+        200:
+          description: Scanner's metadata and capabilities
+          content:
+            application/vnd.scanner.adapter.metadata+json; version=1.1:
+              schema:
+                $ref: '#/components/schemas/ScannerAdapterMetadata_2'
+            application/vnd.scanner.adapter.metadata+json; version=1.0:
+              schema:
+                $ref: '#/components/schemas/ScannerAdapterMetadata_2'
+        500:
+          description: Internal server error
+          content:
+            application/vnd.scanner.adapter.error+json; version=1.0:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BasicAuth: []
+      - BearerAuth: []
+  /scan:
+    servers:
+    - url: /api/v1
+    post:
+      tags:
+      - Scanner
+      summary: Accept artifact scanning request
+      description: 'A non-blocking operation which enqueues a scan job and returns immediately. It returns a unique
+
+        identifier which can be used to poll for generated scan reports by Harbor.'
+      operationId: AcceptScanRequest
+      requestBody:
+        description: 'Contains data required to pull the given artifact and save it for scanning in the file system or any other
+
+          location accessible to the scanner.
+
+          '
+        content:
+          application/vnd.scanner.adapter.scan.request+json; version=1.1:
+            schema:
+              $ref: '#/components/schemas/ScanRequest'
+          application/vnd.scanner.adapter.scan.request+json; version=1.0:
+            schema:
+              $ref: '#/components/schemas/ScanRequest'
+      responses:
+        202:
+          description: Scan request accepted
+          content:
+            application/vnd.scanner.adapter.scan.response+json; version=1.0:
+              schema:
+                $ref: '#/components/schemas/ScanResponse'
+        400:
+          description: Received invalid JSON or the wrong type of JSON values
+          content:
+            application/vnd.scanner.adapter.error+json; version=1.0:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        422:
+          description: Received invalid field
+          content:
+            application/vnd.scanner.adapter.error+json; version=1.0:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Internal server error
+          content:
+            application/vnd.scanner.adapter.error+json; version=1.0:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        501:
+          description: The scanner has no capability to handle the scan request
+          content:
+            application/vnd.scanner.adapter.error+json; version=1.0:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BasicAuth: []
+      - BearerAuth: []
+  /scan/{scan_request_id}/report:
+    servers:
+    - url: /api/v1
+    get:
+      tags:
+      - Scanner
+      summary: Get scan report
+      description: 'Get a scan report for the given scan request identifier.
+
+
+        Clients will periodically poll this operation and check `$response.status` until its value equals `200` or `500`.'
+      operationId: GetScanReport
+      parameters:
+      - name: scan_request_id
+        in: path
+        description: The identifier of the corresponding scan request
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/ScanRequestId'
+      - name: Accept
+        in: header
+        schema:
+          type: string
+        example: application/vnd.security.vulnerability.report; version=1.1
+      - name: sbom_media_type
+        in: query
+        description: media_type specifies the format of SBOM to be retrieved from the scanner adapter, it should either SPDX SBOM or CycloneDX
+        required: false
+        schema:
+          type: string
+        enum:
+        - application/spdx+json
+        - application/vnd.cyclonedx+json
+      responses:
+        200:
+          description: Scan report
+          content:
+            application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0:
+              schema:
+                $ref: '#/components/schemas/HarborVulnerabilityReport'
+            application/vnd.security.vulnerability.report; version=1.1:
+              schema:
+                $ref: '#/components/schemas/HarborVulnerabilityReport'
+            application/vnd.scanner.adapter.vuln.report.raw:
+              schema:
+                type: string
+                example: "{\n  \"vendor_specific\": \"vulnerabilities_report\"\n}\n"
+            application/vnd.security.sbom.report+json; version=1.0:
+              schema:
+                $ref: '#/components/schemas/HarborSbomReport'
+        302:
+          description: Status indicating the scan report is being generated and the request should be retried.
+          headers:
+            Refresh-After:
+              description: Indicates the interval after which the request should be retried.
+              schema:
+                type: integer
+        400:
+          description: Bad request from the client to query report of a "/scan" request. For example, querying SBOM generation report, but not passing query parameter (?sbom_media_type=xxx), or the key/value of the query parameter is not valid, it should return 400.
+          content:
+            application/vnd.scanner.adapter.error+json; version=1.0:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        404:
+          description: Cannot find the corresponding scan request identifier
+        500:
+          description: Internal server error
+          content:
+            application/vnd.scanner.adapter.error+json; version=1.0:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        501:
+          description: The scanner has no capability to handle the mime type
+          content:
+            application/vnd.scanner.adapter.error+json; version=1.0:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BasicAuth: []
+      - BearerAuth: []
+components:
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    sort:
+      name: sort
+      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
+      in: query
+      required: false
+      schema:
+        type: string
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
+      required: false
+      schema:
+        type: string
+  schemas:
+    ScannerAdapterMetadata:
+      type: object
+      description: The metadata info of the scanner adapter
+      properties:
+        scanner:
+          $ref: '#/components/schemas/Scanner'
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScannerCapability'
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            harbor.scanner-adapter/registry-authorization-type: Bearer
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    ScannerRegistration:
+      type: object
+      description: 'Registration represents a named configuration for invoking a scanner via its adapter.
+
+        '
+      properties:
+        uuid:
+          type: string
+          description: The unique identifier of this registration.
+        name:
+          type: string
+          example: Trivy
+          description: The name of this registration.
+        description:
+          type: string
+          description: An optional description of this registration.
+          example: 'A free-to-use tool that scans container images for package vulnerabilities.
+
+            '
+          x-omitempty: false
+        url:
+          type: string
+          format: uri
+          description: A base URL of the scanner adapter
+          example: http://harbor-scanner-trivy:8080
+        disabled:
+          type: boolean
+          default: false
+          description: Indicate whether the registration is enabled or not
+          x-omitempty: false
+        is_default:
+          type: boolean
+          default: false
+          description: Indicate if the registration is set as the system default one
+          x-omitempty: false
+        auth:
+          type: string
+          default: ''
+          description: 'Specify what authentication approach is adopted for the HTTP communications.
+
+            Supported types Basic", "Bearer" and api key header "X-ScannerAdapter-API-Key"
+
+            '
+          example: Bearer
+          x-omitempty: false
+        access_credential:
+          type: string
+          description: 'An optional value of the HTTP Authorization header sent with each request to the Scanner Adapter API.
+
+            '
+          example: 'Bearer: JWTTOKENGOESHERE'
+          x-omitempty: false
+        skip_certVerify:
+          type: boolean
+          default: false
+          description: Indicate if skip the certificate verification when sending HTTP requests
+          x-omitempty: false
+        use_internal_addr:
+          type: boolean
+          default: false
+          description: Indicate whether use internal registry addr for the scanner to pull content or not
+          x-omitempty: false
+        create_time:
+          type: string
+          format: date-time
+          description: The creation time of this registration
+        update_time:
+          type: string
+          format: date-time
+          description: The update time of this registration
+        adapter:
+          type: string
+          description: Optional property to describe the name of the scanner registration
+          example: Trivy
+        vendor:
+          type: string
+          description: Optional property to describe the vendor of the scanner registration
+          example: CentOS
+        version:
+          type: string
+          description: Optional property to describe the version of the scanner registration
+          example: 1.0.1
+        health:
+          type: string
+          default: ''
+          description: Indicate the healthy of the registration
+          example: healthy
+        capabilities:
+          type: object
+          description: Indicates the capabilities of the scanner, e.g. support_vulnerability or support_sbom.
+          additionalProperties: true
+          example:
+            support_vulnerability: true
+            support_sbom: true
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    IsDefault:
+      type: object
+      properties:
+        is_default:
+          type: boolean
+          description: A flag indicating whether a scanner registration is default.
+    ScannerRegistrationSettings:
+      type: object
+      required:
+      - name
+      - url
+      properties:
+        name:
+          type: string
+          description: The name of this registration
+          example: Trivy
+        url:
+          type: string
+          format: uri
+          description: A base URL of the scanner adapter.
+          example: http://harbor-scanner-trivy:8080
+        auth:
+          type: string
+          default: ''
+          description: 'Specify what authentication approach is adopted for the HTTP communications.
+
+            Supported types Basic", "Bearer" and api key header "X-ScannerAdapter-API-Key"
+
+            '
+        access_credential:
+          type: string
+          description: 'An optional value of the HTTP Authorization header sent with each request to the Scanner Adapter API.
+
+            '
+          example: 'Bearer: JWTTOKENGOESHERE'
+    Scanner:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the scanner
+          example: Trivy
+        vendor:
+          type: string
+          description: Name of the scanner provider
+          example: Aqua Security
+        version:
+          type: string
+          description: Version of the scanner adapter
+          example: v0.9.1
+    ScannerRegistrationReq:
+      type: object
+      required:
+      - name
+      - url
+      properties:
+        name:
+          type: string
+          description: The name of this registration
+          example: Trivy
+        description:
+          type: string
+          description: An optional description of this registration.
+          example: 'A free-to-use tool that scans container images for package vulnerabilities.
+
+            '
+        url:
+          type: string
+          format: uri
+          description: A base URL of the scanner adapter.
+          example: http://harbor-scanner-trivy:8080
+        auth:
+          type: string
+          description: 'Specify what authentication approach is adopted for the HTTP communications.
+
+            Supported types Basic", "Bearer" and api key header "X-ScannerAdapter-API-Key"
+
+            '
+          example: Bearer
+        access_credential:
+          type: string
+          description: 'An optional value of the HTTP Authorization header sent with each request to the Scanner Adapter API.
+
+
+            When updating a registration (PUT `/scanners/{registration_id}`), if this field is omitted or empty
+
+            and `auth` is still one of Basic, Bearer, or APIKey, the previously stored credential is kept
+
+            unchanged. Provide a non-empty value to set or rotate the credential. Clearing `auth` removes the
+
+            need for a credential; in that case an empty `access_credential` does not restore the old secret.
+
+            '
+          example: 'Bearer: JWTTOKENGOESHERE'
+        skip_certVerify:
+          type: boolean
+          default: false
+          description: Indicate if skip the certificate verification when sending HTTP requests
+        use_internal_addr:
+          type: boolean
+          default: false
+          description: Indicate whether use internal registry addr for the scanner to pull content or not
+        disabled:
+          type: boolean
+          default: false
+          description: Indicate whether the registration is enabled or not
+    ScannerCapability:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'Specify the type of scanner capability, like vulnerability or sbom
+
+            '
+          x-omitempty: false
+          example: sbom
+        consumes_mime_types:
+          type: array
+          items:
+            type: string
+            example: application/vnd.docker.distribution.manifest.v2+json
+        produces_mime_types:
+          type: array
+          items:
+            type: string
+            example: application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0
+    ScanRequestId:
+      description: 'A unique identifier returned by the [/scan](#/operation/AcceptScanRequest] operations. The format of the
+
+        identifier is not imposed but it should be unique enough to prevent collisons when polling for scan reports.
+
+        '
+      type: string
+      example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    SbomParameters:
+      type: object
+      properties:
+        sbom_media_types:
+          type: array
+          items:
+            type: string
+            enum:
+            - application/spdx+json
+            - application/vnd.cyclonedx+json
+    ScannerCapability_2:
+      description: "Capability consists of the set of recognized artifact MIME types and the set of scanner report MIME types.\n\nFor example, a scanner capable of analyzing Docker images and producing a vulnerabilities report recognizable\nby Harbor web console might be represented with the following capability:\n- consumes MIME types:\n  - `application/vnd.oci.image.manifest.v1+json`\n  - `application/vnd.docker.distribution.manifest.v2+json`\n- produces MIME types:\n  - `application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0`\n\nFor example, a scanner capable of analyzing artifacts and producing a sbom report recognizable\nby Harbor might be represented with the following capability:\n- type: sbom\n- consumes MIME types:\n  - `application/vnd.oci.image.manifest.v1+json`\n  - `application/vnd.docker.distribution.manifest.v2+json`\n- produces MIME types:\n  - `application/vnd.security.sbom.report+json; version=1.0`\n"
+      required:
+      - consumes_mime_types
+      - produces_mime_types
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - vulnerability
+          - sbom
+          description: 'The type of the capability, for example, ''vulnerability'' represents analyzing the artifact then producing the vulnerabilities report,
+
+            ''sbom'' represents generating the corresponding sbom for the artifact which be scanned. In order to the backward and forward compatible,
+
+            the field is optional, we think it''s a original ''vulnerability'' scan if no such field.
+
+            '
+        consumes_mime_types:
+          type: array
+          items:
+            type: string
+          description: 'The set of MIME types of the artifacts supported by the scanner to produce the reports specified in the "produces_mime_types". A given
+
+            mime type should only be present in one capability item.
+
+            '
+          example:
+          - application/vnd.oci.image.manifest.v1+json
+          - application/vnd.docker.distribution.manifest.v2+json
+        produces_mime_types:
+          type: array
+          items:
+            type: string
+          description: 'The set of MIME types of reports generated by the scanner for the consumes_mime_types of the same capability record.
+
+            '
+          example:
+          - application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0
+        additional_attributes:
+          type: object
+          descriptions: The additional attributes for scanner capabilities. If the type is sbom, then it returns supported media types of the SBOM format.
+          example: "{\n  \"sbom_media_types\": [\n    \"application/spdx+json\",\n    \"application/vnd.cyclonedx+json\"\n  ]\n}            \n"
+    Error_2:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Some unexpected error
+    ScannerAdapterMetadata_2:
+      required:
+      - scanner
+      - capabilities
+      type: object
+      properties:
+        scanner:
+          $ref: '#/components/schemas/Scanner_2'
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScannerCapability_2'
+          example: "[\n {\n    \"type\": \"vulnerability\",\n    \"consumes_mime_types\": [\n      \"application/vnd.oci.image.manifest.v1+json\",\n      \"application/vnd.docker.distribution.manifest.v2+json\"\n    ],\n    \"produces_mime_types\": [\n      \"application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0\"\n    ]\n  },\n  {\n    \"type\": \"sbom\",\n    \"consumes_mime_types\": [\n      \"application/vnd.oci.image.manifest.v1+json\",\n      \"application/vnd.docker.distribution.manifest.v2+json\"\n    ],\n    \"produces_mime_types\": [\n      \"application/vnd.security.sbom.report+json; version=1.0\"\n    ],\n    \"additional_attributes\": {\n      \"sbom_media_types\": [\n        \"application/spdx+json\",\n        \"application/vnd.cyclonedx+json\"\n      ]\n    }\n  }\n]\n"
+        properties:
+          $ref: '#/components/schemas/ScannerProperties'
+      description: 'Represents metadata of a Scanner Adapter which allows Harbor to lookup a scanner capabilities
+
+        of scanning a given Artifact stored in its registry and making sure that it
+
+        can interpret a returned result.
+
+        '
+    HarborVulnerabilityReport:
+      type: object
+      properties:
+        generated_at:
+          type: string
+          format: date-time
+        artifact:
+          $ref: '#/components/schemas/Artifact'
+        scanner:
+          $ref: '#/components/schemas/Scanner_2'
+        severity:
+          $ref: '#/components/schemas/Severity'
+        vulnerabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/VulnerabilityItem'
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error_2'
+    Registry:
+      type: object
+      properties:
+        url:
+          type: string
+          description: A base URL or the Docker Registry v2 API.
+          format: url
+          example: https://core.harbor.domain
+        authorization:
+          type: string
+          description: 'An optional value of the HTTP Authorization header sent with each request to the Docker Registry v2 API.
+
+            It''s used to exchange Base64 encoded robot account credentials to a short lived JWT access token which
+
+            allows the underlying scanner to pull the artifact from the Docker Registry.
+
+            '
+          example: Basic BASE64_ENCODED_CREDENTIALS
+    CVSSDetails:
+      type: object
+      properties:
+        score_v3:
+          type: number
+          format: float
+          description: 'The CVSS 3.0 score for the vulnerability.
+
+            '
+          example: 3.2
+        score_v2:
+          type: number
+          format: float
+          description: 'The CVSS 2.0 score for the vulnerability.
+
+            '
+        vector_v3:
+          type: string
+          description: "The CVSS 3.0 vector for the vulnerability. \n"
+          example: CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N
+        vector_v2:
+          type: string
+          description: 'The CVSS 2.0 vector for the vulnerability. The string is of the form AV:L/AC:M/Au:N/C:P/I:N/A:N
+
+            '
+          example: AV:N/AC:L/Au:N/C:N/I:N/A:P
+    ScannerProperties:
+      type: object
+      additionalProperties:
+        type: string
+      example:
+        harbor.scanner-adapter/scanner-type: os-package-vulnerability
+        harbor.scanner-adapter/vulnerability-database-updated-at: '2019-08-13T08:16:33.345Z'
+      description: 'A set of custom properties that can further describe capabilities of a given scanner.
+
+        '
+    ScanRequest:
+      required:
+      - registry
+      - artifact
+      type: object
+      properties:
+        registry:
+          $ref: '#/components/schemas/Registry'
+        artifact:
+          $ref: '#/components/schemas/Artifact'
+        enabled_capabilities:
+          type: array
+          description: Enable which capabilities supported by scanner, for backward compatibility, without this field scanner can be considered to enable all capabilities by default.
+          items:
+            type: object
+            required:
+            - type
+            properties:
+              type:
+                type: string
+                enum:
+                - vulnerability
+                - sbom
+                description: The type of the scan capability.
+                example: sbom
+              produces_mime_types:
+                type: array
+                items:
+                  type: string
+                description: 'The set of MIME types of reports generated by the scanner for the consumes_mime_types of the same capability record, it is a subset or fullset of the
+
+                  produces_mime_types of the capability returned by the metadata API, used for client to fine grained control of the expected report type. It''s a optional
+
+                  field, only applied when client needs to customize it, otherwise the scanner can think it''s a fullset as before behavior if without this field.
+
+                  '
+                example:
+                - application/vnd.security.sbom.report+json; version=1.0
+              parameters:
+                oneOf:
+                - $ref: '#/components/schemas/SbomParameters'
+                description: The additional parameters for the scan request, for the SBOM type, harbor will carry with `sbom_media_types` to specify the expected formats for SBOM content.
+                example: "{\n  \"sbom_media_types\": [\n    \"application/spdx+json\",\n    \"application/vnd.cyclonedx+json\"\n  ]\n}\n"
+    Scanner_2:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the scanner.
+          example: Trivy
+        vendor:
+          type: string
+          description: The name of the scanner's provider.
+          example: Aqua Security
+        version:
+          type: string
+          description: The version of the scanner.
+          example: 0.4.0
+      description: 'Basic scanner properties such as name, vendor, and version.
+
+        '
+    VulnerabilityItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the vulnerability.
+          example: CVE-2017-8283
+        package:
+          type: string
+          description: 'An operating system package containing the vulnerability.
+
+            '
+          example: dpkg
+        version:
+          type: string
+          description: 'The version of the package containing the vulnerability.
+
+            '
+          example: 1.17.27
+        fix_version:
+          type: string
+          description: 'The version of the package containing the fix if available.
+
+            '
+          example: 1.18.0
+        severity:
+          $ref: '#/components/schemas/Severity'
+        description:
+          type: string
+          description: 'The detailed description of the vulnerability.
+
+            '
+          example: 'dpkg-source in dpkg 1.3.0 through 1.18.23 is able to use a non-GNU patch program
+
+            and does not offer a protection mechanism for blank-indented diff hunks, which
+
+            allows remote attackers to conduct directory traversal attacks via a crafted
+
+            Debian source package, as demonstrated by using of dpkg-source on NetBSD.
+
+            '
+        links:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: 'The list of links to the upstream databases with the full description of the vulnerability.
+
+            '
+          format: uri
+          example:
+          - https://security-tracker.debian.org/tracker/CVE-2017-8283
+        preferred_cvss:
+          $ref: '#/components/schemas/CVSSDetails'
+        cwe_ids:
+          type: array
+          items:
+            type: string
+          example:
+          - CWE-476
+          description: 'The Common Weakness Enumeration Identifiers associated with this vulnerability.
+
+            '
+        vendor_attributes:
+          type: object
+          additionalProperties: true
+    Artifact:
+      type: object
+      properties:
+        repository:
+          type: string
+          description: The name of the Docker Registry repository containing the artifact.
+          example: library/mongo
+        digest:
+          type: string
+          description: The artifact's digest, consisting of an algorithm and hex portion.
+          example: sha256:6c3c624b58dbbcd3c0dd82b4c53f04194d1247c6eebdaab7c610cf7d66709b3b
+        tag:
+          type: string
+          description: The artifact's tag
+          example: 3.14-xenial
+        mime_type:
+          type: string
+          description: The MIME type of the artifact.
+          example: application/vnd.docker.distribution.manifest.v2+json
+    Severity:
+      type: string
+      description: "A standard scale for measuring the severity of a vulnerability.\n\n* `Unknown` - either a security problem that has not been assigned to a priority yet or a priority that the\n  scanner did not recognize.\n* `Negligible` - technically a security problem, but is only theoretical in nature, requires a very special\n  situation, has almost no install base, or does no real damage.\n* `Low` - a security problem, but is hard to exploit due to environment, requires a user-assisted attack,\n  a small install base, or does very little damage.\n* `Medium` - a real security problem, and is exploitable for many people. Includes network daemon denial of\n  service attacks, cross-site scripting, and gaining user privileges.\n* `High` - a real problem, exploitable for many people in a default installation. Includes serious remote denial\n  of service, local root privilege escalations, or data loss.\n* `Critical` - a world-burning problem, exploitable for nearly all people in a default installation. Includes\n  remote root privilege escalations, or massive data loss.\n"
+      example: Low
+      enum:
+      - Unknown
+      - Negligible
+      - Low
+      - Medium
+      - High
+      - Critical
+    HarborSbomReport:
+      type: object
+      properties:
+        generated_at:
+          type: string
+          format: date-time
+          description: The time of the report generated.
+        artifact:
+          $ref: '#/components/schemas/Artifact'
+        scanner:
+          $ref: '#/components/schemas/Scanner_2'
+        vendor_attributes:
+          type: object
+          additionalProperties: true
+          description: The additional attributes of the vendor.
+        media_type:
+          type: string
+          enum:
+          - application/spdx+json
+          - application/vnd.cyclonedx+json
+          description: The format of the sbom data.
+        sbom:
+          type: object
+          additionalProperties: true
+          description: The raw data of the sbom generated by the scanner.
+    ScanResponse:
+      required:
+      - id
+      properties:
+        id:
+          $ref: '#/components/schemas/ScanRequestId'
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- goharbor-harbor-api-v2.0-swagger.yml
+- goharbor-scanner-api-openapi.yml

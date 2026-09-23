@@ -1,0 +1,44 @@
+openapi: 3.2.0
+info:
+  title: Harbor Ping API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: Ping
+paths:
+  /ping:
+    get:
+      operationId: getPing
+      summary: Ping Harbor to check if the API server is alive
+      description: This API simply replies a pong to indicate the process to handle API is up, disregarding the health status of dependent components. This path does not require any authentication.
+      tags:
+      - Ping
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      responses:
+        '200':
+          description: The API server is alive
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

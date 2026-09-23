@@ -1,0 +1,317 @@
+openapi: 3.2.0
+info:
+  title: Harbor Ldap API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: LDAP
+paths:
+  /ldap/ping:
+    post:
+      operationId: pingLdap
+      summary: Ping available ldap service
+      description: This endpoint ping the available ldap service for test related configuration parameters.
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      tags:
+      - LDAP
+      responses:
+        '200':
+          description: Ping ldap service successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LdapPingResult'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LdapConf'
+        description: ldap configuration. support input ldap service configuration. If it is a empty request, will load current configuration from the system.
+  /ldap/users/search:
+    get:
+      operationId: searchLdapUser
+      summary: Search available ldap users
+      description: This endpoint searches the available ldap users based on related configuration parameters. Support searched by input ldap configuration, load configuration from the system and specific filter.
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: username
+        in: query
+        required: false
+        description: Registered user ID
+        schema:
+          type: string
+      tags:
+      - LDAP
+      responses:
+        '200':
+          description: Search ldap users successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LdapUser'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+  /ldap/users/import:
+    post:
+      operationId: importLdapUser
+      summary: Import selected available ldap users
+      description: This endpoint adds the selected available ldap users to harbor based on related configuration parameters from the system. System will try to guess the user email address and realname, add to harbor user information. If have errors when import user, will return the list of importing failed uid and the failed reason.
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      tags:
+      - LDAP
+      responses:
+        '200':
+          description: Add ldap users successfully.
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          description: Failed import some users.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LdapFailedImportUser'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LdapImportUsers'
+        description: The uid listed for importing. This list will check users validity of ldap service based on configuration from the system.
+        required: true
+  /ldap/groups/search:
+    get:
+      summary: Search available ldap groups
+      operationId: searchLdapGroup
+      description: This endpoint searches the available ldap groups based on related configuration parameters. support to search by groupname or groupdn.
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: groupname
+        in: query
+        required: false
+        description: Ldap group name
+        schema:
+          type: string
+      - name: groupdn
+        in: query
+        required: false
+        description: The LDAP group DN
+        schema:
+          type: string
+      tags:
+      - LDAP
+      responses:
+        '200':
+          description: Search ldap group successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserGroup'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  schemas:
+    UserGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the user group
+        group_name:
+          type: string
+          description: The name of the user group
+        group_type:
+          type: integer
+          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
+        ldap_group_dn:
+          type: string
+          description: The DN of the LDAP group if group type is 1 (LDAP group).
+    LdapFailedImportUser:
+      type: object
+      properties:
+        uid:
+          type: string
+          description: the uid can't add to system.
+        error:
+          type: string
+          description: fail reason.
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    LdapConf:
+      type: object
+      description: The ldap configure properties
+      properties:
+        ldap_url:
+          type: string
+          description: The url of ldap service.
+        ldap_search_dn:
+          type: string
+          description: The search dn of ldap service.
+        ldap_search_password:
+          type: string
+          description: The search password of ldap service.
+        ldap_base_dn:
+          type: string
+          description: The base dn of ldap service.
+        ldap_filter:
+          type: string
+          description: The serach filter of ldap service.
+        ldap_uid:
+          type: string
+          description: The serach uid from ldap service attributes.
+        ldap_scope:
+          type: integer
+          format: int64
+          description: The serach scope of ldap service.
+        ldap_connection_timeout:
+          type: integer
+          format: int64
+          description: The connect timeout of ldap service(second).
+        ldap_verify_cert:
+          type: boolean
+          description: Verify Ldap server certificate.
+    LdapImportUsers:
+      type: object
+      properties:
+        ldap_uid_list:
+          type: array
+          description: selected uid list
+          items:
+            type: string
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    LdapPingResult:
+      type: object
+      description: The ldap ping result
+      properties:
+        success:
+          type: boolean
+          description: Test success
+        message:
+          type: string
+          description: The ping operation output message.
+    LdapUser:
+      type: object
+      properties:
+        username:
+          type: string
+          description: ldap username.
+        realname:
+          type: string
+          description: The user realname from "uid" or "cn" attribute.
+        email:
+          type: string
+          description: The user email address from "mail" or "email" attribute.
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

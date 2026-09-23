@@ -1,0 +1,377 @@
+openapi: 3.2.0
+info:
+  title: Harbor Usergroup API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: User Group
+paths:
+  /usergroups:
+    get:
+      summary: Get all user groups information
+      description: Get all user groups information, it is open for system admin
+      operationId: listUserGroups
+      tags:
+      - User Group
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - name: ldap_group_dn
+        in: query
+        required: false
+        description: search with ldap group DN
+        schema:
+          type: string
+      - name: group_name
+        in: query
+        required: false
+        description: group name need to search, fuzzy matches
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Get user group successfully.
+          headers:
+            X-Total-Count:
+              description: The total count of available items
+              schema:
+                type: integer
+            Link:
+              description: Link to previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserGroup'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      summary: Create user group
+      description: Create user group information
+      operationId: createUserGroup
+      tags:
+      - User Group
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      responses:
+        '201':
+          description: User group created successfully.
+          headers:
+            Location:
+              description: The URL of the created resource
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserGroup'
+  /usergroups/search:
+    get:
+      summary: Search groups by groupname
+      description: This endpoint is to search groups by group name. It's open for all authenticated requests.
+      tags:
+      - User Group
+      operationId: searchUserGroups
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - name: groupname
+        in: query
+        required: true
+        description: Group name for filtering results.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Search groups successfully.
+          headers:
+            X-Total-Count:
+              description: The total count of available items
+              schema:
+                type: integer
+            Link:
+              description: Link to previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserGroupSearchItem'
+        '401':
+          $ref: '#/components/responses/401'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+  /usergroups/{group_id}:
+    get:
+      summary: Get user group information
+      operationId: getUserGroup
+      tags:
+      - User Group
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: group_id
+        in: path
+        required: true
+        description: Group ID
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: User group get successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGroup'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      summary: Update group information
+      description: Update user group information
+      operationId: updateUserGroup
+      tags:
+      - User Group
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: group_id
+        in: path
+        required: true
+        description: Group ID
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserGroup'
+    delete:
+      summary: Delete user group
+      operationId: deleteUserGroup
+      tags:
+      - User Group
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '409':
+      description: Conflict. The resource already exists or the current state prevents the operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  schemas:
+    UserGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the user group
+        group_name:
+          type: string
+          description: The name of the user group
+        group_type:
+          type: integer
+          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
+        ldap_group_dn:
+          type: string
+          description: The DN of the LDAP group if group type is 1 (LDAP group).
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    UserGroupSearchItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the user group
+        group_name:
+          type: string
+          description: The name of the user group
+        group_type:
+          type: integer
+          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

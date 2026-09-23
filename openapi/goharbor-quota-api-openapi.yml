@@ -1,0 +1,293 @@
+openapi: 3.2.0
+info:
+  title: Harbor Quota API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: Quota
+paths:
+  /quotas:
+    get:
+      summary: List quotas
+      tags:
+      - Quota
+      operationId: listQuotas
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - name: reference
+        in: query
+        description: The reference type of quota.
+        required: false
+        schema:
+          type: string
+      - name: reference_id
+        in: query
+        description: The reference id of quota.
+        required: false
+        schema:
+          type: string
+      - name: sort
+        in: query
+        required: false
+        description: 'Sort method, valid values include:
+
+          ''hard.resource_name'', ''-hard.resource_name'', ''used.resource_name'', ''-used.resource_name''.
+
+          Here ''-'' stands for descending order, resource_name should be the real resource name of the quota.
+
+          '
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully retrieved the quotas.
+          headers:
+            X-Total-Count:
+              description: The total count of access logs
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Quota'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+  /quotas/{id}:
+    get:
+      summary: Get the specified quota
+      tags:
+      - Quota
+      operationId: getQuota
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: id
+        in: path
+        required: true
+        description: Quota ID
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Successfully retrieved the quota.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quota'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      summary: Update the specified quota
+      description: Update hard limits of the specified quota
+      tags:
+      - Quota
+      operationId: updateQuota
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: id
+        in: path
+        required: true
+        description: Quota ID
+        schema:
+          type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuotaUpdateReq'
+        description: The new hard limits for the quota
+        required: true
+components:
+  schemas:
+    Quota:
+      type: object
+      description: The quota object
+      properties:
+        id:
+          type: integer
+          description: ID of the quota
+        ref:
+          $ref: '#/components/schemas/QuotaRefObject'
+          description: The reference object of the quota
+        hard:
+          $ref: '#/components/schemas/ResourceList'
+          description: The hard limits of the quota
+          x-omitempty: false
+        used:
+          $ref: '#/components/schemas/ResourceList'
+          description: The used status of the quota
+          x-omitempty: false
+        creation_time:
+          type: string
+          format: date-time
+          description: the creation time of the quota
+        update_time:
+          type: string
+          format: date-time
+          description: the update time of the quota
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    ResourceList:
+      type: object
+      additionalProperties:
+        type: integer
+        format: int64
+    QuotaUpdateReq:
+      type: object
+      properties:
+        hard:
+          $ref: '#/components/schemas/ResourceList'
+          description: The new hard limits for the quota
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    QuotaRefObject:
+      type: object
+      additionalProperties: {}
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  parameters:
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

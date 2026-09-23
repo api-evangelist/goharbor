@@ -1,58 +1,271 @@
 openapi: 3.2.0
 info:
-  title: Harbor artifacts Scan API
+  title: Harbor Scan API
+  description: These APIs provide services for manipulating Harbor project.
   version: '2.0'
-  description: 'Subset of the Harbor v2.0 REST API for the cloud-native container
-
-    registry. Authenticates with HTTP Basic auth. Full upstream spec
-
-    available at
-
-    https://raw.githubusercontent.com/goharbor/harbor/main/api/v2.0/swagger.yaml
-
-    '
-  contact:
-    name: Harbor
-    url: https://goharbor.io/
 servers:
-- url: https://{host}/api/v2.0
-  description: Harbor instance
-  variables:
-    host:
-      default: harbor.example.com
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
 security:
-- basicAuth: []
+- basic: []
+- {}
 tags:
-- name: scan
+- name: Scan
 paths:
   /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/scan:
     post:
+      summary: Scan the artifact
+      description: Scan the specified artifact
       tags:
-      - scan
-      summary: Trigger an artifact vulnerability scan
+      - Scan
       operationId: scanArtifact
       parameters:
-      - name: project_name
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/reference'
+      responses:
+        '202':
+          $ref: '#/components/responses/202'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          description: Artifact not found. No artifact with the specified reference exists in this repository.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '422':
+          description: The artifact does not support scanning (for example, it is an image index with no directly scannable layers).
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScanType'
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/scan/stop:
+    post:
+      summary: Cancelling a scan job for a particular artifact
+      tags:
+      - Scan
+      operationId: stopScanArtifact
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/reference'
+      responses:
+        '202':
+          $ref: '#/components/responses/202'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScanType'
+        description: 'The scan type: Vulnerabilities, SBOM'
+        required: true
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/scan/{report_id}/log:
+    get:
+      summary: Get the log of the scan report
+      tags:
+      - Scan
+      operationId: getReportLog
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/reference'
+      - name: report_id
         in: path
         required: true
-        schema:
-          type: string
-      - name: repository_name
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: reference
-        in: path
-        required: true
+        description: The report id to get the log
         schema:
           type: string
       responses:
-        '202':
-          description: Accepted
+        '200':
+          description: Successfully get scan log file
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
 components:
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '202':
+      description: Accepted
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '422':
+      description: Unprocessable entity. The request was well-formed but could not be processed (for example, due to validation errors). Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  parameters:
+    projectName:
+      name: project_name
+      in: path
+      description: The name of the project
+      required: true
+      schema:
+        type: string
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    repositoryName:
+      name: repository_name
+      in: path
+      description: The name of the repository. If it contains slash, encode it twice over with URL encoding. e.g. a/b -> a%2Fb -> a%252Fb
+      required: true
+      schema:
+        type: string
+    reference:
+      name: reference
+      in: path
+      description: The reference of the artifact, can be digest or tag
+      required: true
+      schema:
+        type: string
+  schemas:
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    ScanType:
+      type: object
+      properties:
+        scan_type:
+          type: string
+          description: The scan type for the scan request. Two options are currently supported, vulnerability and sbom
+          enum:
+          - vulnerability
+          - sbom
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
   securitySchemes:
-    basicAuth:
+    basic:
       type: http
       scheme: basic
-      description: Harbor user credentials (HTTP Basic)

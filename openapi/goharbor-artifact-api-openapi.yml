@@ -1,0 +1,1233 @@
+openapi: 3.2.0
+info:
+  title: Harbor Artifact API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: Artifact
+paths:
+  /projects/{project_name}/repositories/{repository_name}/artifacts:
+    get:
+      summary: List artifacts
+      description: List artifacts under the specific project and repository. Except the basic properties, the other supported queries in "q" includes "tags=*" to list only tagged artifacts, "tags=nil" to list only untagged artifacts, "tags=~v" to list artifacts whose tag fuzzy matches "v", "tags=v" to list artifact whose tag exactly matches "v", "labels=(id1, id2)" to list artifacts that both labels with id1 and id2 are added to
+      tags:
+      - Artifact
+      operationId: listArtifacts
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/acceptVulnerabilities'
+      - name: with_tag
+        in: query
+        description: Specify whether the tags are included inside the returning artifacts
+        required: false
+        schema:
+          type: boolean
+          default: true
+      - name: with_label
+        in: query
+        description: Specify whether the labels are included inside the returning artifacts
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_scan_overview
+        in: query
+        description: Specify whether the scan overview is included inside the returning artifacts
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_sbom_overview
+        in: query
+        description: Specify whether the SBOM overview is included in returning artifacts, when this option is true, the SBOM overview will be included in the response
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_immutable_status
+        in: query
+        description: Specify whether the immutable status is included inside the tags of the returning artifacts. Only works when setting "with_immutable_status=true"
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_accessory
+        in: query
+        description: Specify whether the accessories are included of the returning artifacts. Only works when setting "with_accessory=true"
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_inherited_accessory
+        in: query
+        description: Specify whether the accessories of the parent OCI index(es) referencing the artifact are included, in the separate inherited_accessories field. Off by default because it costs an extra reference lookup per artifact.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Total-Count:
+              description: The total count of artifacts
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Artifact'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          description: Repository or project not found.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      summary: Copy artifact
+      description: Copy the artifact specified in the "from" parameter to the repository.
+      tags:
+      - Artifact
+      operationId: CopyArtifact
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - name: from
+        in: query
+        description: The artifact from which the new artifact is copied from, the format should be "project/repository:tag" or "project/repository@digest".
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/201'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          description: Source artifact or target repository not found.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '405':
+          $ref: '#/components/responses/405'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}:
+    get:
+      summary: Get the specific artifact
+      description: Get the artifact specified by the reference under the project and repository. The reference can be digest or tag.
+      tags:
+      - Artifact
+      operationId: getArtifact
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/reference'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/acceptVulnerabilities'
+      - name: with_tag
+        in: query
+        description: Specify whether the tags are inclued inside the returning artifacts
+        required: false
+        schema:
+          type: boolean
+          default: true
+      - name: with_label
+        in: query
+        description: Specify whether the labels are inclued inside the returning artifacts
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_scan_overview
+        in: query
+        description: Specify whether the scan overview is inclued inside the returning artifacts
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_sbom_overview
+        in: query
+        description: Specify whether the SBOM overview is included in returning artifact, when this option is true, the SBOM overview will be included in the response
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_accessory
+        in: query
+        description: Specify whether the accessories are included of the returning artifacts.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_inherited_accessory
+        in: query
+        description: Specify whether the accessories of the parent OCI index(es) referencing the artifact are included, in the separate inherited_accessories field. Off by default because it costs an extra reference lookup per artifact.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_signature
+        in: query
+        description: Specify whether the signature is inclued inside the returning artifacts
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_immutable_status
+        in: query
+        description: Specify whether the immutable status is inclued inside the tags of the returning artifacts.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artifact'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          description: Artifact not found. No artifact exists for the given reference in this project and repository.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      summary: Delete the specific artifact
+      description: Delete the artifact specified by the reference under the project and repository. The reference can be digest or tag
+      tags:
+      - Artifact
+      operationId: deleteArtifact
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/reference'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          description: Artifact not found. No artifact with the specified reference exists in this repository.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/tags:
+    post:
+      summary: Create tag
+      description: Create a tag for the specified artifact
+      tags:
+      - Artifact
+      operationId: createTag
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/reference'
+      responses:
+        '201':
+          $ref: '#/components/responses/201'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          description: The artifact specified by the reference does not exist.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '405':
+          $ref: '#/components/responses/405'
+        '409':
+          description: A tag with this name already exists on the artifact.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTag'
+        description: The JSON object of tag.
+        required: true
+    get:
+      summary: List tags
+      description: List tags of the specific artifact
+      tags:
+      - Artifact
+      operationId: listTags
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/reference'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - name: with_immutable_status
+        in: query
+        description: Specify whether the immutable status is included inside the returning tags
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Total-Count:
+              description: The total count of tags
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/tags/{tag_name}:
+    delete:
+      summary: Delete tag
+      description: Delete the tag of the specified artifact
+      tags:
+      - Artifact
+      operationId: deleteTag
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/reference'
+      - $ref: '#/components/parameters/tagName'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          description: Tag not found. The specified tag does not exist on this artifact.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/accessories:
+    get:
+      summary: List accessories
+      description: List accessories of the specific artifact
+      tags:
+      - Artifact
+      operationId: listAccessories
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/reference'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Total-Count:
+              description: The total count of accessories
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Accessory'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/additions/vulnerabilities:
+    get:
+      summary: Get the vulnerabilities addition of the specific artifact
+      description: Get the vulnerabilities addition of the artifact specified by the reference under the project and repository.
+      tags:
+      - Artifact
+      operationId: getVulnerabilitiesAddition
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/reference'
+      - $ref: '#/components/parameters/acceptVulnerabilities'
+      responses:
+        '200':
+          description: Success
+          headers:
+            Content-Type:
+              description: The content type of the vulnerabilities addition
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/additions/{addition}:
+    get:
+      summary: Get the addition of the specific artifact
+      description: Get the addition of the artifact specified by the reference under the project and repository.
+      tags:
+      - Artifact
+      operationId: getAddition
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/reference'
+      - name: addition
+        in: path
+        description: The type of addition.
+        required: true
+        schema:
+          type: string
+          enum:
+          - build_history
+          - values.yaml
+          - readme.md
+          - dependencies
+          - sbom
+          - license
+          - files
+      responses:
+        '200':
+          description: Success
+          headers:
+            Content-Type:
+              description: The content type of the addition
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/labels:
+    post:
+      summary: Add label to artifact
+      description: Add label to the specified artiact.
+      tags:
+      - Artifact
+      operationId: addLabel
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/reference'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Label'
+        description: The label that added to the artifact. Only the ID property is needed.
+        required: true
+  /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/labels/{label_id}:
+    delete:
+      summary: Remove label from artifact
+      description: Remove the label from the specified artiact.
+      tags:
+      - Artifact
+      operationId: removeLabel
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/repositoryName'
+      - $ref: '#/components/parameters/reference'
+      - name: label_id
+        in: path
+        description: The ID of the label that removed from the artifact.
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '201':
+      description: Created
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+        Location:
+          description: The location of the resource
+          schema:
+            type: string
+    '405':
+      description: Method not allowed.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '422':
+      description: Unprocessable entity. The request was well-formed but could not be processed (for example, due to validation errors). Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '409':
+      description: Conflict. The resource already exists or the current state prevents the operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    reference:
+      name: reference
+      in: path
+      description: The reference of the artifact, can be digest or tag
+      required: true
+      schema:
+        type: string
+    projectName:
+      name: project_name
+      in: path
+      description: The name of the project
+      required: true
+      schema:
+        type: string
+    repositoryName:
+      name: repository_name
+      in: path
+      description: The name of the repository. If it contains slash, encode it twice over with URL encoding. e.g. a/b -> a%2Fb -> a%252Fb
+      required: true
+      schema:
+        type: string
+    tagName:
+      name: tag_name
+      in: path
+      description: The name of the tag
+      required: true
+      schema:
+        type: string
+    sort:
+      name: sort
+      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
+      in: query
+      required: false
+      schema:
+        type: string
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    acceptVulnerabilities:
+      name: X-Accept-Vulnerabilities
+      in: header
+      description: 'A comma-separated lists of MIME types for the scan report or scan summary. The first mime type will be used when the report found for it.
+
+        Currently the mime type supports ''application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0'' and ''application/vnd.security.vulnerability.report; version=1.1'''
+      schema:
+        type: string
+        default: application/vnd.security.vulnerability.report; version=1.1, application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
+      required: false
+      schema:
+        type: string
+  schemas:
+    Label:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the label
+        name:
+          type: string
+          description: The name the label
+        description:
+          type: string
+          description: The description the label
+        color:
+          type: string
+          description: The color the label
+        scope:
+          type: string
+          description: The scope the label
+        project_id:
+          type: integer
+          format: int64
+          description: The ID of project that the label belongs to
+        creation_time:
+          type: string
+          format: date-time
+          description: The creation time the label
+        update_time:
+          type: string
+          format: date-time
+          description: The update time of the label
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    NewTag:
+      type: object
+      description: The request body for creating a tag
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: The name of the tag
+    AdditionLink:
+      type: object
+      properties:
+        href:
+          type: string
+          description: The link of the addition
+        absolute:
+          type: boolean
+          x-omitempty: false
+          description: Determine whether the link is an absolute URL or not
+    Platform:
+      type: object
+      properties:
+        architecture:
+          type: string
+          description: The architecture that the artifact applys to
+        os:
+          type: string
+          description: The OS that the artifact applys to
+        '''os.version''':
+          type: string
+          description: The version of the OS that the artifact applys to
+        '''os.features''':
+          type: array
+          description: The features of the OS that the artifact applys to
+          items:
+            type: string
+        variant:
+          type: string
+          description: The variant of the CPU
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    SBOMOverview:
+      type: object
+      description: The generate SBOM overview information
+      properties:
+        start_time:
+          type: string
+          format: date-time
+          description: The start time of the generating sbom report task
+          example: '2006-01-02T14:04:05Z'
+        end_time:
+          type: string
+          format: date-time
+          description: The end time of the generating sbom report task
+          example: '2006-01-02T15:04:05Z'
+        scan_status:
+          type: string
+          description: The status of the generating SBOM task
+        sbom_digest:
+          type: string
+          description: The digest of the generated SBOM accessory
+        report_id:
+          type: string
+          description: id of the native scan report
+          example: 5f62c830-f996-11e9-957f-0242c0a89008
+        duration:
+          type: integer
+          format: int64
+          description: Time in seconds required to create the report
+          example: 300
+        scanner:
+          $ref: '#/components/schemas/Scanner'
+    AdditionLinks:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/AdditionLink'
+    Accessory:
+      type: object
+      description: The accessory of the artifact
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the accessory
+        artifact_id:
+          type: integer
+          format: int64
+          description: The artifact id of the accessory
+          x-omitempty: false
+        subject_artifact_id:
+          type: integer
+          format: int64
+          description: Going to be deprecated, use repo and digest for insteand. The subject artifact id of the accessory.
+        subject_artifact_digest:
+          type: string
+          description: The subject artifact digest of the accessory
+          x-omitempty: false
+        subject_artifact_repo:
+          type: string
+          description: The subject artifact repository name of the accessory
+          x-omitempty: false
+        size:
+          type: integer
+          format: int64
+          description: The artifact size of the accessory
+          x-omitempty: false
+        digest:
+          type: string
+          description: The artifact digest of the accessory
+          x-omitempty: false
+        type:
+          type: string
+          description: The artifact size of the accessory
+          x-omitempty: false
+        icon:
+          type: string
+          description: The icon of the accessory
+          x-omitempty: false
+        creation_time:
+          type: string
+          format: date-time
+          description: The creation time of the accessory
+    NativeReportSummary:
+      type: object
+      description: The summary for the native report
+      properties:
+        report_id:
+          type: string
+          description: id of the native scan report
+          example: 5f62c830-f996-11e9-957f-0242c0a89008
+        scan_status:
+          type: string
+          description: The status of the report generating process
+          example: Success
+        severity:
+          type: string
+          description: The overall severity
+          example: High
+        duration:
+          type: integer
+          format: int64
+          description: The seconds spent for generating the report
+          example: 300
+        summary:
+          $ref: '#/components/schemas/VulnerabilitySummary'
+        start_time:
+          type: string
+          format: date-time
+          description: The start time of the scan process that generating report
+          example: '2006-01-02T14:04:05Z'
+        end_time:
+          type: string
+          format: date-time
+          description: The end time of the scan process that generating report
+          example: '2006-01-02T15:04:05Z'
+        complete_percent:
+          type: integer
+          description: The complete percent of the scanning which value is between 0 and 100
+          example: 100
+        scanner:
+          $ref: '#/components/schemas/Scanner'
+    Reference:
+      type: object
+      properties:
+        parent_id:
+          type: integer
+          format: int64
+          description: The parent ID of the reference
+        child_id:
+          type: integer
+          format: int64
+          description: The child ID of the reference
+        child_digest:
+          type: string
+          description: The digest of the child artifact
+        platform:
+          $ref: '#/components/schemas/Platform'
+        annotations:
+          $ref: '#/components/schemas/Annotations'
+        urls:
+          type: array
+          description: The download URLs
+          items:
+            type: string
+    Artifact:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the artifact
+        type:
+          type: string
+          description: The type of the artifact, e.g. image, chart, etc
+        media_type:
+          type: string
+          description: The media type of the artifact
+        manifest_media_type:
+          type: string
+          description: The manifest media type of the artifact
+        artifact_type:
+          type: string
+          description: The artifact_type in the manifest of the artifact
+        project_id:
+          type: integer
+          format: int64
+          description: The ID of the project that the artifact belongs to
+        repository_id:
+          type: integer
+          format: int64
+          description: The ID of the repository that the artifact belongs to
+        repository_name:
+          type: string
+          description: The name of the repository that the artifact belongs to
+        digest:
+          type: string
+          description: The digest of the artifact
+        size:
+          type: integer
+          format: int64
+          description: The size of the artifact
+        icon:
+          type: string
+          description: The digest of the icon
+        push_time:
+          type: string
+          format: date-time
+          description: The push time of the artifact
+        pull_time:
+          type: string
+          format: date-time
+          description: The latest pull time of the artifact
+        extra_attrs:
+          $ref: '#/components/schemas/ExtraAttrs'
+        annotations:
+          $ref: '#/components/schemas/Annotations'
+        references:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reference'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+        addition_links:
+          $ref: '#/components/schemas/AdditionLinks'
+        labels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Label'
+        scan_overview:
+          $ref: '#/components/schemas/ScanOverview'
+          description: The overview of the scan result.
+        sbom_overview:
+          $ref: '#/components/schemas/SBOMOverview'
+          description: The overview of the generating SBOM progress
+        accessories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Accessory'
+            description: The accessory of the artifact.
+        inherited_accessories:
+          type: array
+          x-omitempty: true
+          description: 'The signatures of the parent OCI index(es) that reference this artifact, both
+
+            cosign and notation. A signature on an index covers the whole index, so a child
+
+            manifest of a signed index is covered by that signature even though it carries
+
+            none of its own. These entries describe the parent, not this artifact: their
+
+            subject_artifact_digest is the index digest, so verifying them against this
+
+            artifact''s digest fails and they are not listed by the referrers API for this
+
+            digest. Only returned when the with_inherited_accessory query parameter is set
+
+            to true.
+
+            '
+          items:
+            $ref: '#/components/schemas/Accessory'
+            description: The accessory inherited from the parent OCI index.
+    ScanOverview:
+      type: object
+      description: The scan overview attached in the metadata of tag
+      additionalProperties:
+        $ref: '#/components/schemas/NativeReportSummary'
+    Scanner:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the scanner
+          example: Trivy
+        vendor:
+          type: string
+          description: Name of the scanner provider
+          example: Aqua Security
+        version:
+          type: string
+          description: Version of the scanner adapter
+          example: v0.9.1
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the tag
+        repository_id:
+          type: integer
+          format: int64
+          description: The ID of the repository that the tag belongs to
+        artifact_id:
+          type: integer
+          format: int64
+          description: The ID of the artifact that the tag attached to
+        name:
+          type: string
+          description: The name of the tag
+        push_time:
+          type: string
+          format: date-time
+          description: The push time of the tag
+        pull_time:
+          type: string
+          format: date-time
+          description: The latest pull time of the tag
+        immutable:
+          type: boolean
+          x-omitempty: false
+          description: The immutable status of the tag
+    VulnerabilitySummary:
+      type: object
+      description: 'VulnerabilitySummary contains the total number of the foun d vulnerabilities number and numbers of each severity level.
+
+        '
+      properties:
+        total:
+          type: integer
+          format: int
+          description: The total number of the found vulnerabilities
+          example: 500
+          x-omitempty: false
+        fixable:
+          type: integer
+          format: int
+          description: The number of the fixable vulnerabilities
+          example: 100
+          x-omitempty: false
+        summary:
+          type: object
+          description: Numbers of the vulnerabilities with different severity
+          additionalProperties:
+            type: integer
+            format: int
+            example: 10
+          example:
+            Critical: 5
+            High: 5
+          x-omitempty: false
+    ExtraAttrs:
+      type: object
+      additionalProperties:
+        type: object
+    Annotations:
+      type: object
+      additionalProperties:
+        type: string
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

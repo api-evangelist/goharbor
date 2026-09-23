@@ -1,0 +1,402 @@
+openapi: 3.2.0
+info:
+  title: Harbor Securityhub API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: securityhub
+paths:
+  /security/summary:
+    get:
+      summary: Get vulnerability system summary
+      description: Retrieve the vulnerability summary of the system
+      tags:
+      - securityhub
+      operationId: getSecuritySummary
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: with_dangerous_cve
+        in: query
+        description: Specify whether the dangerous CVEs are included inside summary information
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_dangerous_artifact
+        in: query
+        description: Specify whether the dangerous Artifact are included inside summary information
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecuritySummary'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /security/vul:
+    get:
+      summary: Get the vulnerability list
+      description: 'Get the vulnerability list. use q to pass the query condition,
+
+        supported conditions:
+
+        cve_id(exact match)
+
+        cvss_score_v3(range condition)
+
+        severity(exact match)
+
+        status(exact match)
+
+        repository_name(exact match)
+
+        project_id(exact match)
+
+        package(exact match)
+
+        tag(exact match)
+
+        digest(exact match)'
+      tags:
+      - securityhub
+      operationId: ListVulnerabilities
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - name: tune_count
+        in: query
+        description: Enable to ignore X-Total-Count when the total count > 1000, if the total count is less than 1000, the real total count is returned, else -1.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_tag
+        in: query
+        description: Specify whether the tag information is included inside vulnerability information
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: The vulnerability list.
+          headers:
+            X-Total-Count:
+              description: The total count of vulnerabilities
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VulnerabilityItem'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  schemas:
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    DangerousArtifact:
+      type: object
+      description: the dangerous artifact information
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          description: the project id of the artifact
+        repository_name:
+          type: string
+          description: the repository name of the artifact
+        digest:
+          type: string
+          description: the digest of the artifact
+        critical_cnt:
+          type: integer
+          x-omitempty: false
+          description: the count of critical vulnerabilities
+        high_cnt:
+          type: integer
+          format: int64
+          x-omitempty: false
+          description: the count of high vulnerabilities
+        medium_cnt:
+          type: integer
+          x-omitempty: false
+          description: the count of medium vulnerabilities
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    DangerousCVE:
+      type: object
+      description: the dangerous CVE information
+      properties:
+        cve_id:
+          type: string
+          description: the cve id
+        severity:
+          type: string
+          description: the severity of the CVE
+        cvss_score_v3:
+          type: number
+          format: float64
+          description: the cvss score v3
+        desc:
+          type: string
+          description: the description of the CVE
+        package:
+          type: string
+          description: the package of the CVE
+        version:
+          type: string
+          description: the version of the package
+    VulnerabilityItem:
+      type: object
+      description: the vulnerability item info
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          description: the project ID of the artifact
+        repository_name:
+          type: string
+          description: the repository name of the artifact
+        digest:
+          type: string
+          description: the digest of the artifact
+        tags:
+          type: array
+          items:
+            type: string
+          description: the tags of the artifact
+        cve_id:
+          type: string
+          description: the CVE id of the vulnerability.
+        severity:
+          type: string
+          description: the severity of the vulnerability
+        status:
+          type: string
+          description: the status of the vulnerability, example "fixed", "won't fix"
+        cvss_v3_score:
+          type: number
+          format: float
+          description: the nvd cvss v3 score of the vulnerability
+        package:
+          type: string
+          description: the package of the vulnerability
+        version:
+          type: string
+          description: the version of the package
+        fixed_version:
+          type: string
+          description: the fixed version of the package
+        desc:
+          type: string
+          description: The description of the vulnerability
+        links:
+          type: array
+          items:
+            type: string
+          description: Links of the vulnerability
+    SecuritySummary:
+      type: object
+      description: the security summary
+      properties:
+        critical_cnt:
+          type: integer
+          format: int64
+          x-omitempty: false
+          description: the count of critical vulnerabilities
+        high_cnt:
+          type: integer
+          format: int64
+          description: the count of high vulnerabilities
+        medium_cnt:
+          type: integer
+          format: int64
+          x-omitempty: false
+          description: the count of medium vulnerabilities
+        low_cnt:
+          type: integer
+          format: int64
+          x-omitempty: false
+          description: the count of low vulnerabilities
+        none_cnt:
+          type: integer
+          format: int64
+          description: the count of none vulnerabilities
+        unknown_cnt:
+          type: integer
+          format: int64
+          description: the count of unknown vulnerabilities
+        total_vuls:
+          type: integer
+          format: int64
+          x-omitempty: false
+          description: the count of total vulnerabilities
+        scanned_cnt:
+          type: integer
+          format: int64
+          x-omitempty: false
+          description: the count of scanned artifacts
+        total_artifact:
+          type: integer
+          format: int64
+          x-omitempty: false
+          description: the total count of artifacts
+        fixable_cnt:
+          type: integer
+          format: int64
+          x-omitempty: false
+          description: the count of fixable vulnerabilities
+        dangerous_cves:
+          type: array
+          x-omitempty: true
+          description: the list of dangerous CVEs
+          items:
+            $ref: '#/components/schemas/DangerousCVE'
+        dangerous_artifacts:
+          type: array
+          x-omitempty: true
+          description: the list of dangerous artifacts
+          items:
+            $ref: '#/components/schemas/DangerousArtifact'
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
+      required: false
+      schema:
+        type: string
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

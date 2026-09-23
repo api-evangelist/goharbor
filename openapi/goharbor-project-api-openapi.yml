@@ -1,0 +1,1608 @@
+openapi: 3.2.0
+info:
+  title: Harbor Project API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: Project
+paths:
+  /projects:
+    get:
+      summary: List projects
+      description: This endpoint returns projects created by Harbor.
+      tags:
+      - Project
+      operationId: listProjects
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/sort'
+      - name: name
+        in: query
+        description: The name of project.
+        required: false
+        schema:
+          type: string
+      - name: public
+        in: query
+        description: The project is public or private.
+        required: false
+        schema:
+          type: boolean
+      - name: owner
+        in: query
+        description: The name of project owner.
+        required: false
+        schema:
+          type: string
+      - name: with_detail
+        in: query
+        description: Bool value indicating whether return detailed information of the project
+        required: false
+        schema:
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: Return all matched projects.
+          headers:
+            X-Total-Count:
+              description: The total count of projects
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    head:
+      summary: Check if the project name user provided already exists
+      description: This endpoint is used to check if the project name provided already exist.
+      tags:
+      - Project
+      operationId: headProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: project_name
+        in: query
+        description: Project name for checking exists.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      summary: Create a new project
+      description: This endpoint is for user to create a new project.
+      tags:
+      - Project
+      operationId: createProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/resourceNameInLocation'
+      responses:
+        '201':
+          $ref: '#/components/responses/201'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '409':
+          description: Project name already exists.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectReq'
+        description: New created project.
+        required: true
+  /projects/{project_name_or_id}:
+    get:
+      summary: Return specific project detail information
+      description: This endpoint returns specific project information by project ID.
+      tags:
+      - Project
+      operationId: getProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      responses:
+        '200':
+          description: Return matched project information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          description: Project not found. No project exists with the specified name or ID.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      summary: Update properties for a selected project
+      description: This endpoint is aimed to update the properties of a project.
+      tags:
+      - Project
+      operationId: updateProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectReq'
+        description: Updates of project.
+        required: true
+    delete:
+      summary: Delete project by projectID
+      description: This endpoint is aimed to delete project by project ID.
+      tags:
+      - Project
+      operationId: deleteProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          description: Project not found. No project exists with the specified name or ID.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '412':
+          description: Project cannot be deleted. The project still contains repositories or has pending tasks.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name_or_id}/_deletable:
+    get:
+      summary: Get the deletable status of the project
+      tags:
+      - Project
+      operationId: getProjectDeletable
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      responses:
+        '200':
+          description: Return deletable status of the project.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectDeletable'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name_or_id}/summary:
+    get:
+      summary: Get summary of the project
+      description: Get summary of the project.
+      tags:
+      - Project
+      operationId: getProjectSummary
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      responses:
+        '200':
+          description: Get summary of the project successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectSummary'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name_or_id}/artifacts:
+    get:
+      summary: List artifacts
+      description: List artifacts of the specified project
+      tags:
+      - Project
+      operationId: listArtifactsOfProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/acceptVulnerabilities'
+      - name: with_tag
+        in: query
+        description: Specify whether the tags are included inside the returning artifacts
+        required: false
+        schema:
+          type: boolean
+          default: true
+      - name: with_label
+        in: query
+        description: Specify whether the labels are included inside the returning artifacts
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_scan_overview
+        in: query
+        description: Specify whether the scan overview is included inside the returning artifacts
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_sbom_overview
+        in: query
+        description: Specify whether the SBOM overview is included in returning artifacts, when this option is true, the SBOM overview will be included in the response
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_immutable_status
+        in: query
+        description: Specify whether the immutable status is included inside the tags of the returning artifacts. Only works when setting "with_immutable_status=true"
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_accessory
+        in: query
+        description: Specify whether the accessories are included of the returning artifacts. Only works when setting "with_accessory=true"
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: with_inherited_accessory
+        in: query
+        description: Specify whether the accessories of the parent OCI index(es) referencing the artifact are included, in the separate inherited_accessories field. Off by default because it costs an extra reference lookup per artifact.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: latest_in_repository
+        in: query
+        description: Specify whether only the latest pushed artifact of each repository is included inside the returning artifacts. Only works when either artifact_type or media_type is included in the query.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Total-Count:
+              description: The total count of artifacts
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Artifact'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name_or_id}/scanner:
+    get:
+      summary: Get project level scanner
+      description: Get the scanner registration of the specified project. If no scanner registration is configured for the specified project, the system default scanner registration will be returned.
+      tags:
+      - Project
+      operationId: getScannerOfProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      responses:
+        '200':
+          description: The details of the scanner registration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScannerRegistration'
+        '400':
+          description: Bad project ID
+        '401':
+          description: Unauthorized request
+        '403':
+          description: Request is not allowed
+        '404':
+          description: The requested object is not found
+        '500':
+          description: Internal server error happened
+    put:
+      summary: Configure scanner for the specified project
+      description: Set one of the system configured scanner registration as the indepndent scanner of the specified project.
+      tags:
+      - Project
+      operationId: setScannerOfProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectScanner'
+        required: true
+  /projects/{project_name_or_id}/scanner/candidates:
+    get:
+      summary: Get scanner registration candidates for configurating project level scanner
+      description: Retrieve the system configured scanner registrations as candidates of setting project level scanner.
+      tags:
+      - Project
+      operationId: listScannerCandidatesOfProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: A list of scanner registrations.
+          headers:
+            X-Total-Count:
+              description: The total count of available items
+              schema:
+                type: integer
+            Link:
+              description: Link to previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScannerRegistration'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name}/logs:
+    get:
+      summary: Get recent logs of the projects (deprecated)
+      description: Get recent logs of the projects, it only query the previous version's audit log
+      tags:
+      - Project
+      operationId: getLogs
+      parameters:
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Total-Count:
+              description: The total count of auditlogs
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLog'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name}/auditlog-exts:
+    get:
+      summary: Get recent logs of the projects
+      tags:
+      - Project
+      operationId: getLogExts
+      parameters:
+      - $ref: '#/components/parameters/projectName'
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Total-Count:
+              description: The total count of auditlogs
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLogExt'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '201':
+      description: Created
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+        Location:
+          description: The location of the resource
+          schema:
+            type: string
+    '422':
+      description: Unprocessable entity. The request was well-formed but could not be processed (for example, due to validation errors). Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  schemas:
+    ResourceList:
+      type: object
+      additionalProperties:
+        type: integer
+        format: int64
+    Label:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the label
+        name:
+          type: string
+          description: The name the label
+        description:
+          type: string
+          description: The description the label
+        color:
+          type: string
+          description: The color the label
+        scope:
+          type: string
+          description: The scope the label
+        project_id:
+          type: integer
+          format: int64
+          description: The ID of project that the label belongs to
+        creation_time:
+          type: string
+          format: date-time
+          description: The creation time the label
+        update_time:
+          type: string
+          format: date-time
+          description: The update time of the label
+    ProjectSummaryQuota:
+      type: object
+      properties:
+        hard:
+          $ref: '#/components/schemas/ResourceList'
+          description: The hard limits of the quota
+        used:
+          $ref: '#/components/schemas/ResourceList'
+          description: The used status of the quota
+    RegistryCredential:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Credential type, such as 'basic', 'oauth'.
+        access_key:
+          type: string
+          description: Access key, e.g. user name when credential type is 'basic'.
+        access_secret:
+          type: string
+          description: Access secret, e.g. password when credential type is 'basic'.
+    AuditLogExt:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the audit log entry.
+        username:
+          type: string
+          description: The username of the operator in this log entry.
+        resource:
+          type: string
+          description: Name of the resource in this log entry.
+        resource_type:
+          type: string
+          description: Type of the resource in this log entry.
+        operation:
+          type: string
+          description: The operation against the resource in this log entry.
+        operation_description:
+          type: string
+          description: The operation's detail description
+        operation_result:
+          type: boolean
+          x-omitempty: false
+          description: the operation's result, true for success, false for fail
+        op_time:
+          type: string
+          format: date-time
+          example: '2006-01-02T15:04:05Z'
+          description: The time when this operation is triggered.
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    ScannerRegistration:
+      type: object
+      description: 'Registration represents a named configuration for invoking a scanner via its adapter.
+
+        '
+      properties:
+        uuid:
+          type: string
+          description: The unique identifier of this registration.
+        name:
+          type: string
+          example: Trivy
+          description: The name of this registration.
+        description:
+          type: string
+          description: An optional description of this registration.
+          example: 'A free-to-use tool that scans container images for package vulnerabilities.
+
+            '
+          x-omitempty: false
+        url:
+          type: string
+          format: uri
+          description: A base URL of the scanner adapter
+          example: http://harbor-scanner-trivy:8080
+        disabled:
+          type: boolean
+          default: false
+          description: Indicate whether the registration is enabled or not
+          x-omitempty: false
+        is_default:
+          type: boolean
+          default: false
+          description: Indicate if the registration is set as the system default one
+          x-omitempty: false
+        auth:
+          type: string
+          default: ''
+          description: 'Specify what authentication approach is adopted for the HTTP communications.
+
+            Supported types Basic", "Bearer" and api key header "X-ScannerAdapter-API-Key"
+
+            '
+          example: Bearer
+          x-omitempty: false
+        access_credential:
+          type: string
+          description: 'An optional value of the HTTP Authorization header sent with each request to the Scanner Adapter API.
+
+            '
+          example: 'Bearer: JWTTOKENGOESHERE'
+          x-omitempty: false
+        skip_certVerify:
+          type: boolean
+          default: false
+          description: Indicate if skip the certificate verification when sending HTTP requests
+          x-omitempty: false
+        use_internal_addr:
+          type: boolean
+          default: false
+          description: Indicate whether use internal registry addr for the scanner to pull content or not
+          x-omitempty: false
+        create_time:
+          type: string
+          format: date-time
+          description: The creation time of this registration
+        update_time:
+          type: string
+          format: date-time
+          description: The update time of this registration
+        adapter:
+          type: string
+          description: Optional property to describe the name of the scanner registration
+          example: Trivy
+        vendor:
+          type: string
+          description: Optional property to describe the vendor of the scanner registration
+          example: CentOS
+        version:
+          type: string
+          description: Optional property to describe the version of the scanner registration
+          example: 1.0.1
+        health:
+          type: string
+          default: ''
+          description: Indicate the healthy of the registration
+          example: healthy
+        capabilities:
+          type: object
+          description: Indicates the capabilities of the scanner, e.g. support_vulnerability or support_sbom.
+          additionalProperties: true
+          example:
+            support_vulnerability: true
+            support_sbom: true
+    AdditionLink:
+      type: object
+      properties:
+        href:
+          type: string
+          description: The link of the addition
+        absolute:
+          type: boolean
+          x-omitempty: false
+          description: Determine whether the link is an absolute URL or not
+    Platform:
+      type: object
+      properties:
+        architecture:
+          type: string
+          description: The architecture that the artifact applys to
+        os:
+          type: string
+          description: The OS that the artifact applys to
+        '''os.version''':
+          type: string
+          description: The version of the OS that the artifact applys to
+        '''os.features''':
+          type: array
+          description: The features of the OS that the artifact applys to
+          items:
+            type: string
+        variant:
+          type: string
+          description: The variant of the CPU
+    ProjectReq:
+      type: object
+      properties:
+        project_name:
+          type: string
+          description: The name of the project.
+          maxLength: 255
+        public:
+          type:
+          - boolean
+          - 'null'
+          description: deprecated, reserved for project creation in replication
+        metadata:
+          description: The metadata of the project.
+          $ref: '#/components/schemas/ProjectMetadata'
+        cve_allowlist:
+          description: The CVE allowlist of the project.
+          $ref: '#/components/schemas/CVEAllowlist'
+        storage_limit:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: The storage quota of the project.
+        registry_id:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: The ID of referenced registry when creating the proxy cache project
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    CVEAllowlistItem:
+      type: object
+      description: The item in CVE allowlist
+      properties:
+        cve_id:
+          type: string
+          description: The ID of the CVE, such as "CVE-2019-10164"
+    ProjectScanner:
+      type: object
+      required:
+      - uuid
+      properties:
+        uuid:
+          type: string
+          description: The identifier of the scanner registration
+    SBOMOverview:
+      type: object
+      description: The generate SBOM overview information
+      properties:
+        start_time:
+          type: string
+          format: date-time
+          description: The start time of the generating sbom report task
+          example: '2006-01-02T14:04:05Z'
+        end_time:
+          type: string
+          format: date-time
+          description: The end time of the generating sbom report task
+          example: '2006-01-02T15:04:05Z'
+        scan_status:
+          type: string
+          description: The status of the generating SBOM task
+        sbom_digest:
+          type: string
+          description: The digest of the generated SBOM accessory
+        report_id:
+          type: string
+          description: id of the native scan report
+          example: 5f62c830-f996-11e9-957f-0242c0a89008
+        duration:
+          type: integer
+          format: int64
+          description: Time in seconds required to create the report
+          example: 300
+        scanner:
+          $ref: '#/components/schemas/Scanner'
+    AdditionLinks:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/AdditionLink'
+    Project:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int32
+          description: Project ID
+        owner_id:
+          type: integer
+          format: int32
+          description: The owner ID of the project always means the creator of the project.
+        name:
+          type: string
+          description: The name of the project.
+        registry_id:
+          type: integer
+          format: int64
+          description: The ID of referenced registry when the project is a proxy cache project.
+        creation_time:
+          type: string
+          format: date-time
+          description: The creation time of the project.
+        update_time:
+          type: string
+          format: date-time
+          description: The update time of the project.
+        deleted:
+          type: boolean
+          description: A deletion mark of the project.
+        owner_name:
+          type: string
+          description: The owner name of the project.
+        togglable:
+          type: boolean
+          description: Correspond to the UI about whether the project's publicity is  updatable (for UI)
+        current_user_role_id:
+          type: integer
+          description: The role ID with highest permission of the current user who triggered the API (for UI).  This attribute is deprecated and will be removed in future versions.
+        current_user_role_ids:
+          type: array
+          items:
+            type: integer
+            format: int32
+          description: The list of role ID of the current user who triggered the API (for UI)
+        repo_count:
+          type: integer
+          description: The number of the repositories under this project.
+          x-omitempty: false
+        metadata:
+          description: The metadata of the project.
+          $ref: '#/components/schemas/ProjectMetadata'
+        cve_allowlist:
+          description: The CVE allowlist of this project.
+          $ref: '#/components/schemas/CVEAllowlist'
+    Accessory:
+      type: object
+      description: The accessory of the artifact
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the accessory
+        artifact_id:
+          type: integer
+          format: int64
+          description: The artifact id of the accessory
+          x-omitempty: false
+        subject_artifact_id:
+          type: integer
+          format: int64
+          description: Going to be deprecated, use repo and digest for insteand. The subject artifact id of the accessory.
+        subject_artifact_digest:
+          type: string
+          description: The subject artifact digest of the accessory
+          x-omitempty: false
+        subject_artifact_repo:
+          type: string
+          description: The subject artifact repository name of the accessory
+          x-omitempty: false
+        size:
+          type: integer
+          format: int64
+          description: The artifact size of the accessory
+          x-omitempty: false
+        digest:
+          type: string
+          description: The artifact digest of the accessory
+          x-omitempty: false
+        type:
+          type: string
+          description: The artifact size of the accessory
+          x-omitempty: false
+        icon:
+          type: string
+          description: The icon of the accessory
+          x-omitempty: false
+        creation_time:
+          type: string
+          format: date-time
+          description: The creation time of the accessory
+    Registry:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The registry ID.
+          x-omitempty: false
+        url:
+          type: string
+          description: The registry URL string.
+        name:
+          type: string
+          description: The registry name.
+        credential:
+          $ref: '#/components/schemas/RegistryCredential'
+        type:
+          type: string
+          description: Type of the registry, e.g. 'harbor'.
+        insecure:
+          type: boolean
+          description: Whether or not the certificate will be verified when Harbor tries to access the server.
+        ca_certificate:
+          type:
+          - string
+          - 'null'
+          description: The PEM-encoded CA certificate for this registry endpoint. If provided, this CA will be used to verify the registry's certificate instead of the system CA pool.
+        description:
+          type: string
+          description: Description of the registry.
+        status:
+          type: string
+          description: Health status of the registry.
+        creation_time:
+          type: string
+          format: date-time
+          description: The create time of the policy.
+        update_time:
+          type: string
+          format: date-time
+          description: The update time of the policy.
+    NativeReportSummary:
+      type: object
+      description: The summary for the native report
+      properties:
+        report_id:
+          type: string
+          description: id of the native scan report
+          example: 5f62c830-f996-11e9-957f-0242c0a89008
+        scan_status:
+          type: string
+          description: The status of the report generating process
+          example: Success
+        severity:
+          type: string
+          description: The overall severity
+          example: High
+        duration:
+          type: integer
+          format: int64
+          description: The seconds spent for generating the report
+          example: 300
+        summary:
+          $ref: '#/components/schemas/VulnerabilitySummary'
+        start_time:
+          type: string
+          format: date-time
+          description: The start time of the scan process that generating report
+          example: '2006-01-02T14:04:05Z'
+        end_time:
+          type: string
+          format: date-time
+          description: The end time of the scan process that generating report
+          example: '2006-01-02T15:04:05Z'
+        complete_percent:
+          type: integer
+          description: The complete percent of the scanning which value is between 0 and 100
+          example: 100
+        scanner:
+          $ref: '#/components/schemas/Scanner'
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the audit log entry.
+        username:
+          type: string
+          description: Username of the user in this log entry.
+        resource:
+          type: string
+          description: Name of the repository in this log entry.
+        resource_type:
+          type: string
+          description: Tag of the repository in this log entry.
+        operation:
+          type: string
+          description: The operation against the repository in this log entry.
+        op_time:
+          type: string
+          format: date-time
+          example: '2006-01-02T15:04:05Z'
+          description: The time when this operation is triggered.
+    Reference:
+      type: object
+      properties:
+        parent_id:
+          type: integer
+          format: int64
+          description: The parent ID of the reference
+        child_id:
+          type: integer
+          format: int64
+          description: The child ID of the reference
+        child_digest:
+          type: string
+          description: The digest of the child artifact
+        platform:
+          $ref: '#/components/schemas/Platform'
+        annotations:
+          $ref: '#/components/schemas/Annotations'
+        urls:
+          type: array
+          description: The download URLs
+          items:
+            type: string
+    Artifact:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the artifact
+        type:
+          type: string
+          description: The type of the artifact, e.g. image, chart, etc
+        media_type:
+          type: string
+          description: The media type of the artifact
+        manifest_media_type:
+          type: string
+          description: The manifest media type of the artifact
+        artifact_type:
+          type: string
+          description: The artifact_type in the manifest of the artifact
+        project_id:
+          type: integer
+          format: int64
+          description: The ID of the project that the artifact belongs to
+        repository_id:
+          type: integer
+          format: int64
+          description: The ID of the repository that the artifact belongs to
+        repository_name:
+          type: string
+          description: The name of the repository that the artifact belongs to
+        digest:
+          type: string
+          description: The digest of the artifact
+        size:
+          type: integer
+          format: int64
+          description: The size of the artifact
+        icon:
+          type: string
+          description: The digest of the icon
+        push_time:
+          type: string
+          format: date-time
+          description: The push time of the artifact
+        pull_time:
+          type: string
+          format: date-time
+          description: The latest pull time of the artifact
+        extra_attrs:
+          $ref: '#/components/schemas/ExtraAttrs'
+        annotations:
+          $ref: '#/components/schemas/Annotations'
+        references:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reference'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+        addition_links:
+          $ref: '#/components/schemas/AdditionLinks'
+        labels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Label'
+        scan_overview:
+          $ref: '#/components/schemas/ScanOverview'
+          description: The overview of the scan result.
+        sbom_overview:
+          $ref: '#/components/schemas/SBOMOverview'
+          description: The overview of the generating SBOM progress
+        accessories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Accessory'
+            description: The accessory of the artifact.
+        inherited_accessories:
+          type: array
+          x-omitempty: true
+          description: 'The signatures of the parent OCI index(es) that reference this artifact, both
+
+            cosign and notation. A signature on an index covers the whole index, so a child
+
+            manifest of a signed index is covered by that signature even though it carries
+
+            none of its own. These entries describe the parent, not this artifact: their
+
+            subject_artifact_digest is the index digest, so verifying them against this
+
+            artifact''s digest fails and they are not listed by the referrers API for this
+
+            digest. Only returned when the with_inherited_accessory query parameter is set
+
+            to true.
+
+            '
+          items:
+            $ref: '#/components/schemas/Accessory'
+            description: The accessory inherited from the parent OCI index.
+    ScanOverview:
+      type: object
+      description: The scan overview attached in the metadata of tag
+      additionalProperties:
+        $ref: '#/components/schemas/NativeReportSummary'
+    ProjectMetadata:
+      type: object
+      properties:
+        public:
+          type: string
+          description: The public status of the project. The valid values are "true", "false".
+        enable_content_trust:
+          type:
+          - string
+          - 'null'
+          description: Whether content trust is enabled or not. If it is enabled, user can't pull unsigned images from this project. The valid values are "true", "false".
+        enable_content_trust_cosign:
+          type:
+          - string
+          - 'null'
+          description: Whether cosign content trust is enabled or not. If it is enabled, user can't pull images without cosign signature from this project. The valid values are "true", "false".
+        prevent_vul:
+          type:
+          - string
+          - 'null'
+          description: Whether prevent the vulnerable images from running. The valid values are "true", "false".
+        severity:
+          type:
+          - string
+          - 'null'
+          description: If the vulnerability is high than severity defined here, the images can't be pulled. The valid values are "none", "low", "medium", "high", "critical".
+        auto_scan:
+          type:
+          - string
+          - 'null'
+          description: Whether scan images automatically when pushing. The valid values are "true", "false".
+        auto_sbom_generation:
+          type:
+          - string
+          - 'null'
+          description: Whether generating SBOM automatically when pushing a subject artifact. The valid values are "true", "false".
+        reuse_sys_cve_allowlist:
+          type:
+          - string
+          - 'null'
+          description: 'Whether this project reuse the system level CVE allowlist as the allowlist of its own. The valid values are "true", "false".
+
+            If it is set to "true" the actual allowlist associate with this project, if any, will be ignored.'
+        retention_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the tag retention policy for the project
+        proxy_speed_kb:
+          type:
+          - string
+          - 'null'
+          description: The bandwidth limit of proxy cache, in Kbps (kilobits per second). It limits the communication between Harbor and the upstream registry, not the client and the Harbor.
+        max_upstream_conn:
+          type:
+          - string
+          - 'null'
+          description: The max connection per artifact to the upstream registry in current proxy cache project, if it is -1, no limit to upstream registry connections
+        proxy_cache_local_on_not_found:
+          type:
+          - string
+          - 'null'
+          description: Whether to serve images from local cache when they are removed from the upstream registry. The valid values are "true", "false".
+        proxy_referrer_api:
+          type:
+          - string
+          - 'null'
+          description: Whether the proxy cache project should proxy OCI 1.1 referrer API requests to the upstream registry. The valid values are "true", "false".
+        proxy_cache_filter_pattern:
+          type:
+          - string
+          - 'null'
+          description: Repository filter pattern for proxy cache project. Only repositories matching the pattern will be proxied. Empty means allow all. Only has value when the current project is a proxy cache project.
+        proxy_cache_filter_kind:
+          type:
+          - string
+          - 'null'
+          description: 'Matching mode for proxy_cache_filter_pattern: "doublestar" (default, glob-style with ** support) or "regex". Only has value when the current project is a proxy cache project.'
+    ProjectDeletable:
+      type: object
+      properties:
+        deletable:
+          type: boolean
+          description: Whether the project can be deleted.
+        message:
+          type: string
+          description: The detail message when the project can not be deleted.
+    Scanner:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the scanner
+          example: Trivy
+        vendor:
+          type: string
+          description: Name of the scanner provider
+          example: Aqua Security
+        version:
+          type: string
+          description: Version of the scanner adapter
+          example: v0.9.1
+    ProjectSummary:
+      type: object
+      properties:
+        repo_count:
+          type: integer
+          description: The number of the repositories under this project.
+          x-omitempty: false
+        project_admin_count:
+          type: integer
+          description: The total number of project admin members.
+        maintainer_count:
+          type: integer
+          description: The total number of maintainer members.
+        developer_count:
+          type: integer
+          description: The total number of developer members.
+        guest_count:
+          type: integer
+          description: The total number of guest members.
+        limited_guest_count:
+          type: integer
+          description: The total number of limited guest members.
+        quota:
+          $ref: '#/components/schemas/ProjectSummaryQuota'
+        registry:
+          $ref: '#/components/schemas/Registry'
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the tag
+        repository_id:
+          type: integer
+          format: int64
+          description: The ID of the repository that the tag belongs to
+        artifact_id:
+          type: integer
+          format: int64
+          description: The ID of the artifact that the tag attached to
+        name:
+          type: string
+          description: The name of the tag
+        push_time:
+          type: string
+          format: date-time
+          description: The push time of the tag
+        pull_time:
+          type: string
+          format: date-time
+          description: The latest pull time of the tag
+        immutable:
+          type: boolean
+          x-omitempty: false
+          description: The immutable status of the tag
+    VulnerabilitySummary:
+      type: object
+      description: 'VulnerabilitySummary contains the total number of the foun d vulnerabilities number and numbers of each severity level.
+
+        '
+      properties:
+        total:
+          type: integer
+          format: int
+          description: The total number of the found vulnerabilities
+          example: 500
+          x-omitempty: false
+        fixable:
+          type: integer
+          format: int
+          description: The number of the fixable vulnerabilities
+          example: 100
+          x-omitempty: false
+        summary:
+          type: object
+          description: Numbers of the vulnerabilities with different severity
+          additionalProperties:
+            type: integer
+            format: int
+            example: 10
+          example:
+            Critical: 5
+            High: 5
+          x-omitempty: false
+    ExtraAttrs:
+      type: object
+      additionalProperties:
+        type: object
+    Annotations:
+      type: object
+      additionalProperties:
+        type: string
+    CVEAllowlist:
+      type: object
+      description: The CVE Allowlist for system or project
+      properties:
+        id:
+          type: integer
+          description: ID of the allowlist
+        project_id:
+          type: integer
+          description: ID of the project which the allowlist belongs to.  For system level allowlist this attribute is zero.
+        expires_at:
+          type:
+          - integer
+          - 'null'
+          description: the time for expiration of the allowlist, in the form of seconds since epoch.  This is an optional attribute, if it's not set the CVE allowlist does not expire.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CVEAllowlistItem'
+        creation_time:
+          type: string
+          format: date-time
+          description: The creation time of the allowlist.
+        update_time:
+          type: string
+          format: date-time
+          description: The update time of the allowlist.
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    isResourceName:
+      name: X-Is-Resource-Name
+      description: The flag to indicate whether the parameter which supports both name and id in the path is the name of the resource. When the X-Is-Resource-Name is false and the parameter can be converted to an integer, the parameter will be as an id, otherwise, it will be as a name.
+      in: header
+      required: false
+      schema:
+        type: boolean
+        default: false
+    projectNameOrId:
+      name: project_name_or_id
+      in: path
+      description: The name or id of the project
+      required: true
+      schema:
+        type: string
+    projectName:
+      name: project_name
+      in: path
+      description: The name of the project
+      required: true
+      schema:
+        type: string
+    resourceNameInLocation:
+      name: X-Resource-Name-In-Location
+      description: The flag to indicate whether to return the name of the resource in Location. When X-Resource-Name-In-Location is true, the Location will return the name of the resource.
+      in: header
+      required: false
+      schema:
+        type: boolean
+        default: false
+    sort:
+      name: sort
+      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
+      in: query
+      required: false
+      schema:
+        type: string
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    acceptVulnerabilities:
+      name: X-Accept-Vulnerabilities
+      in: header
+      description: 'A comma-separated lists of MIME types for the scan report or scan summary. The first mime type will be used when the report found for it.
+
+        Currently the mime type supports ''application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0'' and ''application/vnd.security.vulnerability.report; version=1.1'''
+      schema:
+        type: string
+        default: application/vnd.security.vulnerability.report; version=1.1, application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
+      required: false
+      schema:
+        type: string
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

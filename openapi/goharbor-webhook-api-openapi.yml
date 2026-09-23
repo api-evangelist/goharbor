@@ -1,0 +1,734 @@
+openapi: 3.2.0
+info:
+  title: Harbor Webhook API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: Webhook
+paths:
+  /projects/{project_name_or_id}/webhook/policies:
+    get:
+      summary: List project webhook policies
+      description: This endpoint returns webhook policies of a project.
+      tags:
+      - Webhook
+      operationId: ListWebhookPoliciesOfProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Total-Count:
+              description: The total count of webhook policies.
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookPolicy'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      summary: Create project webhook policy
+      description: This endpoint create a webhook policy if the project does not have one.
+      tags:
+      - Webhook
+      operationId: CreateWebhookPolicyOfProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      responses:
+        '201':
+          description: Project webhook policy create successfully.
+          headers:
+            X-Request-Id:
+              description: The ID of the corresponding request for the response
+              schema:
+                type: string
+            Location:
+              description: The location of the resource
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookPolicy'
+        description: Properties "targets" and "event_types" needed.
+        required: true
+  /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}:
+    get:
+      summary: Get project webhook policy
+      description: This endpoint returns specified webhook policy of a project.
+      tags:
+      - Webhook
+      operationId: GetWebhookPolicyOfProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      - $ref: '#/components/parameters/webhookPolicyId'
+      responses:
+        '200':
+          description: Get webhook policy successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookPolicy'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      summary: Update webhook policy of a project
+      description: This endpoint is aimed to update the webhook policy of a project.
+      tags:
+      - Webhook
+      operationId: UpdateWebhookPolicyOfProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      - $ref: '#/components/parameters/webhookPolicyId'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookPolicy'
+        description: All properties needed except "id", "project_id", "creation_time", "update_time".
+        required: true
+    delete:
+      summary: Delete webhook policy of a project
+      description: This endpoint is aimed to delete webhookpolicy of a project.
+      tags:
+      - Webhook
+      operationId: DeleteWebhookPolicyOfProject
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      - $ref: '#/components/parameters/webhookPolicyId'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}/executions:
+    get:
+      summary: List executions for a specific webhook policy
+      description: This endpoint returns the executions of a specific webhook policy.
+      tags:
+      - Webhook
+      operationId: ListExecutionsOfWebhookPolicy
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      - $ref: '#/components/parameters/webhookPolicyId'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/sort'
+      responses:
+        '200':
+          description: List webhook executions success
+          headers:
+            X-Total-Count:
+              description: The total count of executions
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Execution'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}/executions/{execution_id}/tasks:
+    get:
+      summary: List tasks for a specific webhook execution
+      description: This endpoint returns the tasks of a specific webhook execution.
+      tags:
+      - Webhook
+      operationId: ListTasksOfWebhookExecution
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      - $ref: '#/components/parameters/webhookPolicyId'
+      - $ref: '#/components/parameters/executionId'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/query'
+      - $ref: '#/components/parameters/sort'
+      responses:
+        '200':
+          description: List tasks of webhook executions success
+          headers:
+            X-Total-Count:
+              description: The total count of tasks
+              schema:
+                type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name_or_id}/webhook/policies/{webhook_policy_id}/executions/{execution_id}/tasks/{task_id}/log:
+    get:
+      summary: Get logs for a specific webhook task
+      description: This endpoint returns the logs of a specific webhook task.
+      tags:
+      - Webhook
+      operationId: GetLogsOfWebhookTask
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      - $ref: '#/components/parameters/webhookPolicyId'
+      - $ref: '#/components/parameters/executionId'
+      - $ref: '#/components/parameters/taskId'
+      responses:
+        '200':
+          description: Get log success
+          headers:
+            Content-Type:
+              description: Content type of response
+              schema:
+                type: string
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name_or_id}/webhook/lasttrigger:
+    get:
+      deprecated: true
+      summary: Get project webhook policy last trigger info
+      description: This endpoint returns last trigger information of project webhook policy.
+      tags:
+      - Webhook
+      operationId: LastTrigger
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      responses:
+        '200':
+          description: Test webhook connection successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookLastTrigger'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+  /projects/{project_name_or_id}/webhook/events:
+    get:
+      summary: Get supported event types and notify types
+      description: Get supported event types and notify types.
+      tags:
+      - Webhook
+      operationId: GetSupportedEventTypes
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/isResourceName'
+      - $ref: '#/components/parameters/projectNameOrId'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportedWebhookEventTypes'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  schemas:
+    WebhookLastTrigger:
+      type: object
+      description: The webhook policy and last trigger time group by event type.
+      properties:
+        policy_name:
+          type: string
+          description: The webhook policy name.
+        event_type:
+          type: string
+          description: The webhook event type.
+        enabled:
+          type: boolean
+          description: Whether or not the webhook policy enabled.
+        creation_time:
+          type: string
+          description: The creation time of webhook policy.
+          format: date-time
+        last_trigger_time:
+          type: string
+          description: The last trigger time of webhook policy.
+          format: date-time
+    PayloadFormatType:
+      type: string
+      description: The type of webhook paylod format.
+      example: CloudEvents
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of task
+        execution_id:
+          type: integer
+          description: The ID of task execution
+        status:
+          type: string
+          description: The status of task
+        status_message:
+          type: string
+          description: The status message of task
+        run_count:
+          type: integer
+          format: int32
+          description: The count of task run
+        extra_attrs:
+          $ref: '#/components/schemas/ExtraAttrs'
+        creation_time:
+          type: string
+          description: The creation time of task
+        update_time:
+          type: string
+          description: The update time of task
+        start_time:
+          type: string
+          description: The start time of task
+        end_time:
+          type: string
+          description: The end time of task
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    Execution:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of execution
+        vendor_type:
+          type: string
+          description: The vendor type of execution
+        vendor_id:
+          type: integer
+          description: The vendor id of execution
+        status:
+          type: string
+          description: The status of execution
+        status_message:
+          type: string
+          description: The status message of execution
+        metrics:
+          $ref: '#/components/schemas/Metrics'
+        trigger:
+          type: string
+          description: The trigger of execution
+        extra_attrs:
+          $ref: '#/components/schemas/ExtraAttrs'
+        start_time:
+          type: string
+          description: The start time of execution
+        end_time:
+          type: string
+          description: The end time of execution
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    EventType:
+      type: string
+      description: Webhook supported event type.
+      example: PULL_ARTIFACT
+    PayloadFormat:
+      type: object
+      description: Webhook supported payload format type collections.
+      properties:
+        notify_type:
+          $ref: '#/components/schemas/NotifyType'
+        formats:
+          type: array
+          description: The supported payload formats for this notify type.
+          items:
+            $ref: '#/components/schemas/PayloadFormatType'
+    Metrics:
+      type: object
+      properties:
+        task_count:
+          type: integer
+          description: The count of task
+        success_task_count:
+          type: integer
+          description: The count of success task
+        error_task_count:
+          type: integer
+          description: The count of error task
+        pending_task_count:
+          type: integer
+          description: The count of pending task
+        running_task_count:
+          type: integer
+          description: The count of running task
+        scheduled_task_count:
+          type: integer
+          description: The count of scheduled task
+        stopped_task_count:
+          type: integer
+          description: The count of stopped task
+    NotifyType:
+      type: string
+      description: Webhook supported notify type.
+      example: http
+    WebhookTargetObject:
+      type: object
+      description: The webhook policy target object.
+      properties:
+        type:
+          type: string
+          description: The webhook target notify type.
+        address:
+          type: string
+          description: The webhook target address.
+        auth_header:
+          type: string
+          description: The webhook auth header.
+        skip_cert_verify:
+          type: boolean
+          description: Whether or not to skip cert verify.
+        payload_format:
+          $ref: '#/components/schemas/PayloadFormatType'
+          description: The payload format of webhook, by default is Default for http type.
+    WebhookPolicy:
+      type: object
+      description: The webhook policy object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The webhook policy ID.
+        name:
+          type: string
+          description: The name of webhook policy.
+        description:
+          type: string
+          description: The description of webhook policy.
+        project_id:
+          type: integer
+          description: The project ID of webhook policy.
+        targets:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookTargetObject'
+        event_types:
+          type: array
+          items:
+            type: string
+        creator:
+          type: string
+          description: The creator of the webhook policy.
+        creation_time:
+          type: string
+          description: The create time of the webhook policy.
+          format: date-time
+        update_time:
+          type: string
+          description: The update time of the webhook policy.
+          format: date-time
+        enabled:
+          type: boolean
+          description: Whether the webhook policy is enabled or not.
+          x-omitempty: false
+    ExtraAttrs:
+      type: object
+      additionalProperties:
+        type: object
+    SupportedWebhookEventTypes:
+      type: object
+      description: Supported webhook event types and notify types.
+      properties:
+        event_type:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventType'
+        notify_type:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotifyType'
+        payload_formats:
+          type: array
+          items:
+            $ref: '#/components/schemas/PayloadFormat'
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    isResourceName:
+      name: X-Is-Resource-Name
+      description: The flag to indicate whether the parameter which supports both name and id in the path is the name of the resource. When the X-Is-Resource-Name is false and the parameter can be converted to an integer, the parameter will be as an id, otherwise, it will be as a name.
+      in: header
+      required: false
+      schema:
+        type: boolean
+        default: false
+    projectNameOrId:
+      name: project_name_or_id
+      in: path
+      description: The name or id of the project
+      required: true
+      schema:
+        type: string
+    webhookPolicyId:
+      name: webhook_policy_id
+      in: path
+      description: The ID of the webhook policy
+      required: true
+      schema:
+        type: integer
+        format: int64
+    taskId:
+      name: task_id
+      in: path
+      description: Task ID
+      required: true
+      schema:
+        type: integer
+    sort:
+      name: sort
+      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
+      in: query
+      required: false
+      schema:
+        type: string
+    executionId:
+      name: execution_id
+      in: path
+      description: Execution ID
+      required: true
+      schema:
+        type: integer
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
+      required: false
+      schema:
+        type: string
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

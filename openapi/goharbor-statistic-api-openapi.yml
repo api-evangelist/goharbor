@@ -1,0 +1,130 @@
+openapi: 3.2.0
+info:
+  title: Harbor Statistic API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: Statistic
+paths:
+  /statistics:
+    get:
+      summary: Get the statistic information about the projects and repositories
+      tags:
+      - Statistic
+      operationId: getStatistic
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      responses:
+        '200':
+          description: The statistic information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Statistic'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  schemas:
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    Statistic:
+      type: object
+      properties:
+        private_project_count:
+          type: integer
+          format: int64
+          description: The count of the private projects
+          x-omitempty: false
+        private_repo_count:
+          type: integer
+          format: int64
+          description: The count of the private repositories
+          x-omitempty: false
+        public_project_count:
+          type: integer
+          format: int64
+          description: The count of the public projects
+          x-omitempty: false
+        public_repo_count:
+          type: integer
+          format: int64
+          description: The count of the public repositories
+          x-omitempty: false
+        total_project_count:
+          type: integer
+          format: int64
+          description: The count of the total projects, only be seen by the system admin
+          x-omitempty: false
+        total_repo_count:
+          type: integer
+          format: int64
+          description: The count of the total repositories, only be seen by the system admin
+          x-omitempty: false
+        total_storage_consumption:
+          type: integer
+          format: int64
+          description: The total storage consumption of blobs, only be seen by the system admin
+          x-omitempty: false
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+  responses:
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

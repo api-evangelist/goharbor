@@ -1,0 +1,365 @@
+openapi: 3.2.0
+info:
+  title: Harbor Jobservice API
+  description: These APIs provide services for manipulating Harbor project.
+  version: '2.0'
+servers:
+- url: http://localhost/api/v2.0
+- url: https://localhost/api/v2.0
+security:
+- basic: []
+- {}
+tags:
+- name: Job Service
+paths:
+  /jobservice/pools:
+    get:
+      operationId: getWorkerPools
+      summary: Get worker pools
+      tags:
+      - Job Service
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      responses:
+        '200':
+          description: Get worker pools successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkerPool'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+  /jobservice/pools/{pool_id}/workers:
+    get:
+      operationId: getWorkers
+      summary: Get workers
+      description: Get workers in current pool
+      tags:
+      - Job Service
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: pool_id
+        in: path
+        required: true
+        description: The name of the pool. 'all' stands for all pools
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Get workers successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Worker'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /jobservice/jobs/{job_id}:
+    put:
+      operationId: stopRunningJob
+      summary: Stop running job
+      tags:
+      - Job Service
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: job_id
+        in: path
+        required: true
+        description: The id of the job.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Stop worker successfully.
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /jobservice/jobs/{job_id}/log:
+    get:
+      operationId: actionGetJobLog
+      summary: Get job log by job id
+      description: Get job log by job id, it is only used by administrator
+      tags:
+      - Job Service
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: job_id
+        in: path
+        required: true
+        description: The id of the job.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Get job log successfully.
+          headers:
+            Content-Type:
+              description: The content type of response body
+              schema:
+                type: string
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /jobservice/queues:
+    get:
+      operationId: listJobQueues
+      summary: list job queues
+      description: list job queue
+      tags:
+      - Job Service
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      responses:
+        '200':
+          description: List job queue successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JobQueue'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /jobservice/queues/{job_type}:
+    put:
+      operationId: actionPendingJobs
+      summary: stop and clean, pause, resume pending jobs in the queue
+      tags:
+      - Job Service
+      parameters:
+      - $ref: '#/components/parameters/requestId'
+      - name: job_type
+        in: path
+        required: true
+        description: The type of the job. 'all' stands for all job types
+        schema:
+          type: string
+      responses:
+        '200':
+          description: take action to the jobs in the queue successfully.
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActionRequest'
+        required: true
+components:
+  schemas:
+    ActionRequest:
+      type: object
+      description: The request to stop, pause or resume
+      properties:
+        action:
+          type: string
+          description: The action of the request, should be stop, pause or resume
+          enum:
+          - stop
+          - pause
+          - resume
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    WorkerPool:
+      type: object
+      description: the worker pool of job service
+      properties:
+        pid:
+          type: integer
+          description: the process id of jobservice
+        worker_pool_id:
+          type: string
+          description: the id of the worker pool
+        start_at:
+          type: string
+          format: date-time
+          description: The start time of the work pool
+        heartbeat_at:
+          type: string
+          format: date-time
+          description: The heartbeat time of the work pool
+        concurrency:
+          type: integer
+          description: The concurrency of the work pool
+        host:
+          type: string
+          description: The host of the work pool
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    JobQueue:
+      type: object
+      description: the job queue info
+      properties:
+        job_type:
+          type: string
+          description: The type of the job queue
+        count:
+          type: integer
+          description: The count of jobs in the job queue
+        latency:
+          type: integer
+          description: The latency the job queue (seconds)
+        paused:
+          type: boolean
+          description: The paused status of the job queue
+          x-omitempty: false
+    Worker:
+      type: object
+      description: worker in the pool
+      properties:
+        id:
+          type: string
+          description: the id of the worker
+        pool_id:
+          type: string
+          description: the id of the worker pool
+        job_name:
+          type: string
+          description: the name of the running job in the worker
+        job_id:
+          type: string
+          description: the id of the running job in the worker
+        start_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The start time of the worker
+          x-omitempty: true
+        check_in:
+          type: string
+          description: the checkin of the running job in the worker
+        checkin_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The checkin time of the worker
+          x-omitempty: true
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+  responses:
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '422':
+      description: Unprocessable entity. The request was well-formed but could not be processed (for example, due to validation errors). Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic
