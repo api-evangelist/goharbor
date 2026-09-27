@@ -37,8 +37,8 @@ paths:
           $ref: '#/components/responses/500'
 components:
   responses:
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -48,8 +48,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -79,15 +79,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Error'
-    Icon:
-      type: object
-      properties:
-        content-type:
-          type: string
-          description: The content type of the icon
-        content:
-          type: string
-          description: The base64 encoded content of the icon
     Error:
       description: a model for all the error response coming from harbor
       type: object
@@ -101,6 +92,15 @@ components:
       example:
         code: NOT_FOUND
         message: artifact library/hello-world:latest not found
+    Icon:
+      type: object
+      properties:
+        content-type:
+          type: string
+          description: The content type of the icon
+        content:
+          type: string
+          description: The base64 encoded content of the icon
   parameters:
     requestId:
       name: X-Request-Id

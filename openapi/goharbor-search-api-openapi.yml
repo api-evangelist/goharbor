@@ -37,15 +37,19 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 components:
+  responses:
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   schemas:
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
     CVEAllowlistItem:
       type: object
       description: The item in CVE allowlist
@@ -53,27 +57,6 @@ components:
         cve_id:
           type: string
           description: The ID of the CVE, such as "CVE-2019-10164"
-    SearchRepository:
-      type: object
-      properties:
-        project_id:
-          type: integer
-          description: The ID of the project that the repository belongs to
-        project_name:
-          type: string
-          description: The name of the project that the repository belongs to
-        project_public:
-          type: boolean
-          description: The flag to indicate the publicity of the project that the repository belongs to (1 is public, 0 is not)
-        repository_name:
-          type: string
-          description: The name of the repository
-        pull_count:
-          type: integer
-          description: The count how many times the repository is pulled
-        artifact_count:
-          type: integer
-          description: The count of artifacts in the repository
     Project:
       type: object
       properties:
@@ -128,19 +111,14 @@ components:
         cve_allowlist:
           description: The CVE allowlist of this project.
           $ref: '#/components/schemas/CVEAllowlist'
-    Search:
+    Errors:
+      description: The error array that describe the errors got during the handling of request
       type: object
       properties:
-        project:
-          description: Search results of the projects that matched the filter keywords.
+        errors:
           type: array
           items:
-            $ref: '#/components/schemas/Project'
-        repository:
-          description: Search results of the repositories that matched the filter keywords.
-          type: array
-          items:
-            $ref: '#/components/schemas/SearchRepository'
+            $ref: '#/components/schemas/Error'
     Error:
       description: a model for all the error response coming from harbor
       type: object
@@ -154,33 +132,19 @@ components:
       example:
         code: NOT_FOUND
         message: artifact library/hello-world:latest not found
-    CVEAllowlist:
+    Search:
       type: object
-      description: The CVE Allowlist for system or project
       properties:
-        id:
-          type: integer
-          description: ID of the allowlist
-        project_id:
-          type: integer
-          description: ID of the project which the allowlist belongs to.  For system level allowlist this attribute is zero.
-        expires_at:
-          type:
-          - integer
-          - 'null'
-          description: the time for expiration of the allowlist, in the form of seconds since epoch.  This is an optional attribute, if it's not set the CVE allowlist does not expire.
-        items:
+        project:
+          description: Search results of the projects that matched the filter keywords.
           type: array
           items:
-            $ref: '#/components/schemas/CVEAllowlistItem'
-        creation_time:
-          type: string
-          format: date-time
-          description: The creation time of the allowlist.
-        update_time:
-          type: string
-          format: date-time
-          description: The update time of the allowlist.
+            $ref: '#/components/schemas/Project'
+        repository:
+          description: Search results of the repositories that matched the filter keywords.
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchRepository'
     ProjectMetadata:
       type: object
       properties:
@@ -259,6 +223,54 @@ components:
           - string
           - 'null'
           description: 'Matching mode for proxy_cache_filter_pattern: "doublestar" (default, glob-style with ** support) or "regex". Only has value when the current project is a proxy cache project.'
+    CVEAllowlist:
+      type: object
+      description: The CVE Allowlist for system or project
+      properties:
+        id:
+          type: integer
+          description: ID of the allowlist
+        project_id:
+          type: integer
+          description: ID of the project which the allowlist belongs to.  For system level allowlist this attribute is zero.
+        expires_at:
+          type:
+          - integer
+          - 'null'
+          description: the time for expiration of the allowlist, in the form of seconds since epoch.  This is an optional attribute, if it's not set the CVE allowlist does not expire.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CVEAllowlistItem'
+        creation_time:
+          type: string
+          format: date-time
+          description: The creation time of the allowlist.
+        update_time:
+          type: string
+          format: date-time
+          description: The update time of the allowlist.
+    SearchRepository:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          description: The ID of the project that the repository belongs to
+        project_name:
+          type: string
+          description: The name of the project that the repository belongs to
+        project_public:
+          type: boolean
+          description: The flag to indicate the publicity of the project that the repository belongs to (1 is public, 0 is not)
+        repository_name:
+          type: string
+          description: The name of the repository
+        pull_count:
+          type: integer
+          description: The count how many times the repository is pulled
+        artifact_count:
+          type: integer
+          description: The count of artifacts in the repository
   parameters:
     requestId:
       name: X-Request-Id
@@ -268,18 +280,6 @@ components:
       schema:
         type: string
         minLength: 1
-  responses:
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
   securitySchemes:
     basic:
       type: http

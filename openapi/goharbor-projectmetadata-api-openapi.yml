@@ -176,8 +176,8 @@ paths:
           $ref: '#/components/responses/500'
 components:
   responses:
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -189,24 +189,6 @@ components:
             $ref: '#/components/schemas/Errors'
     '500':
       description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '200':
-      description: Success
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-    '404':
-      description: Not found. The requested resource does not exist.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -238,8 +220,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -249,6 +231,48 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  parameters:
+    isResourceName:
+      name: X-Is-Resource-Name
+      description: The flag to indicate whether the parameter which supports both name and id in the path is the name of the resource. When the X-Is-Resource-Name is false and the parameter can be converted to an integer, the parameter will be as an id, otherwise, it will be as a name.
+      in: header
+      required: false
+      schema:
+        type: boolean
+        default: false
+    projectNameOrId:
+      name: project_name_or_id
+      in: path
+      description: The name or id of the project
+      required: true
+      schema:
+        type: string
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
   schemas:
     Errors:
       description: The error array that describe the errors got during the handling of request
@@ -271,30 +295,6 @@ components:
       example:
         code: NOT_FOUND
         message: artifact library/hello-world:latest not found
-  parameters:
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
-    isResourceName:
-      name: X-Is-Resource-Name
-      description: The flag to indicate whether the parameter which supports both name and id in the path is the name of the resource. When the X-Is-Resource-Name is false and the parameter can be converted to an integer, the parameter will be as an id, otherwise, it will be as a name.
-      in: header
-      required: false
-      schema:
-        type: boolean
-        default: false
-    projectNameOrId:
-      name: project_name_or_id
-      in: path
-      description: The name or id of the project
-      required: true
-      schema:
-        type: string
   securitySchemes:
     basic:
       type: http

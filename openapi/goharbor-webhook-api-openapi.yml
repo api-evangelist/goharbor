@@ -354,37 +354,8 @@ paths:
           $ref: '#/components/responses/500'
 components:
   responses:
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '200':
-      description: Success
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-    '404':
-      description: Not found. The requested resource does not exist.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -405,8 +376,15 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -416,6 +394,107 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  parameters:
+    isResourceName:
+      name: X-Is-Resource-Name
+      description: The flag to indicate whether the parameter which supports both name and id in the path is the name of the resource. When the X-Is-Resource-Name is false and the parameter can be converted to an integer, the parameter will be as an id, otherwise, it will be as a name.
+      in: header
+      required: false
+      schema:
+        type: boolean
+        default: false
+    sort:
+      name: sort
+      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
+      in: query
+      required: false
+      schema:
+        type: string
+    executionId:
+      name: execution_id
+      in: path
+      description: Execution ID
+      required: true
+      schema:
+        type: integer
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    taskId:
+      name: task_id
+      in: path
+      description: Task ID
+      required: true
+      schema:
+        type: integer
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
+    webhookPolicyId:
+      name: webhook_policy_id
+      in: path
+      description: The ID of the webhook policy
+      required: true
+      schema:
+        type: integer
+        format: int64
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
+      required: false
+      schema:
+        type: string
+    projectNameOrId:
+      name: project_name_or_id
+      in: path
+      description: The name or id of the project
+      required: true
+      schema:
+        type: string
   schemas:
     WebhookLastTrigger:
       type: object
@@ -438,10 +517,19 @@ components:
           type: string
           description: The last trigger time of webhook policy.
           format: date-time
-    PayloadFormatType:
-      type: string
-      description: The type of webhook paylod format.
-      example: CloudEvents
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
     Task:
       type: object
       properties:
@@ -475,101 +563,6 @@ components:
         end_time:
           type: string
           description: The end time of task
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
-    Execution:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The ID of execution
-        vendor_type:
-          type: string
-          description: The vendor type of execution
-        vendor_id:
-          type: integer
-          description: The vendor id of execution
-        status:
-          type: string
-          description: The status of execution
-        status_message:
-          type: string
-          description: The status message of execution
-        metrics:
-          $ref: '#/components/schemas/Metrics'
-        trigger:
-          type: string
-          description: The trigger of execution
-        extra_attrs:
-          $ref: '#/components/schemas/ExtraAttrs'
-        start_time:
-          type: string
-          description: The start time of execution
-        end_time:
-          type: string
-          description: The end time of execution
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-    EventType:
-      type: string
-      description: Webhook supported event type.
-      example: PULL_ARTIFACT
-    PayloadFormat:
-      type: object
-      description: Webhook supported payload format type collections.
-      properties:
-        notify_type:
-          $ref: '#/components/schemas/NotifyType'
-        formats:
-          type: array
-          description: The supported payload formats for this notify type.
-          items:
-            $ref: '#/components/schemas/PayloadFormatType'
-    Metrics:
-      type: object
-      properties:
-        task_count:
-          type: integer
-          description: The count of task
-        success_task_count:
-          type: integer
-          description: The count of success task
-        error_task_count:
-          type: integer
-          description: The count of error task
-        pending_task_count:
-          type: integer
-          description: The count of pending task
-        running_task_count:
-          type: integer
-          description: The count of running task
-        scheduled_task_count:
-          type: integer
-          description: The count of scheduled task
-        stopped_task_count:
-          type: integer
-          description: The count of stopped task
-    NotifyType:
-      type: string
-      description: Webhook supported notify type.
-      example: http
     WebhookTargetObject:
       type: object
       description: The webhook policy target object.
@@ -629,10 +622,57 @@ components:
           type: boolean
           description: Whether the webhook policy is enabled or not.
           x-omitempty: false
+    Execution:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of execution
+        vendor_type:
+          type: string
+          description: The vendor type of execution
+        vendor_id:
+          type: integer
+          description: The vendor id of execution
+        status:
+          type: string
+          description: The status of execution
+        status_message:
+          type: string
+          description: The status message of execution
+        metrics:
+          $ref: '#/components/schemas/Metrics'
+        trigger:
+          type: string
+          description: The trigger of execution
+        extra_attrs:
+          $ref: '#/components/schemas/ExtraAttrs'
+        start_time:
+          type: string
+          description: The start time of execution
+        end_time:
+          type: string
+          description: The end time of execution
+    PayloadFormatType:
+      type: string
+      description: The type of webhook paylod format.
+      example: CloudEvents
     ExtraAttrs:
       type: object
       additionalProperties:
         type: object
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    EventType:
+      type: string
+      description: Webhook supported event type.
+      example: PULL_ARTIFACT
     SupportedWebhookEventTypes:
       type: object
       description: Supported webhook event types and notify types.
@@ -649,85 +689,45 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PayloadFormat'
-  parameters:
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
-    isResourceName:
-      name: X-Is-Resource-Name
-      description: The flag to indicate whether the parameter which supports both name and id in the path is the name of the resource. When the X-Is-Resource-Name is false and the parameter can be converted to an integer, the parameter will be as an id, otherwise, it will be as a name.
-      in: header
-      required: false
-      schema:
-        type: boolean
-        default: false
-    projectNameOrId:
-      name: project_name_or_id
-      in: path
-      description: The name or id of the project
-      required: true
-      schema:
-        type: string
-    webhookPolicyId:
-      name: webhook_policy_id
-      in: path
-      description: The ID of the webhook policy
-      required: true
-      schema:
-        type: integer
-        format: int64
-    taskId:
-      name: task_id
-      in: path
-      description: Task ID
-      required: true
-      schema:
-        type: integer
-    sort:
-      name: sort
-      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
-      in: query
-      required: false
-      schema:
-        type: string
-    executionId:
-      name: execution_id
-      in: path
-      description: Execution ID
-      required: true
-      schema:
-        type: integer
-    page:
-      name: page
-      in: query
-      required: false
-      description: The page number
-      schema:
-        type: integer
-        format: int64
-        default: 1
-    pageSize:
-      name: page_size
-      in: query
-      required: false
-      description: The size of per page
-      schema:
-        type: integer
-        format: int64
-        default: 10
-        maximum: 100
-    query:
-      name: q
-      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
-      in: query
-      required: false
-      schema:
-        type: string
+    Metrics:
+      type: object
+      properties:
+        task_count:
+          type: integer
+          description: The count of task
+        success_task_count:
+          type: integer
+          description: The count of success task
+        error_task_count:
+          type: integer
+          description: The count of error task
+        pending_task_count:
+          type: integer
+          description: The count of pending task
+        running_task_count:
+          type: integer
+          description: The count of running task
+        scheduled_task_count:
+          type: integer
+          description: The count of scheduled task
+        stopped_task_count:
+          type: integer
+          description: The count of stopped task
+    PayloadFormat:
+      type: object
+      description: Webhook supported payload format type collections.
+      properties:
+        notify_type:
+          $ref: '#/components/schemas/NotifyType'
+        formats:
+          type: array
+          description: The supported payload formats for this notify type.
+          items:
+            $ref: '#/components/schemas/PayloadFormatType'
+    NotifyType:
+      type: string
+      description: Webhook supported notify type.
+      example: http
   securitySchemes:
     basic:
       type: http

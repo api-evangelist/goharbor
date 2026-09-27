@@ -81,23 +81,70 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 components:
+  responses:
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   schemas:
-    Errors:
-      description: The error array that describe the errors got during the handling of request
+    AuthproxySetting:
       type: object
       properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-    SystemInfo:
-      type: object
-      properties:
-        storage:
-          type: array
-          description: The storage of system.
-          items:
-            $ref: '#/components/schemas/Storage'
+        endpoint:
+          type: string
+          description: The fully qualified URI of login endpoint of authproxy, such as 'https://192.168.1.2:8443/login'
+        tokenreivew_endpoint:
+          type: string
+          description: The fully qualified URI of token review endpoint of authproxy, such as 'https://192.168.1.2:8443/tokenreview'
+        skip_search:
+          type: boolean
+          description: The flag to determine whether Harbor can skip search the user/group when adding him as a member.
+        verify_cert:
+          type: boolean
+          description: The flag to determine whether Harbor should verify the certificate when connecting to the auth proxy.
+        server_certificate:
+          type: string
+          description: The certificate to be pinned when connecting auth proxy.
     GeneralInfo:
       type: object
       properties:
@@ -191,17 +238,22 @@ components:
           - 'null'
           x-omitempty: true
           description: The OIDC provider name, empty if current auth is not OIDC_auth or OIDC provider is not configured.
-    Storage:
+    Errors:
+      description: The error array that describe the errors got during the handling of request
       type: object
       properties:
-        total:
-          type: integer
-          format: uint64
-          description: Total volume size.
-        free:
-          type: integer
-          format: uint64
-          description: Free volume size.
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    SystemInfo:
+      type: object
+      properties:
+        storage:
+          type: array
+          description: The storage of system.
+          items:
+            $ref: '#/components/schemas/Storage'
     Error:
       description: a model for all the error response coming from harbor
       type: object
@@ -215,24 +267,17 @@ components:
       example:
         code: NOT_FOUND
         message: artifact library/hello-world:latest not found
-    AuthproxySetting:
+    Storage:
       type: object
       properties:
-        endpoint:
-          type: string
-          description: The fully qualified URI of login endpoint of authproxy, such as 'https://192.168.1.2:8443/login'
-        tokenreivew_endpoint:
-          type: string
-          description: The fully qualified URI of token review endpoint of authproxy, such as 'https://192.168.1.2:8443/tokenreview'
-        skip_search:
-          type: boolean
-          description: The flag to determine whether Harbor can skip search the user/group when adding him as a member.
-        verify_cert:
-          type: boolean
-          description: The flag to determine whether Harbor should verify the certificate when connecting to the auth proxy.
-        server_certificate:
-          type: string
-          description: The certificate to be pinned when connecting auth proxy.
+        total:
+          type: integer
+          format: uint64
+          description: Total volume size.
+        free:
+          type: integer
+          format: uint64
+          description: Free volume size.
   parameters:
     requestId:
       name: X-Request-Id
@@ -242,51 +287,6 @@ components:
       schema:
         type: string
         minLength: 1
-  responses:
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '404':
-      description: Not found. The requested resource does not exist.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
   securitySchemes:
     basic:
       type: http

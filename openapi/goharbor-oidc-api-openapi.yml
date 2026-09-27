@@ -48,8 +48,8 @@ paths:
         required: true
 components:
   responses:
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -70,13 +70,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '200':
-      description: Success
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
     '401':
       description: Unauthorized. Authentication is required to access this resource.
       headers:
@@ -88,8 +81,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -99,6 +92,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
   schemas:
     Errors:
       description: The error array that describe the errors got during the handling of request

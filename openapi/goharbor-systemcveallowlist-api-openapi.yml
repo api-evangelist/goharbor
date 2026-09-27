@@ -57,8 +57,8 @@ paths:
         description: The allowlist with new content
 components:
   responses:
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -79,8 +79,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -91,6 +91,13 @@ components:
           schema:
             $ref: '#/components/schemas/Errors'
   schemas:
+    CVEAllowlistItem:
+      type: object
+      description: The item in CVE allowlist
+      properties:
+        cve_id:
+          type: string
+          description: The ID of the CVE, such as "CVE-2019-10164"
     Errors:
       description: The error array that describe the errors got during the handling of request
       type: object
@@ -99,13 +106,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Error'
-    CVEAllowlistItem:
-      type: object
-      description: The item in CVE allowlist
-      properties:
-        cve_id:
-          type: string
-          description: The ID of the CVE, such as "CVE-2019-10164"
     Error:
       description: a model for all the error response coming from harbor
       type: object

@@ -134,71 +134,9 @@ paths:
         description: The new hard limits for the quota
         required: true
 components:
-  schemas:
-    Quota:
-      type: object
-      description: The quota object
-      properties:
-        id:
-          type: integer
-          description: ID of the quota
-        ref:
-          $ref: '#/components/schemas/QuotaRefObject'
-          description: The reference object of the quota
-        hard:
-          $ref: '#/components/schemas/ResourceList'
-          description: The hard limits of the quota
-          x-omitempty: false
-        used:
-          $ref: '#/components/schemas/ResourceList'
-          description: The used status of the quota
-          x-omitempty: false
-        creation_time:
-          type: string
-          format: date-time
-          description: the creation time of the quota
-        update_time:
-          type: string
-          format: date-time
-          description: the update time of the quota
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-    ResourceList:
-      type: object
-      additionalProperties:
-        type: integer
-        format: int64
-    QuotaUpdateReq:
-      type: object
-      properties:
-        hard:
-          $ref: '#/components/schemas/ResourceList'
-          description: The new hard limits for the quota
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
-    QuotaRefObject:
-      type: object
-      additionalProperties: {}
   responses:
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -210,6 +148,28 @@ components:
             $ref: '#/components/schemas/Errors'
     '500':
       description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -237,28 +197,68 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
+  schemas:
+    QuotaRefObject:
+      type: object
+      additionalProperties: {}
+    ResourceList:
+      type: object
+      additionalProperties:
+        type: integer
+        format: int64
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    QuotaUpdateReq:
+      type: object
+      properties:
+        hard:
+          $ref: '#/components/schemas/ResourceList'
+          description: The new hard limits for the quota
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    Quota:
+      type: object
+      description: The quota object
+      properties:
+        id:
+          type: integer
+          description: ID of the quota
+        ref:
+          $ref: '#/components/schemas/QuotaRefObject'
+          description: The reference object of the quota
+        hard:
+          $ref: '#/components/schemas/ResourceList'
+          description: The hard limits of the quota
+          x-omitempty: false
+        used:
+          $ref: '#/components/schemas/ResourceList'
+          description: The used status of the quota
+          x-omitempty: false
+        creation_time:
+          type: string
+          format: date-time
+          description: the creation time of the quota
+        update_time:
+          type: string
+          format: date-time
+          description: the update time of the quota
   parameters:
     pageSize:
       name: page_size

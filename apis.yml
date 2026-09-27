@@ -49,7 +49,7 @@ tags:
   - Vulnerability Scanning
   - Supply Chain Security
   - OCI
-  - Open-Source
+  - Open Source
   - Kubernetes
   - DevOps
   - Replication
@@ -64,6 +64,7 @@ tags_raw:
   - Kubernetes
   - DevOps
   - Replication
+  - Open-Source
 created: '2025-02-17'
 modified: '2026-09-12'
 url: >-
@@ -71,7 +72,7 @@ url: >-
 specificationVersion: '0.23'
 apis:
 - aid: goharbor:goharbor-health-api
-  name: GoHarbor health API
+  name: GoHarbor Health API
   description: The health API from GoHarbor — 2 operation(s) for health.
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
@@ -87,7 +88,7 @@ apis:
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-replication-api
-  name: GoHarbor replication API
+  name: GoHarbor Replication API
   description: The replication API from GoHarbor — 2 operation(s) for replication.
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
@@ -103,7 +104,7 @@ apis:
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-scan-api
-  name: GoHarbor scan API
+  name: GoHarbor Scan API
   description: The scan API from GoHarbor — 1 operation(s) for scan.
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
@@ -119,7 +120,7 @@ apis:
   - type: SourceCode
     url: https://github.com/goharbor/harbor
 - aid: goharbor:goharbor-search-api
-  name: GoHarbor search API
+  name: GoHarbor Search API
   description: The search API from GoHarbor — 1 operation(s) for search.
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
@@ -1025,8 +1026,6 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
-  - Audit Logs
-  tags_raw:
   - Audit Log
   properties:
   - type: OpenAPI
@@ -1111,8 +1110,6 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
-  - UserGroup
-  tags_raw:
   - User Group
   properties:
   - type: OpenAPI

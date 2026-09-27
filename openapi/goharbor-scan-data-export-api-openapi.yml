@@ -136,19 +136,8 @@ paths:
           $ref: '#/components/responses/500'
 components:
   responses:
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -180,17 +169,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '404':
-      description: Not found. The requested resource does not exist.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '405':
       description: Method not allowed.
       headers:
@@ -202,8 +180,30 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '404':
+      description: Not found. The requested resource does not exist.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -214,14 +214,6 @@ components:
           schema:
             $ref: '#/components/schemas/Errors'
   schemas:
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
     ScanDataExportJob:
       type: object
       description: The metadata associated with the scan data export job
@@ -230,6 +222,34 @@ components:
           type: integer
           format: int64
           description: The id of the scan data export job
+    ScanDataExportRequest:
+      type: object
+      description: The criteria to select the scan data to export.
+      properties:
+        job_name:
+          type: string
+          description: Name of the scan data export job
+        projects:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: A list of one or more projects for which to export the scan data, currently only one project is supported due to performance concerns, but define as array for extension in the future.
+        labels:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: A list of one or more labels for which to export the scan data, defaults to all if empty
+        repositories:
+          type: string
+          description: A list of repositories for which to export the scan data, defaults to all if empty
+        cveIds:
+          type: string
+          description: CVE-IDs for which to export data. Multiple CVE-IDs can be specified by separating using ',' and enclosed between '{}'. Defaults to all if empty
+        tags:
+          type: string
+          description: A list of tags enclosed within '{}'. Defaults to all if empty
     ScanDataExportExecutionList:
       type: object
       description: The list of scan data export executions
@@ -239,19 +259,6 @@ components:
           items:
             $ref: '#/components/schemas/ScanDataExportExecution'
           description: The list of scan data export executions
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
     ScanDataExportExecution:
       type: object
       description: The replication execution
@@ -288,43 +295,28 @@ components:
           type: boolean
           x-omitempty: false
           description: Indicates whether the export artifact is present in registry
-    ScanDataExportRequest:
+    Errors:
+      description: The error array that describe the errors got during the handling of request
       type: object
-      description: The criteria to select the scan data to export.
       properties:
-        job_name:
-          type: string
-          description: Name of the scan data export job
-        projects:
+        errors:
           type: array
           items:
-            type: integer
-            format: int64
-          description: A list of one or more projects for which to export the scan data, currently only one project is supported due to performance concerns, but define as array for extension in the future.
-        labels:
-          type: array
-          items:
-            type: integer
-            format: int64
-          description: A list of one or more labels for which to export the scan data, defaults to all if empty
-        repositories:
+            $ref: '#/components/schemas/Error'
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
           type: string
-          description: A list of repositories for which to export the scan data, defaults to all if empty
-        cveIds:
+          description: The error code
+        message:
           type: string
-          description: CVE-IDs for which to export data. Multiple CVE-IDs can be specified by separating using ',' and enclosed between '{}'. Defaults to all if empty
-        tags:
-          type: string
-          description: A list of tags enclosed within '{}'. Defaults to all if empty
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
   parameters:
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
     scanDataType:
       name: X-Scan-Data-Type
       description: The type of scan data to export
@@ -339,6 +331,14 @@ components:
       required: true
       schema:
         type: integer
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
   securitySchemes:
     basic:
       type: http

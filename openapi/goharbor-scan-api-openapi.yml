@@ -131,57 +131,6 @@ paths:
           $ref: '#/components/responses/500'
 components:
   responses:
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '202':
-      description: Accepted
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-    '404':
-      description: Not found. The requested resource does not exist.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '403':
       description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
@@ -204,11 +153,76 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '202':
+      description: Accepted
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
   parameters:
+    repositoryName:
+      name: repository_name
+      in: path
+      description: The name of the repository. If it contains slash, encode it twice over with URL encoding. e.g. a/b -> a%2Fb -> a%252Fb
+      required: true
+      schema:
+        type: string
     projectName:
       name: project_name
       in: path
       description: The name of the project
+      required: true
+      schema:
+        type: string
+    reference:
+      name: reference
+      in: path
+      description: The reference of the artifact, can be digest or tag
       required: true
       schema:
         type: string
@@ -220,20 +234,6 @@ components:
       schema:
         type: string
         minLength: 1
-    repositoryName:
-      name: repository_name
-      in: path
-      description: The name of the repository. If it contains slash, encode it twice over with URL encoding. e.g. a/b -> a%2Fb -> a%252Fb
-      required: true
-      schema:
-        type: string
-    reference:
-      name: reference
-      in: path
-      description: The reference of the artifact, can be digest or tag
-      required: true
-      schema:
-        type: string
   schemas:
     Errors:
       description: The error array that describe the errors got during the handling of request
@@ -243,15 +243,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Error'
-    ScanType:
-      type: object
-      properties:
-        scan_type:
-          type: string
-          description: The scan type for the scan request. Two options are currently supported, vulnerability and sbom
-          enum:
-          - vulnerability
-          - sbom
     Error:
       description: a model for all the error response coming from harbor
       type: object
@@ -265,6 +256,15 @@ components:
       example:
         code: NOT_FOUND
         message: artifact library/hello-world:latest not found
+    ScanType:
+      type: object
+      properties:
+        scan_type:
+          type: string
+          description: The scan type for the scan request. Two options are currently supported, vulnerability and sbom
+          enum:
+          - vulnerability
+          - sbom
   securitySchemes:
     basic:
       type: http

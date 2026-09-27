@@ -601,8 +601,8 @@ paths:
           $ref: '#/components/responses/500'
 components:
   responses:
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -623,6 +623,17 @@ components:
           description: The location of the resource
           schema:
             type: string
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
     '200':
       description: Success
       headers:
@@ -630,8 +641,8 @@ components:
           description: The ID of the corresponding request for the response
           schema:
             type: string
-    '404':
-      description: Not found. The requested resource does not exist.
+    '409':
+      description: Conflict. The resource already exists or the current state prevents the operation.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -652,8 +663,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+    '404':
+      description: Not found. The requested resource does not exist.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -663,8 +674,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -674,29 +685,97 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '409':
-      description: Conflict. The resource already exists or the current state prevents the operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
+  parameters:
+    instanceName:
+      name: preheat_instance_name
+      in: path
+      description: Instance Name
+      required: true
+      schema:
+        type: string
+    sort:
+      name: sort
+      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
+      in: query
+      required: false
+      schema:
+        type: string
+    executionId:
+      name: execution_id
+      in: path
+      description: Execution ID
+      required: true
+      schema:
+        type: integer
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    preheatPolicyName:
+      name: preheat_policy_name
+      in: path
+      description: Preheat Policy Name
+      required: true
+      schema:
+        type: string
+    taskId:
+      name: task_id
+      in: path
+      description: Task ID
+      required: true
+      schema:
+        type: integer
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    projectName:
+      name: project_name
+      in: path
+      description: The name of the project
+      required: true
+      schema:
+        type: string
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
+      required: false
+      schema:
+        type: string
   schemas:
-    ProviderUnderProject:
+    Error:
+      description: a model for all the error response coming from harbor
       type: object
       properties:
-        id:
-          type: integer
-        provider:
+        code:
           type: string
-        enabled:
-          type: boolean
-        default:
-          type: boolean
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
     Task:
       type: object
       properties:
@@ -730,19 +809,40 @@ components:
         end_time:
           type: string
           description: The end time of task
-    Error:
-      description: a model for all the error response coming from harbor
+    Metadata:
       type: object
       properties:
-        code:
+        id:
           type: string
-          description: The error code
-        message:
+          description: id
+        name:
           type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
+          description: name
+        icon:
+          type: string
+          description: icon
+        maintainers:
+          type: array
+          description: maintainers
+          items:
+            type: string
+        version:
+          type: string
+          description: version
+        source:
+          type: string
+          description: source
+    ProviderUnderProject:
+      type: object
+      properties:
+        id:
+          type: integer
+        provider:
+          type: string
+        enabled:
+          type: boolean
+        default:
+          type: boolean
     Execution:
       type: object
       properties:
@@ -774,6 +874,10 @@ components:
         end_time:
           type: string
           description: The end time of execution
+    ExtraAttrs:
+      type: object
+      additionalProperties:
+        type: object
     Errors:
       description: The error array that describe the errors got during the handling of request
       type: object
@@ -858,29 +962,6 @@ components:
         stopped_task_count:
           type: integer
           description: The count of stopped task
-    Metadata:
-      type: object
-      properties:
-        id:
-          type: string
-          description: id
-        name:
-          type: string
-          description: name
-        icon:
-          type: string
-          description: icon
-        maintainers:
-          type: array
-          description: maintainers
-          items:
-            type: string
-        version:
-          type: string
-          description: version
-        source:
-          type: string
-          description: source
     PreheatPolicy:
       type: object
       properties:
@@ -923,87 +1004,6 @@ components:
           type: string
           format: date-time
           description: The Update Time of preheat policy
-    ExtraAttrs:
-      type: object
-      additionalProperties:
-        type: object
-  parameters:
-    preheatPolicyName:
-      name: preheat_policy_name
-      in: path
-      description: Preheat Policy Name
-      required: true
-      schema:
-        type: string
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
-    projectName:
-      name: project_name
-      in: path
-      description: The name of the project
-      required: true
-      schema:
-        type: string
-    taskId:
-      name: task_id
-      in: path
-      description: Task ID
-      required: true
-      schema:
-        type: integer
-    instanceName:
-      name: preheat_instance_name
-      in: path
-      description: Instance Name
-      required: true
-      schema:
-        type: string
-    sort:
-      name: sort
-      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
-      in: query
-      required: false
-      schema:
-        type: string
-    executionId:
-      name: execution_id
-      in: path
-      description: Execution ID
-      required: true
-      schema:
-        type: integer
-    page:
-      name: page
-      in: query
-      required: false
-      description: The page number
-      schema:
-        type: integer
-        format: int64
-        default: 1
-    pageSize:
-      name: page_size
-      in: query
-      required: false
-      description: The size of per page
-      schema:
-        type: integer
-        format: int64
-        default: 10
-        maximum: 100
-    query:
-      name: q
-      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
-      in: query
-      required: false
-      schema:
-        type: string
   securitySchemes:
     basic:
       type: http
