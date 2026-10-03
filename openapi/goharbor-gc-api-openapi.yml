@@ -199,28 +199,6 @@ paths:
         required: true
 components:
   responses:
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '201':
-      description: Created
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-        Location:
-          description: The location of the resource
-          schema:
-            type: string
     '403':
       description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
@@ -239,30 +217,8 @@ components:
           description: The ID of the corresponding request for the response
           schema:
             type: string
-    '409':
-      description: Conflict. The resource already exists or the current state prevents the operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '401':
       description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '404':
-      description: Not found. The requested resource does not exist.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -283,22 +239,51 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '201':
+      description: Created
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+        Location:
+          description: The location of the resource
+          schema:
+            type: string
+    '409':
+      description: Conflict. The resource already exists or the current state prevents the operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   parameters:
-    gcId:
-      name: gc_id
-      in: path
-      description: The ID of the gc log
-      required: true
-      schema:
-        type: integer
-        format: int64
-    sort:
-      name: sort
-      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
-      in: query
-      required: false
-      schema:
-        type: string
     requestId:
       name: X-Request-Id
       description: An unique ID for the request
@@ -307,6 +292,28 @@ components:
       schema:
         type: string
         minLength: 1
+    gcId:
+      name: gc_id
+      in: path
+      description: The ID of the gc log
+      required: true
+      schema:
+        type: integer
+        format: int64
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
+      required: false
+      schema:
+        type: string
+    sort:
+      name: sort
+      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
+      in: query
+      required: false
+      schema:
+        type: string
     pageSize:
       name: page_size
       in: query
@@ -326,13 +333,6 @@ components:
         type: integer
         format: int64
         default: 1
-    query:
-      name: q
-      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
-      in: query
-      required: false
-      schema:
-        type: string
   schemas:
     Error:
       description: a model for all the error response coming from harbor
@@ -347,64 +347,6 @@ components:
       example:
         code: NOT_FOUND
         message: artifact library/hello-world:latest not found
-    ScheduleObj:
-      type: object
-      properties:
-        type:
-          type: string
-          description: 'The schedule type. The valid values are ''Hourly'', ''Daily'', ''Weekly'', ''Custom'', ''Manual'', ''None'' and ''Schedule''.
-
-            ''Manual'' means to trigger it right away, ''Schedule'' means to trigger it by a specified cron schedule and
-
-            ''None'' means to cancel the schedule.
-
-            '
-          enum:
-          - Hourly
-          - Daily
-          - Weekly
-          - Custom
-          - Manual
-          - None
-          - Schedule
-        cron:
-          type: string
-          description: A cron expression, a time-based job scheduler.
-        next_scheduled_time:
-          type: string
-          format: date-time
-          description: The next time to schedule to run the job.
-    GCHistory:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: the id of gc job.
-        job_name:
-          type: string
-          description: the job name of gc job.
-        job_kind:
-          type: string
-          description: the job kind of gc job.
-        job_parameters:
-          type: string
-          description: the job parameters of gc job.
-        schedule:
-          $ref: '#/components/schemas/ScheduleObj'
-        job_status:
-          type: string
-          description: the status of gc job.
-        deleted:
-          type: boolean
-          description: if gc job was deleted.
-        creation_time:
-          type: string
-          format: date-time
-          description: the creation time of gc job.
-        update_time:
-          type: string
-          format: date-time
-          description: the update time of gc job.
     Errors:
       description: The error array that describe the errors got during the handling of request
       type: object
@@ -441,6 +383,64 @@ components:
           description: The parameters of schedule job
           additionalProperties:
             type: object
+    GCHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: the id of gc job.
+        job_name:
+          type: string
+          description: the job name of gc job.
+        job_kind:
+          type: string
+          description: the job kind of gc job.
+        job_parameters:
+          type: string
+          description: the job parameters of gc job.
+        schedule:
+          $ref: '#/components/schemas/ScheduleObj'
+        job_status:
+          type: string
+          description: the status of gc job.
+        deleted:
+          type: boolean
+          description: if gc job was deleted.
+        creation_time:
+          type: string
+          format: date-time
+          description: the creation time of gc job.
+        update_time:
+          type: string
+          format: date-time
+          description: the update time of gc job.
+    ScheduleObj:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'The schedule type. The valid values are ''Hourly'', ''Daily'', ''Weekly'', ''Custom'', ''Manual'', ''None'' and ''Schedule''.
+
+            ''Manual'' means to trigger it right away, ''Schedule'' means to trigger it by a specified cron schedule and
+
+            ''None'' means to cancel the schedule.
+
+            '
+          enum:
+          - Hourly
+          - Daily
+          - Weekly
+          - Custom
+          - Manual
+          - None
+          - Schedule
+        cron:
+          type: string
+          description: A cron expression, a time-based job scheduler.
+        next_scheduled_time:
+          type: string
+          format: date-time
+          description: The next time to schedule to run the job.
   securitySchemes:
     basic:
       type: http

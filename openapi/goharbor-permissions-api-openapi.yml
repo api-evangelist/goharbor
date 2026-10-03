@@ -38,17 +38,6 @@ paths:
           $ref: '#/components/responses/500'
 components:
   responses:
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '500':
       description: Internal server error. Inspect the `errors` array in the response body for details.
       headers:
@@ -60,8 +49,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -82,16 +71,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   schemas:
-    Permission:
-      type: object
-      properties:
-        resource:
-          type: string
-          description: The permission resoruce
-        action:
-          type: string
-          description: The permission action
     Errors:
       description: The error array that describe the errors got during the handling of request
       type: object
@@ -100,19 +91,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Error'
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
     Permissions:
       type: object
       properties:
@@ -126,6 +104,28 @@ components:
           description: The project level permissions
           items:
             $ref: '#/components/schemas/Permission'
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    Permission:
+      type: object
+      properties:
+        resource:
+          type: string
+          description: The permission resoruce
+        action:
+          type: string
+          description: The permission action
   parameters:
     requestId:
       name: X-Request-Id

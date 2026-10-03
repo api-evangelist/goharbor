@@ -85,73 +85,19 @@ paths:
         description: The configuration map can contain a subset of the attributes of the schema, which are to be updated.
         required: true
 components:
-  responses:
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '422':
-      description: Unprocessable entity. The request was well-formed but could not be processed (for example, due to validation errors). Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
   schemas:
-    InternalConfigurationValue:
+    InternalConfigurationsResponse:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/InternalConfigurationValue'
+    Errors:
+      description: The error array that describe the errors got during the handling of request
       type: object
       properties:
-        value:
-          type: object
-          description: The value of current config item
-        editable:
-          type: boolean
-          x-omitempty: false
-          description: The configure item can be updated or not
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
     BoolConfigItem:
       type: object
       properties:
@@ -344,6 +290,51 @@ components:
         disabled_audit_log_event_types:
           $ref: '#/components/schemas/StringConfigItem'
           description: The audit log event types to skip to log in database
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    StringConfigItem:
+      type: object
+      properties:
+        value:
+          type: string
+          x-omitempty: false
+          description: The string value of current config item
+        editable:
+          type: boolean
+          x-omitempty: false
+          description: The configure item can be updated or not
+    InternalConfigurationValue:
+      type: object
+      properties:
+        value:
+          type: object
+          description: The value of current config item
+        editable:
+          type: boolean
+          x-omitempty: false
+          description: The configure item can be updated or not
+    IntegerConfigItem:
+      type: object
+      properties:
+        value:
+          type: integer
+          x-omitempty: false
+          description: The integer value of current config item
+        editable:
+          type: boolean
+          x-omitempty: false
+          description: The configure item can be updated or not
     Configurations:
       type: object
       properties:
@@ -633,53 +624,62 @@ components:
           description: the list to disable log audit event types.
           x-omitempty: true
           x-isnullable: true
-    IntegerConfigItem:
-      type: object
-      properties:
-        value:
-          type: integer
-          x-omitempty: false
-          description: The integer value of current config item
-        editable:
-          type: boolean
-          x-omitempty: false
-          description: The configure item can be updated or not
-    InternalConfigurationsResponse:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/InternalConfigurationValue'
-    StringConfigItem:
-      type: object
-      properties:
-        value:
-          type: string
-          x-omitempty: false
-          description: The string value of current config item
-        editable:
-          type: boolean
-          x-omitempty: false
-          description: The configure item can be updated or not
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '422':
+      description: Unprocessable entity. The request was well-formed but could not be processed (for example, due to validation errors). Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   parameters:
     requestId:
       name: X-Request-Id

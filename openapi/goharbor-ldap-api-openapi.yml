@@ -148,51 +148,6 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 components:
-  responses:
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
   schemas:
     UserGroup:
       type: object
@@ -209,27 +164,6 @@ components:
         ldap_group_dn:
           type: string
           description: The DN of the LDAP group if group type is 1 (LDAP group).
-    LdapUser:
-      type: object
-      properties:
-        username:
-          type: string
-          description: ldap username.
-        realname:
-          type: string
-          description: The user realname from "uid" or "cn" attribute.
-        email:
-          type: string
-          description: The user email address from "mail" or "email" attribute.
-    LdapFailedImportUser:
-      type: object
-      properties:
-        uid:
-          type: string
-          description: the uid can't add to system.
-        error:
-          type: string
-          description: fail reason.
     Errors:
       description: The error array that describe the errors got during the handling of request
       type: object
@@ -238,19 +172,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Error'
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
     LdapConf:
       type: object
       description: The ldap configure properties
@@ -292,6 +213,40 @@ components:
           description: selected uid list
           items:
             type: string
+    LdapUser:
+      type: object
+      properties:
+        username:
+          type: string
+          description: ldap username.
+        realname:
+          type: string
+          description: The user realname from "uid" or "cn" attribute.
+        email:
+          type: string
+          description: The user email address from "mail" or "email" attribute.
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    LdapFailedImportUser:
+      type: object
+      properties:
+        uid:
+          type: string
+          description: the uid can't add to system.
+        error:
+          type: string
+          description: fail reason.
     LdapPingResult:
       type: object
       description: The ldap ping result
@@ -302,6 +257,51 @@ components:
         message:
           type: string
           description: The ping operation output message.
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   parameters:
     requestId:
       name: X-Request-Id

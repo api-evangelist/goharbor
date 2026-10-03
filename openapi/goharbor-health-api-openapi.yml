@@ -52,19 +52,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Error'
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
     ComponentHealthStatus:
       type: object
       description: The health status of component
@@ -78,6 +65,19 @@ components:
         error:
           type: string
           description: (optional) The error message when the status is "unhealthy"
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
     OverallHealthStatus:
       type: object
       description: The system health status

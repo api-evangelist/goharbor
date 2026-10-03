@@ -37,26 +37,28 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 components:
-  responses:
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
   schemas:
-    CVEAllowlistItem:
+    Search:
       type: object
-      description: The item in CVE allowlist
       properties:
-        cve_id:
-          type: string
-          description: The ID of the CVE, such as "CVE-2019-10164"
+        project:
+          description: Search results of the projects that matched the filter keywords.
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        repository:
+          description: Search results of the repositories that matched the filter keywords.
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchRepository'
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
     Project:
       type: object
       properties:
@@ -111,14 +113,13 @@ components:
         cve_allowlist:
           description: The CVE allowlist of this project.
           $ref: '#/components/schemas/CVEAllowlist'
-    Errors:
-      description: The error array that describe the errors got during the handling of request
+    CVEAllowlistItem:
       type: object
+      description: The item in CVE allowlist
       properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
+        cve_id:
+          type: string
+          description: The ID of the CVE, such as "CVE-2019-10164"
     Error:
       description: a model for all the error response coming from harbor
       type: object
@@ -132,19 +133,27 @@ components:
       example:
         code: NOT_FOUND
         message: artifact library/hello-world:latest not found
-    Search:
+    SearchRepository:
       type: object
       properties:
-        project:
-          description: Search results of the projects that matched the filter keywords.
-          type: array
-          items:
-            $ref: '#/components/schemas/Project'
-        repository:
-          description: Search results of the repositories that matched the filter keywords.
-          type: array
-          items:
-            $ref: '#/components/schemas/SearchRepository'
+        project_id:
+          type: integer
+          description: The ID of the project that the repository belongs to
+        project_name:
+          type: string
+          description: The name of the project that the repository belongs to
+        project_public:
+          type: boolean
+          description: The flag to indicate the publicity of the project that the repository belongs to (1 is public, 0 is not)
+        repository_name:
+          type: string
+          description: The name of the repository
+        pull_count:
+          type: integer
+          description: The count how many times the repository is pulled
+        artifact_count:
+          type: integer
+          description: The count of artifacts in the repository
     ProjectMetadata:
       type: object
       properties:
@@ -250,27 +259,18 @@ components:
           type: string
           format: date-time
           description: The update time of the allowlist.
-    SearchRepository:
-      type: object
-      properties:
-        project_id:
-          type: integer
-          description: The ID of the project that the repository belongs to
-        project_name:
-          type: string
-          description: The name of the project that the repository belongs to
-        project_public:
-          type: boolean
-          description: The flag to indicate the publicity of the project that the repository belongs to (1 is public, 0 is not)
-        repository_name:
-          type: string
-          description: The name of the repository
-        pull_count:
-          type: integer
-          description: The count how many times the repository is pulled
-        artifact_count:
-          type: integer
-          description: The count of artifacts in the repository
+  responses:
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   parameters:
     requestId:
       name: X-Request-Id

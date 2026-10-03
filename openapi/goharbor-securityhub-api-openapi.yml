@@ -121,63 +121,34 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 components:
-  responses:
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '404':
-      description: Not found. The requested resource does not exist.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
   schemas:
+    DangerousArtifact:
+      type: object
+      description: the dangerous artifact information
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          description: the project id of the artifact
+        repository_name:
+          type: string
+          description: the repository name of the artifact
+        digest:
+          type: string
+          description: the digest of the artifact
+        critical_cnt:
+          type: integer
+          x-omitempty: false
+          description: the count of critical vulnerabilities
+        high_cnt:
+          type: integer
+          format: int64
+          x-omitempty: false
+          description: the count of high vulnerabilities
+        medium_cnt:
+          type: integer
+          x-omitempty: false
+          description: the count of medium vulnerabilities
     VulnerabilityItem:
       type: object
       description: the vulnerability item info
@@ -227,6 +198,27 @@ components:
           items:
             type: string
           description: Links of the vulnerability
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
     SecuritySummary:
       type: object
       description: the security summary
@@ -290,54 +282,6 @@ components:
           description: the list of dangerous artifacts
           items:
             $ref: '#/components/schemas/DangerousArtifact'
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
-    DangerousArtifact:
-      type: object
-      description: the dangerous artifact information
-      properties:
-        project_id:
-          type: integer
-          format: int64
-          description: the project id of the artifact
-        repository_name:
-          type: string
-          description: the repository name of the artifact
-        digest:
-          type: string
-          description: the digest of the artifact
-        critical_cnt:
-          type: integer
-          x-omitempty: false
-          description: the count of critical vulnerabilities
-        high_cnt:
-          type: integer
-          format: int64
-          x-omitempty: false
-          description: the count of high vulnerabilities
-        medium_cnt:
-          type: integer
-          x-omitempty: false
-          description: the count of medium vulnerabilities
     DangerousCVE:
       type: object
       description: the dangerous CVE information
@@ -361,14 +305,80 @@ components:
         version:
           type: string
           description: the version of the package
+  responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   parameters:
-    query:
-      name: q
-      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+    page:
+      name: page
       in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
       required: false
       schema:
         type: string
+        minLength: 1
     pageSize:
       name: page_size
       in: query
@@ -379,23 +389,13 @@ components:
         format: int64
         default: 10
         maximum: 100
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
       required: false
       schema:
         type: string
-        minLength: 1
-    page:
-      name: page
-      in: query
-      required: false
-      description: The page number
-      schema:
-        type: integer
-        format: int64
-        default: 1
   securitySchemes:
     basic:
       type: http

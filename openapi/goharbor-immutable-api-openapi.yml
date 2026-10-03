@@ -139,28 +139,6 @@ paths:
           $ref: '#/components/responses/500'
 components:
   responses:
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '201':
-      description: Created
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-        Location:
-          description: The location of the resource
-          schema:
-            type: string
     '403':
       description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
@@ -190,17 +168,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '404':
-      description: Not found. The requested resource does not exist.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '400':
       description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
       headers:
@@ -212,7 +179,70 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '201':
+      description: Created
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+        Location:
+          description: The location of the resource
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    projectNameOrId:
+      name: project_name_or_id
+      in: path
+      description: The name or id of the project
+      required: true
+      schema:
+        type: string
+    immutableRuleId:
+      name: immutable_rule_id
+      in: path
+      description: The ID of the immutable rule
+      required: true
+      schema:
+        type: integer
+        format: int64
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
+      required: false
+      schema:
+        type: string
     isResourceName:
       name: X-Is-Resource-Name
       description: The flag to indicate whether the parameter which supports both name and id in the path is the name of the resource. When the X-Is-Resource-Name is false and the parameter can be converted to an integer, the parameter will be as an id, otherwise, it will be as a name.
@@ -228,22 +258,6 @@ components:
       required: false
       schema:
         type: string
-    immutableRuleId:
-      name: immutable_rule_id
-      in: path
-      description: The ID of the immutable rule
-      required: true
-      schema:
-        type: integer
-        format: int64
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
     pageSize:
       name: page_size
       in: query
@@ -263,20 +277,6 @@ components:
         type: integer
         format: int64
         default: 1
-    query:
-      name: q
-      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
-      in: query
-      required: false
-      schema:
-        type: string
-    projectNameOrId:
-      name: project_name_or_id
-      in: path
-      description: The name or id of the project
-      required: true
-      schema:
-        type: string
   schemas:
     Error:
       description: a model for all the error response coming from harbor
@@ -291,17 +291,6 @@ components:
       example:
         code: NOT_FOUND
         message: artifact library/hello-world:latest not found
-    ImmutableSelector:
-      type: object
-      properties:
-        kind:
-          type: string
-        decoration:
-          type: string
-        pattern:
-          type: string
-        extras:
-          type: string
     Errors:
       description: The error array that describe the errors got during the handling of request
       type: object
@@ -337,6 +326,17 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/ImmutableSelector'
+    ImmutableSelector:
+      type: object
+      properties:
+        kind:
+          type: string
+        decoration:
+          type: string
+        pattern:
+          type: string
+        extras:
+          type: string
   securitySchemes:
     basic:
       type: http

@@ -280,8 +280,8 @@ paths:
           $ref: '#/components/responses/500'
 components:
   responses:
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
+    '412':
+      description: Precondition failed. A dependency or policy check failed; inspect the `errors` array for the constraint that was violated.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -291,17 +291,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '201':
-      description: Created
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-        Location:
-          description: The location of the resource
-          schema:
-            type: string
     '403':
       description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
@@ -320,41 +309,8 @@ components:
           description: The ID of the corresponding request for the response
           schema:
             type: string
-    '412':
-      description: Precondition failed. A dependency or policy check failed; inspect the `errors` array for the constraint that was violated.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '409':
-      description: Conflict. The resource already exists or the current state prevents the operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '401':
       description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '404':
-      description: Not found. The requested resource does not exist.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -375,77 +331,63 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-  parameters:
-    sort:
-      name: sort
-      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
-      in: query
-      required: false
-      schema:
-        type: string
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
-    pageSize:
-      name: page_size
-      in: query
-      required: false
-      description: The size of per page
-      schema:
-        type: integer
-        format: int64
-        default: 10
-        maximum: 100
-    page:
-      name: page
-      in: query
-      required: false
-      description: The page number
-      schema:
-        type: integer
-        format: int64
-        default: 1
-    query:
-      name: q
-      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
-      in: query
-      required: false
-      schema:
-        type: string
+    '201':
+      description: Created
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+        Location:
+          description: The location of the resource
+          schema:
+            type: string
+    '409':
+      description: Conflict. The resource already exists or the current state prevents the operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   schemas:
-    Error:
-      description: a model for all the error response coming from harbor
+    RegistryCredential:
       type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
-    FilterStyle:
-      type: object
-      description: The style of the resource filter
       properties:
         type:
           type: string
-          description: The filter type
-        style:
+          description: Credential type, such as 'basic', 'oauth'.
+        access_key:
           type: string
-          description: The filter style
-        values:
-          type: array
-          description: The filter values
-          items:
-            type: string
+          description: Access key, e.g. user name when credential type is 'basic'.
+        access_secret:
+          type: string
+          description: Access secret, e.g. password when credential type is 'basic'.
     RegistryProviderInfo:
       type: object
       description: The registry provider info contains the base info and capability declarations of the registry provider
@@ -468,22 +410,6 @@ components:
           description: The endpoint list
           items:
             $ref: '#/components/schemas/RegistryEndpoint'
-    RegistryProviderCredentialPattern:
-      type: object
-      description: The registry credential pattern
-      properties:
-        access_key_type:
-          type: string
-          description: The access key type
-        access_key_data:
-          type: string
-          description: The access key data
-        access_secret_type:
-          type: string
-          description: The access secret type
-        access_secret_data:
-          type: string
-          description: The access secret data
     Registry:
       type: object
       properties:
@@ -525,69 +451,47 @@ components:
           type: string
           format: date-time
           description: The update time of the policy.
-    RegistryCredential:
+    RegistryEndpoint:
       type: object
+      description: The style of the resource filter
+      properties:
+        key:
+          type: string
+          description: The endpoint key
+        value:
+          type: string
+          description: The endpoint value
+    FilterStyle:
+      type: object
+      description: The style of the resource filter
       properties:
         type:
           type: string
-          description: Credential type, such as 'basic', 'oauth'.
-        access_key:
+          description: The filter type
+        style:
           type: string
-          description: Access key, e.g. user name when credential type is 'basic'.
-        access_secret:
-          type: string
-          description: Access secret, e.g. password when credential type is 'basic'.
-    RegistryUpdate:
-      type: object
-      properties:
-        name:
-          type:
-          - string
-          - 'null'
-          description: The registry name.
-        description:
-          type:
-          - string
-          - 'null'
-          description: Description of the registry.
-        url:
-          type:
-          - string
-          - 'null'
-          description: The registry URL.
-        credential_type:
-          type:
-          - string
-          - 'null'
-          description: Credential type of the registry, e.g. 'basic'.
-        access_key:
-          type:
-          - string
-          - 'null'
-          description: The registry access key.
-        access_secret:
-          type:
-          - string
-          - 'null'
-          description: The registry access secret.
-        insecure:
-          type:
-          - boolean
-          - 'null'
-          description: Whether or not the certificate will be verified when Harbor tries to access the server.
-        ca_certificate:
-          type:
-          - string
-          - 'null'
-          description: The PEM-encoded CA certificate for this registry endpoint.
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
+          description: The filter style
+        values:
           type: array
+          description: The filter values
           items:
-            $ref: '#/components/schemas/Error'
+            type: string
+    RegistryProviderCredentialPattern:
+      type: object
+      description: The registry credential pattern
+      properties:
+        access_key_type:
+          type: string
+          description: The access key type
+        access_key_data:
+          type: string
+          description: The access key data
+        access_secret_type:
+          type: string
+          description: The access secret type
+        access_secret_data:
+          type: string
+          description: The access secret data
     RegistryPing:
       type: object
       properties:
@@ -632,16 +536,62 @@ components:
           - string
           - 'null'
           description: The PEM-encoded CA certificate for this registry endpoint.
-    RegistryEndpoint:
+    Error:
+      description: a model for all the error response coming from harbor
       type: object
-      description: The style of the resource filter
       properties:
-        key:
+        code:
           type: string
-          description: The endpoint key
-        value:
+          description: The error code
+        message:
           type: string
-          description: The endpoint value
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    RegistryUpdate:
+      type: object
+      properties:
+        name:
+          type:
+          - string
+          - 'null'
+          description: The registry name.
+        description:
+          type:
+          - string
+          - 'null'
+          description: Description of the registry.
+        url:
+          type:
+          - string
+          - 'null'
+          description: The registry URL.
+        credential_type:
+          type:
+          - string
+          - 'null'
+          description: Credential type of the registry, e.g. 'basic'.
+        access_key:
+          type:
+          - string
+          - 'null'
+          description: The registry access key.
+        access_secret:
+          type:
+          - string
+          - 'null'
+          description: The registry access secret.
+        insecure:
+          type:
+          - boolean
+          - 'null'
+          description: Whether or not the certificate will be verified when Harbor tries to access the server.
+        ca_certificate:
+          type:
+          - string
+          - 'null'
+          description: The PEM-encoded CA certificate for this registry endpoint.
     RegistryInfo:
       type: object
       description: The registry info contains the base info and capability declarations of the registry
@@ -667,6 +617,56 @@ components:
           description: The registry whether support copy by chunk.
           x-omitempty: true
           x-isnullable: true
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
+      required: false
+      schema:
+        type: string
+    sort:
+      name: sort
+      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
+      in: query
+      required: false
+      schema:
+        type: string
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
   securitySchemes:
     basic:
       type: http
