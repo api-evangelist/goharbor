@@ -31,18 +31,6 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 components:
-  responses:
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
   schemas:
     Errors:
       description: The error array that describe the errors got during the handling of request
@@ -65,6 +53,17 @@ components:
         error:
           type: string
           description: (optional) The error message when the status is "unhealthy"
+    OverallHealthStatus:
+      type: object
+      description: The system health status
+      properties:
+        status:
+          type: string
+          description: The overall health status. It is "healthy" only when all the components' status are "healthy"
+        components:
+          type: array
+          items:
+            $ref: '#/components/schemas/ComponentHealthStatus'
     Error:
       description: a model for all the error response coming from harbor
       type: object
@@ -78,17 +77,18 @@ components:
       example:
         code: NOT_FOUND
         message: artifact library/hello-world:latest not found
-    OverallHealthStatus:
-      type: object
-      description: The system health status
-      properties:
-        status:
-          type: string
-          description: The overall health status. It is "healthy" only when all the components' status are "healthy"
-        components:
-          type: array
-          items:
-            $ref: '#/components/schemas/ComponentHealthStatus'
+  responses:
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   parameters:
     requestId:
       name: X-Request-Id

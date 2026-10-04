@@ -146,30 +146,19 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '404':
       description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -197,10 +186,67 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  parameters:
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
   schemas:
     QuotaRefObject:
       type: object
       additionalProperties: {}
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    ResourceList:
+      type: object
+      additionalProperties:
+        type: integer
+        format: int64
     Errors:
       description: The error array that describe the errors got during the handling of request
       type: object
@@ -209,6 +255,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Error'
+    QuotaUpdateReq:
+      type: object
+      properties:
+        hard:
+          $ref: '#/components/schemas/ResourceList'
+          description: The new hard limits for the quota
     Quota:
       type: object
       description: The quota object
@@ -235,58 +287,6 @@ components:
           type: string
           format: date-time
           description: the update time of the quota
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
-    QuotaUpdateReq:
-      type: object
-      properties:
-        hard:
-          $ref: '#/components/schemas/ResourceList'
-          description: The new hard limits for the quota
-    ResourceList:
-      type: object
-      additionalProperties:
-        type: integer
-        format: int64
-  parameters:
-    page:
-      name: page
-      in: query
-      required: false
-      description: The page number
-      schema:
-        type: integer
-        format: int64
-        default: 1
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
-    pageSize:
-      name: page_size
-      in: query
-      required: false
-      description: The size of per page
-      schema:
-        type: integer
-        format: int64
-        default: 10
-        maximum: 100
   securitySchemes:
     basic:
       type: http

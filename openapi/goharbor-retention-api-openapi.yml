@@ -381,8 +381,8 @@ paths:
           $ref: '#/components/responses/500'
 components:
   responses:
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -403,8 +403,19 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -425,68 +436,15 @@ components:
           description: The location of the resource
           schema:
             type: string
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
   schemas:
-    RetentionRule:
+    Errors:
+      description: The error array that describe the errors got during the handling of request
       type: object
       properties:
-        id:
-          type: integer
-        priority:
-          type: integer
-        disabled:
-          type: boolean
-        action:
-          type: string
-        template:
-          type: string
-        params:
-          type: object
-          additionalProperties:
-            type: object
-        tag_selectors:
+        errors:
           type: array
           items:
-            $ref: '#/components/schemas/RetentionSelector'
-        scope_selectors:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/RetentionSelector'
-    RetentionSelector:
-      type: object
-      properties:
-        kind:
-          type: string
-        decoration:
-          type: string
-        pattern:
-          type: string
-        extras:
-          type: string
-    RetentionSelectorMetadata:
-      type: object
-      description: retention selector
-      properties:
-        display_text:
-          type: string
-        kind:
-          type: string
-        decorations:
-          type: array
-          items:
-            type: string
+            $ref: '#/components/schemas/Error'
     Error:
       description: a model for all the error response coming from harbor
       type: object
@@ -500,71 +458,6 @@ components:
       example:
         code: NOT_FOUND
         message: artifact library/hello-world:latest not found
-    RetentionRuleTrigger:
-      type: object
-      properties:
-        kind:
-          type: string
-        settings:
-          type: object
-        references:
-          type: object
-    RetentionRuleParamMetadata:
-      type: object
-      description: rule param
-      properties:
-        type:
-          type: string
-        unit:
-          type: string
-        required:
-          type: boolean
-    RetentionExecution:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        policy_id:
-          type: integer
-          format: int64
-        start_time:
-          type: string
-        end_time:
-          type: string
-        status:
-          type: string
-        trigger:
-          type: string
-        dry_run:
-          type: boolean
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-    RetentionPolicy:
-      type: object
-      description: retention policy
-      properties:
-        id:
-          type: integer
-          format: int64
-        algorithm:
-          type: string
-        rules:
-          type: array
-          items:
-            $ref: '#/components/schemas/RetentionRule'
-        trigger:
-          type: object
-          $ref: '#/components/schemas/RetentionRuleTrigger'
-        scope:
-          type: object
-          $ref: '#/components/schemas/RetentionPolicyScope'
     RetentionMetadata:
       type: object
       description: the tag retention metadata
@@ -584,13 +477,6 @@ components:
           description: supported tag selectors
           items:
             $ref: '#/components/schemas/RetentionSelectorMetadata'
-    RetentionPolicyScope:
-      type: object
-      properties:
-        level:
-          type: string
-        ref:
-          type: integer
     RetentionExecutionTask:
       type: object
       properties:
@@ -622,6 +508,54 @@ components:
         retained:
           type: integer
           x-omitempty: false
+    RetentionRuleParamMetadata:
+      type: object
+      description: rule param
+      properties:
+        type:
+          type: string
+        unit:
+          type: string
+        required:
+          type: boolean
+    RetentionSelector:
+      type: object
+      properties:
+        kind:
+          type: string
+        decoration:
+          type: string
+        pattern:
+          type: string
+        extras:
+          type: string
+    RetentionRule:
+      type: object
+      properties:
+        id:
+          type: integer
+        priority:
+          type: integer
+        disabled:
+          type: boolean
+        action:
+          type: string
+        template:
+          type: string
+        params:
+          type: object
+          additionalProperties:
+            type: object
+        tag_selectors:
+          type: array
+          items:
+            $ref: '#/components/schemas/RetentionSelector'
+        scope_selectors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/RetentionSelector'
     RetentionRuleMetadata:
       type: object
       description: the tag retention rule metadata
@@ -640,6 +574,72 @@ components:
           description: rule params
           items:
             $ref: '#/components/schemas/RetentionRuleParamMetadata'
+    RetentionExecution:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        policy_id:
+          type: integer
+          format: int64
+        start_time:
+          type: string
+        end_time:
+          type: string
+        status:
+          type: string
+        trigger:
+          type: string
+        dry_run:
+          type: boolean
+    RetentionRuleTrigger:
+      type: object
+      properties:
+        kind:
+          type: string
+        settings:
+          type: object
+        references:
+          type: object
+    RetentionPolicyScope:
+      type: object
+      properties:
+        level:
+          type: string
+        ref:
+          type: integer
+    RetentionSelectorMetadata:
+      type: object
+      description: retention selector
+      properties:
+        display_text:
+          type: string
+        kind:
+          type: string
+        decorations:
+          type: array
+          items:
+            type: string
+    RetentionPolicy:
+      type: object
+      description: retention policy
+      properties:
+        id:
+          type: integer
+          format: int64
+        algorithm:
+          type: string
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/RetentionRule'
+        trigger:
+          type: object
+          $ref: '#/components/schemas/RetentionRuleTrigger'
+        scope:
+          type: object
+          $ref: '#/components/schemas/RetentionPolicyScope'
   parameters:
     requestId:
       name: X-Request-Id

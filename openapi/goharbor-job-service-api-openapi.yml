@@ -188,28 +188,6 @@ paths:
         required: true
 components:
   responses:
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '422':
       description: Unprocessable entity. The request was well-formed but could not be processed (for example, due to validation errors). Inspect the `errors` array in the response body for details.
       headers:
@@ -232,6 +210,17 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
     '401':
       description: Unauthorized. Authentication is required to access this resource.
       headers:
@@ -243,7 +232,37 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   schemas:
+    ActionRequest:
+      type: object
+      description: The request to stop, pause or resume
+      properties:
+        action:
+          type: string
+          description: The action of the request, should be stop, pause or resume
+          enum:
+          - stop
+          - pause
+          - resume
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
     Worker:
       type: object
       description: worker in the pool
@@ -277,14 +296,6 @@ components:
           format: date-time
           description: The checkin time of the worker
           x-omitempty: true
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
     JobQueue:
       type: object
       description: the job queue info
@@ -339,17 +350,6 @@ components:
         host:
           type: string
           description: The host of the work pool
-    ActionRequest:
-      type: object
-      description: The request to stop, pause or resume
-      properties:
-        action:
-          type: string
-          description: The action of the request, should be stop, pause or resume
-          enum:
-          - stop
-          - pause
-          - resume
   parameters:
     requestId:
       name: X-Request-Id

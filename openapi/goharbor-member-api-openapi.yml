@@ -191,35 +191,6 @@ paths:
           $ref: '#/components/responses/500'
 components:
   responses:
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '200':
-      description: Success
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '400':
       description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
       headers:
@@ -242,8 +213,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '404':
-      description: Not found. The requested resource does not exist.
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -264,50 +235,67 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-  parameters:
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
-    projectNameOrId:
-      name: project_name_or_id
-      in: path
-      description: The name or id of the project
-      required: true
-      schema:
-        type: string
-    isResourceName:
-      name: X-Is-Resource-Name
-      description: The flag to indicate whether the parameter which supports both name and id in the path is the name of the resource. When the X-Is-Resource-Name is false and the parameter can be converted to an integer, the parameter will be as an id, otherwise, it will be as a name.
-      in: header
-      required: false
-      schema:
-        type: boolean
-        default: false
-    pageSize:
-      name: page_size
-      in: query
-      required: false
-      description: The size of per page
-      schema:
-        type: integer
-        format: int64
-        default: 10
-        maximum: 100
-    page:
-      name: page
-      in: query
-      required: false
-      description: The page number
-      schema:
-        type: integer
-        format: int64
-        default: 1
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   schemas:
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    ProjectMember:
+      type: object
+      properties:
+        role_id:
+          type: integer
+          description: The role id 1 for projectAdmin, 2 for developer, 3 for guest, 4 for maintainer
+        member_user:
+          $ref: '#/components/schemas/UserEntity'
+        member_group:
+          $ref: '#/components/schemas/UserGroup'
     UserEntity:
       type: object
       properties:
@@ -317,21 +305,6 @@ components:
         username:
           type: string
           description: The name of the user.
-    UserGroup:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The ID of the user group
-        group_name:
-          type: string
-          description: The name of the user group
-        group_type:
-          type: integer
-          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
-        ldap_group_dn:
-          type: string
-          description: The DN of the LDAP group if group type is 1 (LDAP group).
     ProjectMemberEntity:
       type: object
       properties:
@@ -356,43 +329,70 @@ components:
         entity_type:
           type: string
           description: the entity's type, u for user entity, g for group entity.
-    Error:
-      description: a model for all the error response coming from harbor
+    UserGroup:
       type: object
       properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-    ProjectMember:
-      type: object
-      properties:
-        role_id:
+        id:
           type: integer
-          description: The role id 1 for projectAdmin, 2 for developer, 3 for guest, 4 for maintainer
-        member_user:
-          $ref: '#/components/schemas/UserEntity'
-        member_group:
-          $ref: '#/components/schemas/UserGroup'
+          description: The ID of the user group
+        group_name:
+          type: string
+          description: The name of the user group
+        group_type:
+          type: integer
+          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
+        ldap_group_dn:
+          type: string
+          description: The DN of the LDAP group if group type is 1 (LDAP group).
     RoleRequest:
       type: object
       properties:
         role_id:
           type: integer
           description: The role id 1 for projectAdmin, 2 for developer, 3 for guest, 4 for maintainer
+  parameters:
+    isResourceName:
+      name: X-Is-Resource-Name
+      description: The flag to indicate whether the parameter which supports both name and id in the path is the name of the resource. When the X-Is-Resource-Name is false and the parameter can be converted to an integer, the parameter will be as an id, otherwise, it will be as a name.
+      in: header
+      required: false
+      schema:
+        type: boolean
+        default: false
+    projectNameOrId:
+      name: project_name_or_id
+      in: path
+      description: The name or id of the project
+      required: true
+      schema:
+        type: string
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    pageSize:
+      name: page_size
+      in: query
+      required: false
+      description: The size of per page
+      schema:
+        type: integer
+        format: int64
+        default: 10
+        maximum: 100
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
   securitySchemes:
     basic:
       type: http

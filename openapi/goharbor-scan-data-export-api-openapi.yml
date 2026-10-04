@@ -147,41 +147,19 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '405':
-      description: Method not allowed.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '409':
       description: Conflict. The resource already exists or the current state prevents the operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -213,15 +191,52 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '405':
+      description: Method not allowed.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  parameters:
+    executionId:
+      name: execution_id
+      in: path
+      description: Execution ID
+      required: true
+      schema:
+        type: integer
+    scanDataType:
+      name: X-Scan-Data-Type
+      description: The type of scan data to export
+      in: header
+      required: true
+      schema:
+        type: string
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
   schemas:
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
     ScanDataExportExecutionList:
       type: object
       description: The list of scan data export executions
@@ -231,6 +246,27 @@ components:
           items:
             $ref: '#/components/schemas/ScanDataExportExecution'
           description: The list of scan data export executions
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
     ScanDataExportExecution:
       type: object
       description: The replication execution
@@ -267,27 +303,6 @@ components:
           type: boolean
           x-omitempty: false
           description: Indicates whether the export artifact is present in registry
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
-    ScanDataExportJob:
-      type: object
-      description: The metadata associated with the scan data export job
-      properties:
-        id:
-          type: integer
-          format: int64
-          description: The id of the scan data export job
     ScanDataExportRequest:
       type: object
       description: The criteria to select the scan data to export.
@@ -316,29 +331,14 @@ components:
         tags:
           type: string
           description: A list of tags enclosed within '{}'. Defaults to all if empty
-  parameters:
-    scanDataType:
-      name: X-Scan-Data-Type
-      description: The type of scan data to export
-      in: header
-      required: true
-      schema:
-        type: string
-    executionId:
-      name: execution_id
-      in: path
-      description: Execution ID
-      required: true
-      schema:
-        type: integer
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
+    ScanDataExportJob:
+      type: object
+      description: The metadata associated with the scan data export job
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The id of the scan data export job
   securitySchemes:
     basic:
       type: http

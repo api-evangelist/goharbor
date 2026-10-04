@@ -406,6 +406,68 @@ paths:
           $ref: '#/components/responses/500'
 components:
   responses:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '409':
+      description: Conflict. The resource already exists or the current state prevents the operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
     '412':
       description: Precondition failed. A dependency or policy check failed; inspect the `errors` array for the constraint that was violated.
       headers:
@@ -428,35 +490,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '200':
-      description: Success
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '201':
       description: Created
       headers:
@@ -468,40 +501,84 @@ components:
           description: The location of the resource
           schema:
             type: string
-    '409':
-      description: Conflict. The resource already exists or the current state prevents the operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '404':
-      description: Not found. The requested resource does not exist.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
   schemas:
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    ReplicationTrigger:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The replication policy trigger type. The valid values are manual, event_based and scheduled.
+        trigger_settings:
+          $ref: '#/components/schemas/ReplicationTriggerSettings'
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    ReplicationExecution:
+      type: object
+      description: The replication execution
+      properties:
+        id:
+          type: integer
+          description: The ID of the execution
+        policy_id:
+          type: integer
+          description: The ID if the policy that the execution belongs to
+        status:
+          type: string
+          description: The status of the execution
+        trigger:
+          type: string
+          description: The trigger mode
+        start_time:
+          type: string
+          format: date-time
+          description: The start time
+        end_time:
+          type: string
+          format: date-time
+          description: The end time
+        status_text:
+          type: string
+          x-omitempty: false
+          description: The status text
+        total:
+          type: integer
+          x-omitempty: false
+          description: The total count of all executions
+        failed:
+          type: integer
+          x-omitempty: false
+          description: The count of failed executions
+        succeed:
+          type: integer
+          x-omitempty: false
+          description: The count of succeed executions
+        in_progress:
+          type: integer
+          x-omitempty: false
+          description: The count of in_progress executions
+        stopped:
+          type: integer
+          x-omitempty: false
+          description: The count of stopped executions
     RegistryCredential:
       type: object
       properties:
@@ -555,82 +632,6 @@ components:
           type: string
           format: date-time
           description: The update time of the policy.
-    StartReplicationExecution:
-      type: object
-      properties:
-        policy_id:
-          type: integer
-          format: int64
-          description: The ID of policy that the execution belongs to.
-    ReplicationTrigger:
-      type: object
-      properties:
-        type:
-          type: string
-          description: The replication policy trigger type. The valid values are manual, event_based and scheduled.
-        trigger_settings:
-          $ref: '#/components/schemas/ReplicationTriggerSettings'
-    ReplicationExecution:
-      type: object
-      description: The replication execution
-      properties:
-        id:
-          type: integer
-          description: The ID of the execution
-        policy_id:
-          type: integer
-          description: The ID if the policy that the execution belongs to
-        status:
-          type: string
-          description: The status of the execution
-        trigger:
-          type: string
-          description: The trigger mode
-        start_time:
-          type: string
-          format: date-time
-          description: The start time
-        end_time:
-          type: string
-          format: date-time
-          description: The end time
-        status_text:
-          type: string
-          x-omitempty: false
-          description: The status text
-        total:
-          type: integer
-          x-omitempty: false
-          description: The total count of all executions
-        failed:
-          type: integer
-          x-omitempty: false
-          description: The count of failed executions
-        succeed:
-          type: integer
-          x-omitempty: false
-          description: The count of succeed executions
-        in_progress:
-          type: integer
-          x-omitempty: false
-          description: The count of in_progress executions
-        stopped:
-          type: integer
-          x-omitempty: false
-          description: The count of stopped executions
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
     ReplicationPolicy:
       type: object
       properties:
@@ -702,14 +703,12 @@ components:
 
             avoiding the execution of the same replication rules multiple times in parallel.'
           x-isnullable: true
-    Errors:
-      description: The error array that describe the errors got during the handling of request
+    ReplicationTriggerSettings:
       type: object
       properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
+        cron:
+          type: string
+          description: The cron string for scheduled trigger
     ReplicationFilter:
       type: object
       properties:
@@ -721,12 +720,6 @@ components:
         decoration:
           type: string
           description: matches or excludes the result
-    ReplicationTriggerSettings:
-      type: object
-      properties:
-        cron:
-          type: string
-          description: The cron string for scheduled trigger
     ReplicationTask:
       type: object
       description: The replication task
@@ -763,7 +756,21 @@ components:
           type: string
           format: date-time
           description: The end time of the task
+    StartReplicationExecution:
+      type: object
+      properties:
+        policy_id:
+          type: integer
+          format: int64
+          description: The ID of policy that the execution belongs to.
   parameters:
+    query:
+      name: q
+      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
+      in: query
+      required: false
+      schema:
+        type: string
     requestId:
       name: X-Request-Id
       description: An unique ID for the request
@@ -772,20 +779,6 @@ components:
       schema:
         type: string
         minLength: 1
-    query:
-      name: q
-      description: Query string to query resources. Supported query patterns are "exact match(k=v)", "fuzzy match(k=~v)", "range(k=[min~max])", "list with union releationship(k={v1 v2 v3})" and "list with intersetion relationship(k=(v1 v2 v3))". The value of range and list can be string(enclosed by " or '), integer or time(in format "2020-04-09 02:36:00"). All of these query patterns should be put in the query string "q=xxx" and splitted by ",". e.g. q=k1=v1,k2=~v2,k3=[min~max]
-      in: query
-      required: false
-      schema:
-        type: string
-    sort:
-      name: sort
-      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
-      in: query
-      required: false
-      schema:
-        type: string
     pageSize:
       name: page_size
       in: query
@@ -796,6 +789,13 @@ components:
         format: int64
         default: 10
         maximum: 100
+    sort:
+      name: sort
+      description: Sort the resource list in ascending or descending order. e.g. sort by field1 in ascending order and field2 in descending order with "sort=field1,-field2"
+      in: query
+      required: false
+      schema:
+        type: string
     page:
       name: page
       in: query

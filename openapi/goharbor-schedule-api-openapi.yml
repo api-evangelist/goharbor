@@ -83,56 +83,6 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 components:
-  schemas:
-    SchedulerStatus:
-      type: object
-      description: the scheduler status
-      properties:
-        paused:
-          type: boolean
-          description: if the scheduler is paused
-          x-omitempty: false
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-    ScheduleTask:
-      type: object
-      description: the schedule task info
-      properties:
-        id:
-          type: integer
-          description: the id of the Schedule task
-        vendor_type:
-          type: string
-          description: the vendor type of the current schedule task
-        vendor_id:
-          type: integer
-          description: the vendor id of the current task
-        cron:
-          type: string
-          description: the cron of the current schedule task
-        update_time:
-          type: string
-          format: date-time
-          description: the update time of the schedule task
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
   responses:
     '400':
       description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
@@ -147,17 +97,6 @@ components:
             $ref: '#/components/schemas/Errors'
     '500':
       description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -189,6 +128,17 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   parameters:
     page:
       name: page
@@ -199,14 +149,6 @@ components:
         type: integer
         format: int64
         default: 1
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
     pageSize:
       name: page_size
       in: query
@@ -217,6 +159,64 @@ components:
         format: int64
         default: 10
         maximum: 100
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+  schemas:
+    ScheduleTask:
+      type: object
+      description: the schedule task info
+      properties:
+        id:
+          type: integer
+          description: the id of the Schedule task
+        vendor_type:
+          type: string
+          description: the vendor type of the current schedule task
+        vendor_id:
+          type: integer
+          description: the vendor id of the current task
+        cron:
+          type: string
+          description: the cron of the current schedule task
+        update_time:
+          type: string
+          format: date-time
+          description: the update time of the schedule task
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    SchedulerStatus:
+      type: object
+      description: the scheduler status
+      properties:
+        paused:
+          type: boolean
+          description: if the scheduler is paused
+          x-omitempty: false
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
   securitySchemes:
     basic:
       type: http

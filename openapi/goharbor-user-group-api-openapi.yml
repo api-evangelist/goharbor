@@ -220,80 +220,9 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 components:
-  schemas:
-    UserGroup:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The ID of the user group
-        group_name:
-          type: string
-          description: The name of the user group
-        group_type:
-          type: integer
-          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
-        ldap_group_dn:
-          type: string
-          description: The DN of the LDAP group if group type is 1 (LDAP group).
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-    UserGroupSearchItem:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The ID of the user group
-        group_name:
-          type: string
-          description: The name of the user group
-        group_type:
-          type: integer
-          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
   responses:
     '400':
       description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -325,6 +254,17 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
     '200':
       description: Success
       headers:
@@ -334,6 +274,17 @@ components:
             type: string
     '401':
       description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -353,14 +304,6 @@ components:
         type: integer
         format: int64
         default: 1
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
     pageSize:
       name: page_size
       in: query
@@ -371,6 +314,63 @@ components:
         format: int64
         default: 10
         maximum: 100
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+  schemas:
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    UserGroupSearchItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the user group
+        group_name:
+          type: string
+          description: The name of the user group
+        group_type:
+          type: integer
+          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
+    UserGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the user group
+        group_name:
+          type: string
+          description: The name of the user group
+        group_type:
+          type: integer
+          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
+        ldap_group_dn:
+          type: string
+          description: The DN of the LDAP group if group type is 1 (LDAP group).
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
   securitySchemes:
     basic:
       type: http
