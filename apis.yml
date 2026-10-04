@@ -1026,6 +1026,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - Audit Logs
+  tags_raw:
   - Audit Log
   properties:
   - type: OpenAPI
@@ -1110,6 +1112,8 @@ apis:
   humanURL: https://goharbor.io/docs/2.15.0/working-with-projects/using-api-explorer/
   baseURL: https://{host}/api/v2.0
   tags:
+  - UserGroup
+  tags_raw:
   - User Group
   properties:
   - type: OpenAPI
@@ -1133,6 +1137,9 @@ apis:
   - type: SourceCode
     url: https://github.com/goharbor/pluggable-scanner-spec
 common:
+  - type: CapabilityMap
+    url: capabilities/goharbor-capability-edges.yml
+    name: GoHarbor Business Capability Map
   - type: IssueTracker
     url: https://github.com/goharbor/harbor/issues
   - type: Releases
