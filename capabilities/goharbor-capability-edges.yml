@@ -1,0 +1,140 @@
+slug: goharbor
+provider: GoHarbor
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 12
+edges:
+- tag: Scan
+  spec_file: goharbor-scan-api-openapi.yml
+  capability_id: BC-620.40
+  capability_id_l1: BC-620
+  capability_name: Vulnerability Management
+  confidence: 0.9
+  evidence: POST /projects/{project_name}/repositories/{repository_name}/artifacts/{reference}/scan  scanArtifact  Scan
+    the artifact
+  reason: Triggers and reports on vulnerability scanning of container artefacts, matching vulnerability
+    scanning/remediation; vendor description confirms 'vulnerability scanning and SBOM generation'.
+- tag: Scanner
+  spec_file: goharbor-scanner-api-openapi.yml
+  capability_id: BC-620.40
+  capability_id_l1: BC-620
+  capability_name: Vulnerability Management
+  confidence: 0.85
+  evidence: POST /scan AcceptScanRequest 'Accept artifact scanning request'; GET /scan/{scan_request_id}/report
+    'Get scan report'; schemas VulnerabilityItem, HarborVulnerabilityReport, CVSSDetails
+  reason: Operations register and invoke vulnerability scanners against container artifacts and return
+    vulnerability/CVSS reports — this is vulnerability scanning and remediation support, i.e. Vulnerability
+    Management, not a generic device/scanner concept.
+- tag: User
+  spec_file: goharbor-user-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.85
+  evidence: POST /users 'Create a local user'; PUT /users/{user_id}/sysadmin 'Update a registered user
+    to change to be an administrator of Harbor'; GET /users/current/permissions 'Get current user permissions'
+  reason: User account lifecycle, password/CLI-secret credentials, admin flag and permission resolution
+    for platform access — Identity & Access Management, not HR employee records.
+- tag: securityhub
+  spec_file: goharbor-securityhub-api-openapi.yml
+  capability_id: BC-620.40
+  capability_id_l1: BC-620
+  capability_name: Vulnerability Management
+  confidence: 0.85
+  evidence: GET /security/vul ListVulnerabilities "Get the vulnerability list"; GET /security/summary
+    "Get vulnerability system summary"; schemas VulnerabilityItem, DangerousCVE
+  reason: Operations expose vulnerability inventory and summary views over scanned artifacts — vulnerability
+    identification and remediation reporting. No other reading of VulnerabilityItem/DangerousCVE fits.
+- tag: Permissions
+  spec_file: goharbor-permissions-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.8
+  evidence: 'GET /permissions  getPermissions  Get system or project level permissions info; schemas:
+    Permissions, Permission'
+  reason: Exposes the RBAC permission model (system and project level) that governs who may act on registry
+    resources — access management, not a business-domain noun.
+- tag: SystemCVEAllowlist
+  spec_file: goharbor-systemcveallowlist-api-openapi.yml
+  capability_id: BC-620.40
+  capability_id_l1: BC-620
+  capability_name: Vulnerability Management
+  confidence: 0.8
+  evidence: GET /system/CVEAllowlist 'Get the system level allowlist of CVE'; PUT /system/CVEAllowlist
+    'Update the system level allowlist of CVE'
+  reason: Maintains the system-wide allowlist of CVEs used to waive vulnerability findings — a vulnerability
+    management (exception/remediation policy) function.
+- tag: scan data export
+  spec_file: goharbor-scan-data-export-api-openapi.yml
+  capability_id: BC-620.40
+  capability_id_l1: BC-620
+  capability_name: Vulnerability Management
+  confidence: 0.8
+  evidence: POST /export/cve exportScanData "Export scan data for selected projects"; schemas ScanDataExportRequest,
+    ScanDataExportExecution
+  reason: The operations export CVE/vulnerability scan results from the registry's image scanning, which
+    is vulnerability scanning/reporting — Vulnerability Management under Cybersecurity. It is not a generic
+    data-export utility; the resource is explicitly /export/cve.
+- tag: User Group
+  spec_file: goharbor-user-group-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.78
+  evidence: POST /usergroups createUserGroup 'Create user group'; schemas UserGroup, UserGroupSearchItem
+  reason: Management of user groups (LDAP/OIDC groups) used for Harbor RBAC assignment; an access-management
+    construct rather than organisational/HR grouping.
+- tag: LDAP
+  spec_file: goharbor-ldap-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.75
+  evidence: 'POST /ldap/ping pingLdap "Ping available ldap service"; GET /ldap/users/search "Search available
+    ldap users"; POST /ldap/users/import "Import selected available ldap users"; schemas: LdapConf, UserGroup'
+  reason: Operations configure and test an LDAP directory connection and import directory users and groups
+    into the registry — identity federation and account provisioning, squarely Identity & Access Management.
+    Could alternatively be read as tenant identity federation, hence not maximal confidence.
+- tag: Robot
+  spec_file: goharbor-robot-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.75
+  evidence: 'POST /robots  CreateRobot  Create a robot account; PATCH /robots/{robot_id}  RefreshSec  Refresh
+    the robot secret; schemas: RobotPermission, Access'
+  reason: Lifecycle of machine/service accounts with scoped permissions and secret rotation — non-human
+    identity and credential management. Could alternatively be read as developer credential management,
+    hence not higher.
+- tag: scanAll
+  spec_file: goharbor-scanall-api-openapi.yml
+  capability_id: BC-620.40
+  capability_id_l1: BC-620
+  capability_name: Vulnerability Management
+  confidence: 0.75
+  evidence: GET /scans/all/metrics "Get the metrics of the latest scan all process"; POST /system/scanAll/schedule
+    "Create a schedule or a manual trigger for the scan all job"
+  reason: Scheduling, triggering and monitoring fleet-wide vulnerability scans of stored artifacts is
+    vulnerability scanning operations. Some scheduling plumbing flavour, so confidence is moderate rather
+    than high.
+- tag: Member
+  spec_file: goharbor-member-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.7
+  evidence: 'POST /projects/{project_name_or_id}/members createProjectMember "Create project member";
+    PUT ... updateProjectMember; schemas: ProjectMember, RoleRequest, UserGroup'
+  reason: Operations grant, update and revoke project membership with roles (RoleRequest) — role-based
+    access administration over registry projects, i.e. access management. Confidence tempered because
+    it is scoped authorisation within one product rather than enterprise-wide IAM.
