@@ -19,17 +19,17 @@ artifacts:
     method: searched
     evidence: declared in the artifact
   collections/goharbor-artifacts-api.opencollection.json:
-    method: derived
-    evidence: openapi/goharbor-artifacts-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-artifacts-api.postman_collection.json:
-    method: derived
-    evidence: openapi/goharbor-artifacts-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-audit-api.opencollection.json:
-    method: derived
-    evidence: openapi/goharbor-audit-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-audit-api.postman_collection.json:
-    method: derived
-    evidence: openapi/goharbor-audit-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-health-api.opencollection.json:
     method: derived
     evidence: openapi/goharbor-health-api
@@ -37,23 +37,23 @@ artifacts:
     method: derived
     evidence: openapi/goharbor-health-api
   collections/goharbor-projects-api.opencollection.json:
-    method: derived
-    evidence: openapi/goharbor-projects-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-projects-api.postman_collection.json:
-    method: derived
-    evidence: openapi/goharbor-projects-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-quotas-api.opencollection.json:
-    method: derived
-    evidence: openapi/goharbor-quotas-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-quotas-api.postman_collection.json:
-    method: derived
-    evidence: openapi/goharbor-quotas-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-registries-api.opencollection.json:
-    method: derived
-    evidence: openapi/goharbor-registries-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-registries-api.postman_collection.json:
-    method: derived
-    evidence: openapi/goharbor-registries-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-replication-api.opencollection.json:
     method: derived
     evidence: openapi/goharbor-replication-api
@@ -61,17 +61,17 @@ artifacts:
     method: derived
     evidence: openapi/goharbor-replication-api
   collections/goharbor-repositories-api.opencollection.json:
-    method: derived
-    evidence: openapi/goharbor-repositories-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-repositories-api.postman_collection.json:
-    method: derived
-    evidence: openapi/goharbor-repositories-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-robots-api.opencollection.json:
-    method: derived
-    evidence: openapi/goharbor-robots-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-robots-api.postman_collection.json:
-    method: derived
-    evidence: openapi/goharbor-robots-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-scan-api.opencollection.json:
     method: derived
     evidence: openapi/goharbor-scan-api
@@ -85,23 +85,23 @@ artifacts:
     method: derived
     evidence: openapi/goharbor-search-api
   collections/goharbor-tags-api.opencollection.json:
-    method: derived
-    evidence: openapi/goharbor-tags-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-tags-api.postman_collection.json:
-    method: derived
-    evidence: openapi/goharbor-tags-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-usergroups-api.opencollection.json:
-    method: derived
-    evidence: openapi/goharbor-usergroups-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-usergroups-api.postman_collection.json:
-    method: derived
-    evidence: openapi/goharbor-usergroups-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-webhooks-api.opencollection.json:
-    method: derived
-    evidence: openapi/goharbor-webhooks-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor-webhooks-api.postman_collection.json:
-    method: derived
-    evidence: openapi/goharbor-webhooks-api
+    method: unknown
+    evidence: no authorship recorded
   collections/goharbor.opencollection.json:
     method: derived
     evidence: openapi/goharbor
@@ -123,37 +123,10 @@ artifacts:
   finops/goharbor-finops.yml:
     method: generated
     evidence: declared in the artifact
-  kin/checks-2026-09-12T080032.yml:
-    method: generated
-    evidence: Kin Score snapshot written by score.rb
-  kin/score-2026-08-17T064519.yml:
-    method: generated
-    evidence: Kin Score snapshot written by score.rb
-  kin/score-2026-08-19T080027.yml:
-    method: generated
-    evidence: Kin Score snapshot written by score.rb
-  kin/score-2026-08-19T082702.yml:
-    method: generated
-    evidence: Kin Score snapshot written by score.rb
-  kin/score-2026-08-19T114122.yml:
-    method: generated
-    evidence: Kin Score snapshot written by score.rb
-  kin/score-2026-08-20T165047.yml:
-    method: generated
-    evidence: Kin Score snapshot written by score.rb
-  kin/score-2026-08-20T191845.yml:
-    method: generated
-    evidence: Kin Score snapshot written by score.rb
-  kin/score-2026-08-20T205517.yml:
-    method: generated
-    evidence: Kin Score snapshot written by score.rb
-  kin/score-2026-08-21T110057.yml:
-    method: generated
-    evidence: Kin Score snapshot written by score.rb
-  kin/score-2026-08-24T064859.yml:
-    method: generated
-    evidence: Kin Score snapshot written by score.rb
-  kin/score-2026-08-24T171257.yml:
+  front-door-ai/2026-09-17.yml:
+    method: unknown
+    evidence: no authorship recorded
+  kin/checks-2026-09-24T161608.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   kin/score-2026-08-25T125852.yml:
@@ -282,64 +255,210 @@ artifacts:
   kin/score-2026-09-12T080032.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-12T204651.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-12T221936.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-13T214537.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-14T064754.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-14T210656.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-14T225847.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-15T211329.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-15T230249.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-16T210549.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-16T225339.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-17T211151.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-17T233623.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-18T205255.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-18T231945.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-19T165737.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-19T193153.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-20T205903.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-20T232958.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-21T211425.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-21T233935.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-22T213221.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-23T000603.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-24T064009.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-24T090406.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-24T161608.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
   lifecycle/goharbor-lifecycle.yml:
     method: searched
     evidence: declared in the artifact
   llms/goharbor-llms.txt:
-    method: unknown
-    evidence: no authorship recorded
+    method: searched
+    evidence: 'derive-llms-provenance.py: harvested'
   mcp/goharbor-mcp.yml:
     method: derived
     evidence: declared in the artifact
   openapi/_original/goharbor-harbor-api-v2.0-swagger.yml:
     method: harvested
-    evidence: fetched from the provider as-is; byte-identical to the source
+    evidence: found in openapi/_original/; the fetch URL and bytes were not recorded, so byte-identity
+      to the provider's source is unverified
   openapi/_original/goharbor-openapi.yml:
     method: harvested
-    evidence: fetched from the provider as-is; byte-identical to the source
-  openapi/goharbor-artifacts-api-openapi.yml:
+    evidence: found in openapi/_original/; the fetch URL and bytes were not recorded, so byte-identity
+      to the provider's source is unverified
+  openapi/goharbor-artifact-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
-  openapi/goharbor-audit-api-openapi.yml:
+  openapi/goharbor-audit-log-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-configure-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-gc-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
   openapi/goharbor-health-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
-  openapi/goharbor-projects-api-openapi.yml:
+  openapi/goharbor-icon-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
-  openapi/goharbor-quotas-api-openapi.yml:
+  openapi/goharbor-immutable-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
-  openapi/goharbor-registries-api-openapi.yml:
+  openapi/goharbor-job-service-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-label-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-ldap-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-member-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-oidc-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-permissions-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-ping-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-preheat-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-project-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-projectmetadata-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-purge-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-quota-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-registry-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
   openapi/goharbor-replication-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
-  openapi/goharbor-repositories-api-openapi.yml:
+  openapi/goharbor-repository-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
-  openapi/goharbor-robots-api-openapi.yml:
+  openapi/goharbor-retention-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-robot-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
   openapi/goharbor-scan-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
-  openapi/goharbor-scanner-adapter-api-openapi.yml:
+  openapi/goharbor-scan-data-export-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-scanall-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-scanner-api-openapi.yml:
     method: unknown
     evidence: no authorship recorded
+  openapi/goharbor-schedule-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
   openapi/goharbor-search-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
-  openapi/goharbor-tags-api-openapi.yml:
+  openapi/goharbor-securityhub-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
-  openapi/goharbor-usergroups-api-openapi.yml:
+  openapi/goharbor-statistic-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
-  openapi/goharbor-webhooks-api-openapi.yml:
+  openapi/goharbor-system-info-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-systemcveallowlist-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-user-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-user-group-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-webhook-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/goharbor-webhookjob-api-openapi.yml:
     method: derived
     evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
   overlays/goharbor-harbor-api-overlay.yaml:
