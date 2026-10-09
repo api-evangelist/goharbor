@@ -1219,6 +1219,8 @@ common:
     url: overlays/goharbor-harbor-api-overlay.yaml
   - type: X-MCPServerCandidate
     url: mcp/goharbor-mcp.yml
+  - type: SpectralRules
+    url: https://github.com/goharbor/harbor/blob/4d425b805f318eb8dfe621842c02bef8dc0c0959/.spectral.yaml
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
