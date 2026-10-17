@@ -57,21 +57,6 @@ paths:
         description: The allowlist with new content
 components:
   schemas:
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-    CVEAllowlistItem:
-      type: object
-      description: The item in CVE allowlist
-      properties:
-        cve_id:
-          type: string
-          description: The ID of the CVE, such as "CVE-2019-10164"
     CVEAllowlist:
       type: object
       description: The CVE Allowlist for system or project
@@ -112,20 +97,33 @@ components:
       example:
         code: NOT_FOUND
         message: artifact library/hello-world:latest not found
+    CVEAllowlistItem:
+      type: object
+      description: The item in CVE allowlist
+      properties:
+        cve_id:
+          type: string
+          description: The ID of the CVE, such as "CVE-2019-10164"
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
   responses:
     '500':
       description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -146,15 +144,17 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-  parameters:
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   securitySchemes:
     basic:
       type: http

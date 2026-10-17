@@ -380,29 +380,211 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 components:
+  schemas:
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    RetentionRuleMetadata:
+      type: object
+      description: the tag retention rule metadata
+      properties:
+        rule_template:
+          type: string
+          description: rule id
+        display_text:
+          type: string
+          description: rule display text
+        action:
+          type: string
+          description: rule action
+        params:
+          type: array
+          description: rule params
+          items:
+            $ref: '#/components/schemas/RetentionRuleParamMetadata'
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    RetentionSelector:
+      type: object
+      properties:
+        kind:
+          type: string
+        decoration:
+          type: string
+        pattern:
+          type: string
+        extras:
+          type: string
+    RetentionRuleTrigger:
+      type: object
+      properties:
+        kind:
+          type: string
+        settings:
+          type: object
+        references:
+          type: object
+    RetentionExecution:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        policy_id:
+          type: integer
+          format: int64
+        start_time:
+          type: string
+        end_time:
+          type: string
+        status:
+          type: string
+        trigger:
+          type: string
+        dry_run:
+          type: boolean
+    RetentionExecutionTask:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        execution_id:
+          type: integer
+          format: int64
+        repository:
+          type: string
+        job_id:
+          type: string
+        status:
+          type: string
+        status_code:
+          type: integer
+          x-omitempty: false
+        status_revision:
+          type: integer
+          format: int64
+        start_time:
+          type: string
+        end_time:
+          type: string
+        total:
+          type: integer
+          x-omitempty: false
+        retained:
+          type: integer
+          x-omitempty: false
+    RetentionPolicyScope:
+      type: object
+      properties:
+        level:
+          type: string
+        ref:
+          type: integer
+    RetentionRule:
+      type: object
+      properties:
+        id:
+          type: integer
+        priority:
+          type: integer
+        disabled:
+          type: boolean
+        action:
+          type: string
+        template:
+          type: string
+        params:
+          type: object
+          additionalProperties:
+            type: object
+        tag_selectors:
+          type: array
+          items:
+            $ref: '#/components/schemas/RetentionSelector'
+        scope_selectors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/RetentionSelector'
+    RetentionMetadata:
+      type: object
+      description: the tag retention metadata
+      properties:
+        templates:
+          type: array
+          description: templates
+          items:
+            $ref: '#/components/schemas/RetentionRuleMetadata'
+        scope_selectors:
+          type: array
+          description: supported scope selectors
+          items:
+            $ref: '#/components/schemas/RetentionSelectorMetadata'
+        tag_selectors:
+          type: array
+          description: supported tag selectors
+          items:
+            $ref: '#/components/schemas/RetentionSelectorMetadata'
+    RetentionPolicy:
+      type: object
+      description: retention policy
+      properties:
+        id:
+          type: integer
+          format: int64
+        algorithm:
+          type: string
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/RetentionRule'
+        trigger:
+          type: object
+          $ref: '#/components/schemas/RetentionRuleTrigger'
+        scope:
+          type: object
+          $ref: '#/components/schemas/RetentionPolicyScope'
+    RetentionRuleParamMetadata:
+      type: object
+      description: rule param
+      properties:
+        type:
+          type: string
+        unit:
+          type: string
+        required:
+          type: boolean
+    RetentionSelectorMetadata:
+      type: object
+      description: retention selector
+      properties:
+        display_text:
+          type: string
+        kind:
+          type: string
+        decorations:
+          type: array
+          items:
+            type: string
   responses:
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '500':
       description: Internal server error. Inspect the `errors` array in the response body for details.
       headers:
@@ -436,210 +618,28 @@ components:
           description: The location of the resource
           schema:
             type: string
-  schemas:
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
-    RetentionMetadata:
-      type: object
-      description: the tag retention metadata
-      properties:
-        templates:
-          type: array
-          description: templates
-          items:
-            $ref: '#/components/schemas/RetentionRuleMetadata'
-        scope_selectors:
-          type: array
-          description: supported scope selectors
-          items:
-            $ref: '#/components/schemas/RetentionSelectorMetadata'
-        tag_selectors:
-          type: array
-          description: supported tag selectors
-          items:
-            $ref: '#/components/schemas/RetentionSelectorMetadata'
-    RetentionExecutionTask:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        execution_id:
-          type: integer
-          format: int64
-        repository:
-          type: string
-        job_id:
-          type: string
-        status:
-          type: string
-        status_code:
-          type: integer
-          x-omitempty: false
-        status_revision:
-          type: integer
-          format: int64
-        start_time:
-          type: string
-        end_time:
-          type: string
-        total:
-          type: integer
-          x-omitempty: false
-        retained:
-          type: integer
-          x-omitempty: false
-    RetentionRuleParamMetadata:
-      type: object
-      description: rule param
-      properties:
-        type:
-          type: string
-        unit:
-          type: string
-        required:
-          type: boolean
-    RetentionSelector:
-      type: object
-      properties:
-        kind:
-          type: string
-        decoration:
-          type: string
-        pattern:
-          type: string
-        extras:
-          type: string
-    RetentionRule:
-      type: object
-      properties:
-        id:
-          type: integer
-        priority:
-          type: integer
-        disabled:
-          type: boolean
-        action:
-          type: string
-        template:
-          type: string
-        params:
-          type: object
-          additionalProperties:
-            type: object
-        tag_selectors:
-          type: array
-          items:
-            $ref: '#/components/schemas/RetentionSelector'
-        scope_selectors:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/RetentionSelector'
-    RetentionRuleMetadata:
-      type: object
-      description: the tag retention rule metadata
-      properties:
-        rule_template:
-          type: string
-          description: rule id
-        display_text:
-          type: string
-          description: rule display text
-        action:
-          type: string
-          description: rule action
-        params:
-          type: array
-          description: rule params
-          items:
-            $ref: '#/components/schemas/RetentionRuleParamMetadata'
-    RetentionExecution:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        policy_id:
-          type: integer
-          format: int64
-        start_time:
-          type: string
-        end_time:
-          type: string
-        status:
-          type: string
-        trigger:
-          type: string
-        dry_run:
-          type: boolean
-    RetentionRuleTrigger:
-      type: object
-      properties:
-        kind:
-          type: string
-        settings:
-          type: object
-        references:
-          type: object
-    RetentionPolicyScope:
-      type: object
-      properties:
-        level:
-          type: string
-        ref:
-          type: integer
-    RetentionSelectorMetadata:
-      type: object
-      description: retention selector
-      properties:
-        display_text:
-          type: string
-        kind:
-          type: string
-        decorations:
-          type: array
-          items:
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
             type: string
-    RetentionPolicy:
-      type: object
-      description: retention policy
-      properties:
-        id:
-          type: integer
-          format: int64
-        algorithm:
-          type: string
-        rules:
-          type: array
-          items:
-            $ref: '#/components/schemas/RetentionRule'
-        trigger:
-          type: object
-          $ref: '#/components/schemas/RetentionRuleTrigger'
-        scope:
-          type: object
-          $ref: '#/components/schemas/RetentionPolicyScope'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   parameters:
     requestId:
       name: X-Request-Id

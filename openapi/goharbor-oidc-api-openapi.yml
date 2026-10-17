@@ -48,17 +48,13 @@ paths:
         required: true
 components:
   responses:
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+    '200':
+      description: Success
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
           schema:
             type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '500':
       description: Internal server error. Inspect the `errors` array in the response body for details.
       headers:
@@ -70,15 +66,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '200':
-      description: Success
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -99,15 +88,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   schemas:
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
     Error:
       description: a model for all the error response coming from harbor
       type: object
@@ -121,6 +113,14 @@ components:
       example:
         code: NOT_FOUND
         message: artifact library/hello-world:latest not found
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
   parameters:
     requestId:
       name: X-Request-Id

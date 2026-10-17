@@ -32,14 +32,19 @@ paths:
           $ref: '#/components/responses/500'
 components:
   schemas:
-    Errors:
-      description: The error array that describe the errors got during the handling of request
+    Error:
+      description: a model for all the error response coming from harbor
       type: object
       properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
     ComponentHealthStatus:
       type: object
       description: The health status of component
@@ -64,19 +69,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ComponentHealthStatus'
-    Error:
-      description: a model for all the error response coming from harbor
+    Errors:
+      description: The error array that describe the errors got during the handling of request
       type: object
       properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
   responses:
     '500':
       description: Internal server error. Inspect the `errors` array in the response body for details.
@@ -89,15 +98,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-  parameters:
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
   securitySchemes:
     basic:
       type: http

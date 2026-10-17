@@ -221,8 +221,15 @@ paths:
           $ref: '#/components/responses/500'
 components:
   responses:
-    '400':
-      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
+    '200':
+      description: Success
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -232,8 +239,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '409':
-      description: Conflict. The resource already exists or the current state prevents the operation.
+    '400':
+      description: Bad request. The request body or query parameters are invalid. Inspect the `errors` array in the response body for details.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -254,35 +261,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '200':
-      description: Success
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '403':
       description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
       headers:
@@ -294,16 +272,78 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '409':
+      description: Conflict. The resource already exists or the current state prevents the operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  schemas:
+    UserGroupSearchItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the user group
+        group_name:
+          type: string
+          description: The name of the user group
+        group_type:
+          type: integer
+          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    UserGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the user group
+        group_name:
+          type: string
+          description: The name of the user group
+        group_type:
+          type: integer
+          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
+        ldap_group_dn:
+          type: string
+          description: The DN of the LDAP group if group type is 1 (LDAP group).
   parameters:
-    page:
-      name: page
-      in: query
-      required: false
-      description: The page number
-      schema:
-        type: integer
-        format: int64
-        default: 1
     pageSize:
       name: page_size
       in: query
@@ -322,55 +362,15 @@ components:
       schema:
         type: string
         minLength: 1
-  schemas:
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-    UserGroupSearchItem:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The ID of the user group
-        group_name:
-          type: string
-          description: The name of the user group
-        group_type:
-          type: integer
-          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
-    UserGroup:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The ID of the user group
-        group_name:
-          type: string
-          description: The name of the user group
-        group_type:
-          type: integer
-          description: The group type, 1 for LDAP group, 2 for HTTP group, 3 for OIDC group.
-        ldap_group_dn:
-          type: string
-          description: The DN of the LDAP group if group type is 1 (LDAP group).
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number
+      schema:
+        type: integer
+        format: int64
+        default: 1
   securitySchemes:
     basic:
       type: http

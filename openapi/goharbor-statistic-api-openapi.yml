@@ -71,14 +71,6 @@ components:
           format: int64
           description: The total storage consumption of blobs, only be seen by the system admin
           x-omitempty: false
-    Errors:
-      description: The error array that describe the errors got during the handling of request
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
     Error:
       description: a model for all the error response coming from harbor
       type: object
@@ -92,6 +84,14 @@ components:
       example:
         code: NOT_FOUND
         message: artifact library/hello-world:latest not found
+    Errors:
+      description: The error array that describe the errors got during the handling of request
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
   responses:
     '500':
       description: Internal server error. Inspect the `errors` array in the response body for details.

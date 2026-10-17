@@ -82,6 +82,38 @@ paths:
           $ref: '#/components/responses/500'
 components:
   schemas:
+    Error:
+      description: a model for all the error response coming from harbor
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
+    Storage:
+      type: object
+      properties:
+        total:
+          type: integer
+          format: uint64
+          description: Total volume size.
+        free:
+          type: integer
+          format: uint64
+          description: Free volume size.
+    SystemInfo:
+      type: object
+      properties:
+        storage:
+          type: array
+          description: The storage of system.
+          items:
+            $ref: '#/components/schemas/Storage'
     GeneralInfo:
       type: object
       properties:
@@ -201,50 +233,16 @@ components:
         server_certificate:
           type: string
           description: The certificate to be pinned when connecting auth proxy.
-    SystemInfo:
-      type: object
-      properties:
-        storage:
-          type: array
-          description: The storage of system.
-          items:
-            $ref: '#/components/schemas/Storage'
-    Storage:
-      type: object
-      properties:
-        total:
-          type: integer
-          format: uint64
-          description: Total volume size.
-        free:
-          type: integer
-          format: uint64
-          description: Free volume size.
-    Error:
-      description: a model for all the error response coming from harbor
-      type: object
-      properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
+  parameters:
+    requestId:
+      name: X-Request-Id
+      description: An unique ID for the request
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
   responses:
-    '404':
-      description: Not found. The requested resource does not exist.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
     '500':
       description: Internal server error. Inspect the `errors` array in the response body for details.
       headers:
@@ -256,8 +254,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
+    '404':
+      description: Not found. The requested resource does not exist.
       headers:
         X-Request-Id:
           description: The ID of the corresponding request for the response
@@ -278,15 +276,17 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
-  parameters:
-    requestId:
-      name: X-Request-Id
-      description: An unique ID for the request
-      in: header
-      required: false
-      schema:
-        type: string
-        minLength: 1
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   securitySchemes:
     basic:
       type: http

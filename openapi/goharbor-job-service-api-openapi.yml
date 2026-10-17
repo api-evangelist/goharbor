@@ -187,62 +187,6 @@ paths:
               $ref: '#/components/schemas/ActionRequest'
         required: true
 components:
-  responses:
-    '422':
-      description: Unprocessable entity. The request was well-formed but could not be processed (for example, due to validation errors). Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '404':
-      description: Not found. The requested resource does not exist.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '500':
-      description: Internal server error. Inspect the `errors` array in the response body for details.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '401':
-      description: Unauthorized. Authentication is required to access this resource.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
-    '403':
-      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
-      headers:
-        X-Request-Id:
-          description: The ID of the corresponding request for the response
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Errors'
   schemas:
     ActionRequest:
       type: object
@@ -255,14 +199,43 @@ components:
           - stop
           - pause
           - resume
-    Errors:
-      description: The error array that describe the errors got during the handling of request
+    WorkerPool:
+      type: object
+      description: the worker pool of job service
+      properties:
+        pid:
+          type: integer
+          description: the process id of jobservice
+        worker_pool_id:
+          type: string
+          description: the id of the worker pool
+        start_at:
+          type: string
+          format: date-time
+          description: The start time of the work pool
+        heartbeat_at:
+          type: string
+          format: date-time
+          description: The heartbeat time of the work pool
+        concurrency:
+          type: integer
+          description: The concurrency of the work pool
+        host:
+          type: string
+          description: The host of the work pool
+    Error:
+      description: a model for all the error response coming from harbor
       type: object
       properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      example:
+        code: NOT_FOUND
+        message: artifact library/hello-world:latest not found
     Worker:
       type: object
       description: worker in the pool
@@ -313,43 +286,70 @@ components:
           type: boolean
           description: The paused status of the job queue
           x-omitempty: false
-    Error:
-      description: a model for all the error response coming from harbor
+    Errors:
+      description: The error array that describe the errors got during the handling of request
       type: object
       properties:
-        code:
-          type: string
-          description: The error code
-        message:
-          type: string
-          description: The error message
-      example:
-        code: NOT_FOUND
-        message: artifact library/hello-world:latest not found
-    WorkerPool:
-      type: object
-      description: the worker pool of job service
-      properties:
-        pid:
-          type: integer
-          description: the process id of jobservice
-        worker_pool_id:
-          type: string
-          description: the id of the worker pool
-        start_at:
-          type: string
-          format: date-time
-          description: The start time of the work pool
-        heartbeat_at:
-          type: string
-          format: date-time
-          description: The heartbeat time of the work pool
-        concurrency:
-          type: integer
-          description: The concurrency of the work pool
-        host:
-          type: string
-          description: The host of the work pool
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+  responses:
+    '422':
+      description: Unprocessable entity. The request was well-formed but could not be processed (for example, due to validation errors). Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Internal server error. Inspect the `errors` array in the response body for details.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '404':
+      description: Not found. The requested resource does not exist.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '403':
+      description: Forbidden. The caller does not have sufficient permission to perform the requested operation.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '401':
+      description: Unauthorized. Authentication is required to access this resource.
+      headers:
+        X-Request-Id:
+          description: The ID of the corresponding request for the response
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
   parameters:
     requestId:
       name: X-Request-Id
