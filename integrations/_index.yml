@@ -69,41 +69,6 @@
     detected: '2026-10-19'
   status: not-a-workflow
   arazzo: null
-- slug: goharbor-openssf-best-practices-badge
-  label: OpenSSF Best Practices Badge
-  partner_name: OpenSSF Best Practices Badge
-  category: OpenSSF Best Practices badge (open-source project security conformance)
-  type: register
-  channel: standard-directory
-  evidence: https://www.bestpractices.dev/en/projects/2095
-  source: edge
-  relationship: standard-participant
-  contract_reference:
-    register: OpenSSF Best Practices badge projects (bestpractices.dev/en/projects.json, paged)
-    standard: OpenSSF Best Practices Badge criteria (formerly CII Best Practices; bestpractices.dev)
-    spec_file: null
-    role: badge-holder
-    registered_name: harbor
-    matched_by: github-org+name-among-claimants
-    matched_on: goharbor
-    certified_products:
-    - product: open-source project
-      product_type: open-source project
-      standard: OpenSSF Best Practices Badge criteria (formerly CII Best Practices; bestpractices.dev)
-      lapsed: false
-      partner_tier: silver
-      projects:
-      - name: harbor
-        id: 2095
-        url: https://www.bestpractices.dev/en/projects/2095
-        badge_level: silver
-    signal_note: 'certified_products = ONE entry (product type: open-source project) with the highest CURRENT badge
-      level in partner_tier; a provider whose projects only lost the badge is lapsed: true; project names are context,
-      never counted; in_progress entries are not conformance'
-    detected_by: sweep-openssf-best-practices-badges.py
-    detected: '2026-10-22'
-  status: not-a-workflow
-  arazzo: null
 - slug: goharbor-artifact-hub-artifact-hub
   label: Artifact Hub (artifact-hub)
   partner: artifact-hub
@@ -115,5 +80,71 @@
   evidence: https://artifacthub.io/packages/search?repo=harbor-cli
   source: edge
   relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: goharbor-cd-foundation-continuous-delivery-foundation-landscape
+  label: CD Foundation (Continuous Delivery Foundation landscape)
+  partner: continuous-delivery-foundation
+  partner_name: CD Foundation (Continuous Delivery Foundation landscape)
+  category: Continuous delivery foundation membership / landscape
+  type: register
+  channel: standard-directory
+  evidence: https://landscape.cd.foundation/
+  source: edge
+  relationship: standard-participant
+  contract_reference:
+    register: CD Foundation landscape (landscape.cd.foundation/data/full.json)
+    spec_file: null
+    standard: Continuous Delivery Foundation
+    role: cdf-landscape-listed
+    registered_name: Harbor
+    registered_names:
+    - Harbor
+    website: https://goharbor.io/
+    matched_domain: goharbor.io
+    matched_by: domain
+    member_tier: null
+    landscape_categories:
+    - Container Registry & Build / Container Registry
+    cdf_projects: []
+    signal_note: 'participation only: CDF membership or a landscape listing is standard-participant evidence, never
+      depth; tier, categories and entries are context, never counted'
+    detected_by: sweep-jenkins-cd-foundation-plugins.py
+    detected: '2026-10-22'
+  status: not-a-workflow
+  arazzo: null
+- slug: goharbor-openssf-best-practices-badge-bestpractices-dev
+  label: OpenSSF Best Practices Badge (bestpractices.dev)
+  partner_name: OpenSSF Best Practices Badge (bestpractices.dev)
+  category: OpenSSF Best Practices badge (open-source project security practices)
+  type: register
+  channel: standard-directory
+  evidence: https://www.bestpractices.dev/en/projects/2095
+  source: edge
+  relationship: standard-participant
+  contract_reference:
+    register: OpenSSF Best Practices Badge projects (www.bestpractices.dev/en/projects.json)
+    standard: OpenSSF Best Practices Badge criteria (passing / silver / gold)
+    spec_file: null
+    role: badged-project-owner
+    registered_name: harbor
+    matched_domain: goharbor.io
+    matched_by: domain
+    certified_products:
+    - product: open-source project
+      product_type: open-source project
+      standard: OpenSSF Best Practices Badge criteria (passing / silver / gold)
+      partner_tier: silver
+      lapsed: false
+    badged_projects:
+    - name: harbor
+      id: 2095
+      badge: silver
+      url: https://www.bestpractices.dev/en/projects/2095
+    signal_note: 'certified_products = ONE entry per provider (product type open-source project): highest current
+      OpenSSF Best Practices badge level in partner_tier, earliest date at that level; lapsed: true when every linked
+      project lost its badge. badged_projects is context, never counted'
+    detected_by: sweep-openssf-best-practices-badges.py
+    detected: '2026-10-22'
   status: not-a-workflow
   arazzo: null
